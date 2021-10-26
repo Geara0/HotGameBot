@@ -1,3 +1,5 @@
+import java.util.Objects;
+
 /**
  * Класс для хранения тайтла
  *
@@ -75,5 +77,10 @@ public class Title {
                 (this.link != null && this.link.equals(another.link)) &&
                 (BuyLink != null && BuyLink.equals(another.BuyLink)) &&
                 Price == another.Price;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(link);
     }
 }
