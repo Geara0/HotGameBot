@@ -4,19 +4,19 @@
       "Ghost of Tshushima": {
         "name": "Ghost of Tsushima - Director's Cut",
         "link": "https://hot-game.info/game/Ghost-of-Tsushima-Directors-Cut",
-        "BuyLink": "https://store.playstation.com/ru-ru/product/EP9000-CUSA13323_00-GHOSTDIRECTORPS4",
+        "BuyLink": "link1",
         "Price": 4999
       },
       "Battlefield V": {
         "name": "Battlefield V",
         "link": "https://hot-game.info/game/Battlefield-V",
-        "BuyLink": "https://steam-account.ru/oplata/battlefield-5?ai=474161",
+        "BuyLink": "link1",
         "Price": 85
       },
       "Grand Theft Auto V": {
         "name": "Grand Theft Auto V",
         "link": "https://hot-game.info/game/grand-theft-auto-5",
-        "BuyLink": "https://steam-account.ru/oplata/gta-5-kupit?ai=474161",
+        "BuyLink": "link1",
         "Price": 662
       }
     },
@@ -27,13 +27,13 @@
       "Knockout City" : {
         "name": "Knockout City",
         "link" : "https://hot-game.info/game/Knockout-City",
-        "BuyLink" : "https://hot-game.info/game/Knockout-City",
+        "BuyLink" : link1",
         "Price" : 5
       },
       "Horizon Zero Dawn": {
           "name": "Horizon Zero Dawn",
           "link": "https://hot-game.info/game/Horizon-Zero-Dawn",
-          "BuyLink": "https://steam-account.ru/oplata/horizon-zero-dawn-complete-pc?ai=474161",
+          "BuyLink": "link1",
           "Price": 1484
         }
       },
@@ -44,19 +44,19 @@
       "Rust" : {
         "name": "Rust",
         "link": "https://hot-game.info/game/rust",
-        "BuyLink": "https://sous-buy.ru/catalog/rust-rusng-account/hotgame",
+        "BuyLink": "link1",
         "Price": 1149
       },
       "Minecraft" : {
         "name": "Minecraft",
         "link": "https://hot-game.info/game/minecraft",
-        "BuyLink": "https://sous-buy.ru/catalog/minecraft-java-edition-key/hotgame",
+        "BuyLink": "link1",
         "Price": 1559
       },
       "New World" : {
         "name": "New World",
         "link": "https://hot-game.info/game/New-World",
-        "BuyLink": "https://store.steampowered.com/app/1063730/New_World/?cc=ru",
+        "BuyLink": "link1",
         "Price": 1299
       }
       },
