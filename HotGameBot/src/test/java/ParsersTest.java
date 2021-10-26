@@ -11,21 +11,13 @@ import java.util.Map;
  *
  * @author Geara0
  * @version 0.0
- * @see Main#parseUsers(HashSet)
- * @see Main#parseUserData(Iterable)
+ * @see Main()
  */
 public class ParsersTest {
-    private JsonParser parser = new UserSubsParser();
-
     @Test
-    public void parseUsers() {
-
-    }
-
-    @Test
-    public void parseUserData() throws IOException {
-        var data = parser.getData(".\\JSONs\\HWUserSubsList");
-        var a = Main.parseUserData(data);
-
+    public void parseUsers() throws InterruptedException {
+        var a = 0;
+        new Main();
+        Thread.sleep(4 * 10 * 1000);
     }
 }
