@@ -3,19 +3,38 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
+/**
+ * Как HashSet, но может возвращать значение
+ * @param <T> дженерик параметр
+ */
 public class Set<T> extends AbstractSet<T> {
+    /**
+     * HashMap, который и хранит все элементы
+     */
     private final HashMap<T, T> map;
 
+    /**
+     * Пустой конструктор
+     */
     public Set() {
         map = new HashMap<>();
     }
 
-    public Set(HashSet<T> hashSet) {
+    /**
+     * Конструктор, принимающий итерируемую коллекцию
+     * @param iterable итерируемая коллекция для клонирования
+     */
+    public Set(Iterable<T> iterable) {
         map = new HashMap<>();
-        for (var el : hashSet)
+        for (var el : iterable)
             map.put(el, el);
     }
 
+    /**
+     * get, которого так нехватало в HashSet
+     * @param value что получить
+     * @return запрошенный элемент
+     */
     public T get(T value) {
         return map.get(value);
     }

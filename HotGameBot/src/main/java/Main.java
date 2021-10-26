@@ -14,6 +14,11 @@ public class Main {
     private static HashMap<Title, Game> gameSet;
     private static HashMap<String,Title> titleMap;
 
+    /**
+     * Конструктор, запускающий таймер и инициализирующий список пользователей и тайтлов
+     *
+     * @see CheckGamesUpdTimer
+     */
     public Main() {
         try {
             //userList = new ObjectMapper().readValue(usersPath, HashSet.class);
@@ -80,6 +85,11 @@ public class Main {
         return userList;
     }
 
+    /**
+     * Метод main для запуска программы
+     *
+     * @param args стандартный параметр
+     */
     public static void main(String[] args){
         new Main();
         startTimer();

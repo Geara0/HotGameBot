@@ -8,11 +8,33 @@ import java.util.HashMap;
 import java.util.TimerTask;
 
 //TODO: com.evolvedbinary.j8fu.function ради TriConsumer или так оставить?
+
+/**
+ * Таймер, проверяющий обновление бд
+ *
+ * @author Geara0
+ * @version 1.0
+ */
 public class CheckGamesUpdTimer extends TimerTask {
+    /**
+     * Путь до базы тайтлов
+     */
     String titlesPath;
+    /**
+     * Старые тайтлы
+     */
     HashMap<String,Title> titleSet;
+    /**
+     * Старые игры
+     */
     HashMap<Title, Game> gameSet;
 
+    /**
+     * Конструктор
+     * @param titlesPath {@link CheckGamesUpdTimer#titlesPath}
+     * @param titleSet {@link CheckGamesUpdTimer#titleSet}
+     * @param gameSet {@link CheckGamesUpdTimer#gameSet}
+     */
     public CheckGamesUpdTimer(String titlesPath, HashMap<String,Title> titleSet, HashMap<Title, Game> gameSet) {
         this.titlesPath = titlesPath;
         this.titleSet = titleSet;
@@ -24,6 +46,12 @@ public class CheckGamesUpdTimer extends TimerTask {
         checkUpd(titlesPath, titleSet, gameSet);
     }
 
+    /**
+     * Метод, проверяющий обновления
+     * @param titlesPath {@link CheckGamesUpdTimer#titlesPath}
+     * @param titleSet {@link CheckGamesUpdTimer#titleSet}
+     * @param gameSet {@link CheckGamesUpdTimer#gameSet}
+     */
     private static void checkUpd(String titlesPath, HashMap<String,Title> titleSet, HashMap<Title, Game> gameSet) {
         HashMap<String,Title> titleSetUpd = new HashMap<>();
         try {
