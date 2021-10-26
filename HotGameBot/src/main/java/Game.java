@@ -27,6 +27,13 @@ public class Game {
     }
 
     /**
+     * Метод, изменяющий данные об игре
+     * @param title тайтл на замену старому
+     */
+    void updateGameData(Title title){
+        this.title = title;
+    }
+    /**
      * Метод, удаляющий пользователя
      * @param username имя пользователя для удаления
      */
