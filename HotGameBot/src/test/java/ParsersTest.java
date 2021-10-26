@@ -18,6 +18,6 @@ public class ParsersTest {
     public void parseUsers() throws InterruptedException {
         var a = 0;
         new Main();
-        Thread.sleep(4 * 10 * 1000);
+        Thread.sleep( 10 * 1000);
     }
 }

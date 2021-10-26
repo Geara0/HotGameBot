@@ -10,7 +10,7 @@ import java.util.Objects;
  */
 public class User {
     /**
-     * Словарь <ссылка, тайтл>
+     * Словарь <название, тайтл>
      */
     private HashMap<String, Title> titles;
     /**
@@ -30,10 +30,16 @@ public class User {
 
     /**
      * Метод, прекращающий отслеживание тайтла
-     * @param link ссылка на более не интересующий тайтл
+     * @param title - экземпляр более не интересующего тайтла
      */
-    public void Unwatch(String link) {
-        titles.remove(link);
+    public void Unwatch(Title title) {
+        if(titles.containsKey(title.getName())) {
+            titles.remove(title.getName());
+            System.out.println("Вы успешно отписались от игры!");
+
+        }
+        else
+            System.out.println("Вы не подписаны на эту игру!");
     }
 
     /**
@@ -41,7 +47,12 @@ public class User {
      * @param title ссылка на интересующий тайтл
      */
     public void Watch(Title title) {
-        titles.put(title.getLink(), title);
+        if(!titles.containsKey(title.getName())){
+            titles.put(title.getName(),title);
+            System.out.println("Вы успешно подписались на игру!");
+        }
+        else
+            System.out.println("Вы уже подписаны на эту игру!");
     }
 
     /**

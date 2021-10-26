@@ -83,4 +83,9 @@ public class Title {
     public int hashCode() {
         return Objects.hash(link);
     }
+
+    @Override
+    public String toString(){
+        return this.name+"  Цена - "+this.Price+"\r\n"+this.BuyLink;
+    }
 }

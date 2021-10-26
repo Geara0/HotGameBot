@@ -1,7 +1,7 @@
-[
-  {
+{
+  "Vadim": {
     "titles": {
-      "Ghost of Tshushima": {
+      "Ghost of Tsushima - Director's Cut": {
         "name": "Ghost of Tsushima - Director's Cut",
         "link": "https://hot-game.info/game/Ghost-of-Tsushima-Directors-Cut",
         "BuyLink": "link1",
@@ -22,24 +22,24 @@
     },
     "username": "Vadim"
   },
-  {
+  "Geara0": {
     "titles": {
-      "Knockout City" : {
+      "Knockout City": {
         "name": "Knockout City",
-        "link" : "https://hot-game.info/game/Knockout-City",
-        "BuyLink" : link1",
-        "Price" : 5
+        "link": "https://hot-game.info/game/Knockout-City",
+        "BuyLink": "link1",
+        "Price": 5
       },
       "Horizon Zero Dawn": {
-          "name": "Horizon Zero Dawn",
-          "link": "https://hot-game.info/game/Horizon-Zero-Dawn",
-          "BuyLink": "link1",
-          "Price": 1484
-        }
-      },
+        "name": "Horizon Zero Dawn",
+        "link": "https://hot-game.info/game/Horizon-Zero-Dawn",
+        "BuyLink": "link1",
+        "Price": 1484
+      }
+    },
     "username": "Geara0"
   },
-  {
+  "AlexeySvalov": {
     "titles": {
       "Rust" : {
         "name": "Rust",
@@ -59,7 +59,7 @@
         "BuyLink": "link1",
         "Price": 1299
       }
-      },
+    },
     "username": "AlexeySvalov"
   }
-]
+}
