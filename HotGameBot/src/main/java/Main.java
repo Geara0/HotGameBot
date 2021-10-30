@@ -8,27 +8,25 @@ import java.util.*;
 
 public class Main {
     private static final String titlesPath = ".\\JSONs\\Titles";
-    private static final String usersPath = ".\\JSONs\\/HWUserSubsList";
+    private static final String usersPath = ".\\JSONs\\HWUserSubsList";
     private static final HashSet<Title> allTitles = new HashSet<>();
-    private static HashMap<String,User> userList;
-    private static HashMap<Title, Game> gameSet;
-    private static HashMap<String,Title> titleMap;
+    private static HashMap<String, User> userMap;
+    private static HashMap<Title, Game> gameMap;
+    private static HashMap<String, Title> titleMap;
 
     /**
-     * Конструктор, запускающий таймер и инициализирующий список пользователей и тайтлов
-     *
-     * @see CheckGamesUpdTimer
+     * Конструктор, инициализирующий поля userMap, titleMap & gameMap
      */
     public Main() {
         try {
-            //userList = new ObjectMapper().readValue(usersPath, HashSet.class);
-            //titleSet = new GenericParser<Set<Title>>.parse(titlesPath);
-            userList = new Gson().fromJson(Files.readString(Path.of(usersPath)), new TypeToken<HashMap<String,User>>(){}.getType());
-            titleMap = new Gson().fromJson(Files.readString(Path.of(titlesPath)), new TypeToken<HashMap<String,Title>>(){}.getType());
+            userMap = new Gson().fromJson(Files.readString(Path.of(usersPath)), new TypeToken<HashMap<String, User>>() {
+            }.getType());
+            titleMap = new Gson().fromJson(Files.readString(Path.of(titlesPath)), new TypeToken<HashMap<String, Title>>() {
+            }.getType());
         } catch (IOException e) {
             e.printStackTrace();
         }
-        gameSet = parseUsers(userList);
+        gameMap = parseUsers(userMap);
     }
 
     /**
@@ -50,10 +48,10 @@ public class Main {
     /**
      * Функция, парсящая данные пользователей
      *
-     * @param users пользователи
+     * @param users - словарь пользователей, ключи - никнеймы
      * @return множество игр
      */
-    public static HashMap<Title, Game> parseUsers(HashMap<String,User> users) {
+    public static HashMap<Title, Game> parseUsers(HashMap<String, User> users) {
         HashMap<Title, Game> gameSet = new HashMap<>();
         HashMap<Title, HashSet<User>> gameList = new HashMap<>();
         for (var user : users.values()) {
@@ -64,13 +62,13 @@ public class Main {
                 gameList.get(title).add(user);
             }
         }
-
         for (var game : gameList.entrySet())
             gameSet.put(game.getKey(), new Game(game.getKey(), game.getValue()));
         return gameSet;
     }
 
     /**
+     * Вроде бы неиспользуемая функция, но пока не удаляю
      * Функция, парсящая данные пользователей
      *
      * @param userData данные пользователей
@@ -90,99 +88,53 @@ public class Main {
      *
      * @param args стандартный параметр
      */
-    public static void main(String[] args){
+    public static void main(String[] args) {
         new Main();
         startTimer();
-        var scanner = new Scanner(System.in);
         User currentUser = getUser();
-        System.out.println(getHelp());
-        while(true){
-            String input = scanner.next();
-            if(input.equals("/quit"))
+        UserInteractor interactor = new UserInteractor(titleMap, currentUser);
+        while (true) {
+            var status = interactor.processUserInput();
+            if ("quit".equals(status))
                 break;
-            switch (input) {
-                case "/help" -> System.out.println(getHelp());
-                case "/wantToPlay" -> {
-                    System.out.println("Пока доступны только подборки по цене, введите желаемую стоимость");
-                    var cash = scanner.nextInt();
-                    for (var title : titleMap.values()) {
-                        if (cash >= title.Price)
-                            System.out.println(title);
-                    }
-                }
-                case "/sub" -> {
-                    System.out.println("Введите название тайтла, на который хотите попдисаться");
-                    String name = getClosestName();
-                    if(!name.equals("stop")) {
-                        currentUser.Watch(titleMap.get(name));
-                    }
-                }
-                case "/unsub" -> {
-                    System.out.println("Введите название тайтла, от которого хотите отписаться");
-                    String name = getClosestName();
-                    currentUser.Unwatch(titleMap.get(name));
-                }
-                case "/mySubs" -> {
-                    for(var title : currentUser.getTitles().values()){
-                        System.out.println(title);
-                    }
-                }
-                case "/quit" -> {
-                    System.out.println("Вы вышли!");
-                }
-                default -> System.out.println("Введенное вами сообщение не является командой");
-            }
+        }
+        writeUserSubs(userMap);
+    }
+
+    /**
+     * Метод для записи данных пользователей в файл
+     * @param userMap - словарь с экземплярами пользователей
+     */
+    public static void writeUserSubs(HashMap<String,User> userMap){
+        try {
+            Files.writeString(Path.of(usersPath),new Gson().toJson(userMap));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    public static void startTimer(){
+    /**
+     * Метоод для старта таймера проверки обновления информации о тайтлах
+     */
+    public static void startTimer() {
         Timer timer = new Timer(true);
-        TimerTask timerTask = new CheckGamesUpdTimer(titlesPath, titleMap, gameSet);
+        TimerTask timerTask = new CheckGamesUpdTimer(titlesPath, titleMap, gameMap);
         timer.scheduleAtFixedRate(timerTask, 10 * 1000, 10 * 1000);
     }
 
-    public static User getUser(){
+    /**
+     * Метод для получения экземпляра пользователя
+     * Находит пользователя по username или создает экземпляр нового и добавялет его в словарь
+     * @return экземпляр пользователя, никнейм которого был введен
+     */
+    public static User getUser() {
         var sc = new Scanner(System.in);
         System.out.println("Введите имя пользователя ");
         var username = sc.next();
-        if(!userList.containsKey(username)){
-            userList.put(username,new User(username,new HashMap<>()));
+        if (!userMap.containsKey(username)) {
+            userMap.put(username, new User(username, new HashMap<>()));
         }
-        return userList.get(username);
-    }
-
-    public static String getHelp(){
-        return """
-                Доступны следующие команды:\r
-                1. /wantToPlay переключит вас на рекомендации\r
-                2. /sub позволит вам добавить тайтл в ваши подписки\r
-                3. /quit выведет вас из меню\r
-                4. /unsub позволит удалить тайтл из ваших подписок\r
-                5. /mySubs выводит ваши подписки
-                """;
-    }
-
-    public static String getClosestName(){
-        String answer;
-        String name="";
-        var sc = new Scanner(System.in);
-        do {
-            System.out.println("Введите название тайтла(как можно точнее)");
-            var toSearch = sc.nextLine();
-            int minDist = Integer.MAX_VALUE;
-            for (var title : titleMap.values()) {
-                var dist = Levenshtein.levenshtein(toSearch, title.getName(), false);
-                if (dist < minDist) {
-                    minDist = dist;
-                    name = title.getName();
-                }
-                if(minDist==0)
-                    break;
-            }
-            System.out.println("Это тот тайтл, который вы искали(yes/no/stop)?\r\n" + titleMap.get(name));
-            answer = sc.next();
-        }while(!(Objects.equals(answer, "yes") | Objects.equals(answer,"stop")));
-        return name;
+        return userMap.get(username);
     }
 }
 
