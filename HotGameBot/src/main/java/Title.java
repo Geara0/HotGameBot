@@ -84,6 +84,10 @@ public class Title {
         return Objects.hash(link);
     }
 
+    public String getStringForm(){
+        return this.toString();
+    }
+
     @Override
     public String toString(){
         return this.name+"  Цена - "+this.Price+"\r\n"+this.BuyLink;
