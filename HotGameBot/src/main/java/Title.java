@@ -79,6 +79,10 @@ public class Title {
         return price;
     }
 
+    public String getStringForm(){
+        return this.toString();
+    }
+
     @Override
     public String toString() {
         return this.name + "  Цена - " + this.price + "\r\n" + this.buyLink;
