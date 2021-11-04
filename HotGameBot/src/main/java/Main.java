@@ -10,25 +10,25 @@ public class Main {
     private static final String titlesPath = ".\\JSONs\\Titles";
     private static final String usersPath = ".\\JSONs\\/HWUserSubsList";
     private static final HashSet<Title> allTitles = new HashSet<>();
-    private static HashMap<String,User> userList;
-    private static HashMap<Title, Game> gameSet;
-    private static HashMap<String,Title> titleMap;
+    private static HashMap<String,User> usersMapper;
+    private static HashMap<Title, Game> gamesMapper;
+    private static HashMap<String,Title> titlesMapper;
 
     /**
      * Конструктор, запускающий таймер и инициализирующий список пользователей и тайтлов
      *
-     * @see CheckGamesUpdTimer
+     * @see CheckGamesUpdateTimer
      */
     public Main() {
         try {
             //userList = new ObjectMapper().readValue(usersPath, HashSet.class);
             //titleSet = new GenericParser<Set<Title>>.parse(titlesPath);
-            userList = new Gson().fromJson(Files.readString(Path.of(usersPath)), new TypeToken<HashMap<String,User>>(){}.getType());
-            titleMap = new Gson().fromJson(Files.readString(Path.of(titlesPath)), new TypeToken<HashMap<String,Title>>(){}.getType());
+            usersMapper = new Gson().fromJson(Files.readString(Path.of(usersPath)), new TypeToken<HashMap<String,User>>(){}.getType());
+            titlesMapper = new Gson().fromJson(Files.readString(Path.of(titlesPath)), new TypeToken<HashMap<String,Title>>(){}.getType());
         } catch (IOException e) {
             e.printStackTrace();
         }
-        gameSet = parseUsers(userList);
+        gamesMapper = parseUsers(usersMapper);
     }
 
     /**
@@ -37,15 +37,6 @@ public class Main {
      * @param game игра, для которой нужно вывести уведомление
      * @return уведомление
      */
-    public static String createNotification(Game game, Title titleUpd) {
-        String notification = null;
-        Title title = game.title;
-        if (titleUpd.Price < title.Price) {
-            notification = String.format("New best price for %s:\n Prev: %s,\nCurrent: %s\nHotGame link: %s,\nBuy link: %s",
-                    title.getName(), title.Price, titleUpd.Price, title.getLink(), titleUpd.BuyLink);
-        }
-        return notification;
-    }
 
     /**
      * Функция, парсящая данные пользователей
@@ -105,8 +96,8 @@ public class Main {
                 case "/wantToPlay" -> {
                     System.out.println("Пока доступны только подборки по цене, введите желаемую стоимость");
                     var cash = scanner.nextInt();
-                    for (var title : titleMap.values()) {
-                        if (cash >= title.Price)
+                    for (var title : titlesMapper.values()) {
+                        if (cash >= title.getPrice())
                             System.out.println(title);
                     }
                 }
@@ -114,13 +105,13 @@ public class Main {
                     System.out.println("Введите название тайтла, на который хотите попдисаться");
                     String name = getClosestName();
                     if(!name.equals("stop")) {
-                        currentUser.Watch(titleMap.get(name));
+                        currentUser.Watch(titlesMapper.get(name));
                     }
                 }
                 case "/unsub" -> {
                     System.out.println("Введите название тайтла, от которого хотите отписаться");
                     String name = getClosestName();
-                    currentUser.Unwatch(titleMap.get(name));
+                    currentUser.Unwatch(titlesMapper.get(name));
                 }
                 case "/mySubs" -> {
                     for(var title : currentUser.getTitles().values()){
@@ -137,7 +128,7 @@ public class Main {
 
     public static void startTimer(){
         Timer timer = new Timer(true);
-        TimerTask timerTask = new CheckGamesUpdTimer(titlesPath, titleMap, gameSet);
+        TimerTask timerTask = new CheckGamesUpdateTimer(titlesPath, titlesMapper, gamesMapper);
         timer.scheduleAtFixedRate(timerTask, 10 * 1000, 10 * 1000);
     }
 
@@ -145,10 +136,10 @@ public class Main {
         var sc = new Scanner(System.in);
         System.out.println("Введите имя пользователя ");
         var username = sc.next();
-        if(!userList.containsKey(username)){
-            userList.put(username,new User(username,new HashMap<>()));
+        if(!usersMapper.containsKey(username)){
+            usersMapper.put(username,new User(username,new HashMap<>()));
         }
-        return userList.get(username);
+        return usersMapper.get(username);
     }
 
     public static String getHelp(){
@@ -170,7 +161,7 @@ public class Main {
             System.out.println("Введите название тайтла(как можно точнее)");
             var toSearch = sc.nextLine();
             int minDist = Integer.MAX_VALUE;
-            for (var title : titleMap.values()) {
+            for (var title : titlesMapper.values()) {
                 var dist = Levenshtein.levenshtein(toSearch, title.getName(), false);
                 if (dist < minDist) {
                     minDist = dist;
@@ -179,7 +170,7 @@ public class Main {
                 if(minDist==0)
                     break;
             }
-            System.out.println("Это тот тайтл, который вы искали(yes/no/stop)?\r\n" + titleMap.get(name));
+            System.out.println("Это тот тайтл, который вы искали(yes/no/stop)?\r\n" + titlesMapper.get(name));
             answer = sc.next();
         }while(!(Objects.equals(answer, "yes") | Objects.equals(answer,"stop")));
         return name;

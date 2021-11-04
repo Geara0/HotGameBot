@@ -1,55 +1,52 @@
-import java.util.Objects;
-
 /**
  * Класс для хранения тайтла
  *
- * @version 1.0
  * @author Geara0
+ * @version 1.0
  */
 public class Title {
     /**
-     *  Поле названия
+     * Поле названия
      */
-    private final String name;
+    private String name;
     /**
      * Поле ссылки на HotGame
      */
-    private final String link;
+    private String link;
     /**
      * Поле ссылки на выгодную покупку
      */
-    String BuyLink;
+    private String buyLink;
     /**
      * Поле цены
      */
-    int Price;
+    private final int price;
 
     /**
      * Конструктор класса
-     * @param name {@link Title#name}
-     * @param link {@link Title#link}
-     * @param buyLink {@link Title#BuyLink}
-     * @param price {@link Title#Price}
+     *
+     * @param name    {@link Title#name}
+     * @param link    {@link Title#link}
+     * @param buyLink {@link Title#buyLink}
+     * @param price   {@link Title#price}
      */
     public Title(String name, String link, String buyLink, int price) {
         this.name = name;
         this.link = link;
-        BuyLink = buyLink;
-        Price = price;
+        this.buyLink = buyLink;
+        this.price = price;
     }
 
     /**
      * Пустой конструктор, полезная вещь
      */
-    public Title(){
-        this.name = null;
-        this.link = null;
-        BuyLink = null;
-        Price = 0;
+    public Title() {
+        price = 0;
     }
 
     /**
      * Геттер названия
+     *
      * @return {@link Title#name}
      */
     public String getName() {
@@ -58,6 +55,7 @@ public class Title {
 
     /**
      * Геттер ссылки на HotGame
+     *
      * @return {@link Title#link}
      */
     public String getLink() {
@@ -65,27 +63,24 @@ public class Title {
     }
 
     /**
-     * Overrides default equals method
-     * @param obj объект для сравнения
+     * Геттер ссылки на покупку
+     * @return {@link Title#buyLink}
      */
-    @Override
-    public boolean equals(Object obj){
-        if(obj.getClass() != this.getClass())
-            return false;
-        Title another = (Title) obj;
-        return (this.name != null && this.name.equals(another.name)) &&
-                (this.link != null && this.link.equals(another.link)) &&
-                (BuyLink != null && BuyLink.equals(another.BuyLink)) &&
-                Price == another.Price;
+    public String getBuyLink() {
+        return buyLink;
+    }
+
+    /**
+     * Геттер цены
+     *
+     * @return {@link Title#price}
+     */
+    public int getPrice() {
+        return price;
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(link);
-    }
-
-    @Override
-    public String toString(){
-        return this.name+"  Цена - "+this.Price+"\r\n"+this.BuyLink;
+    public String toString() {
+        return this.name + "  Цена - " + this.price + "\r\n" + this.buyLink;
     }
 }
