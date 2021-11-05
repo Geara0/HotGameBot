@@ -1,6 +1,8 @@
+package Entities;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import commands.CreateNotification;
+import notifications.CreateNotification;
 
 import java.io.IOException;
 import java.nio.file.Files;

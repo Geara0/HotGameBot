@@ -1,3 +1,5 @@
+package Entities;
+
 /**
  * Класс для хранения тайтла
  *
@@ -85,6 +87,6 @@ public class Title {
 
     @Override
     public String toString() {
-        return this.name + "  Цена - " + this.price + "\r\n" + this.buyLink;
+        return getName() + "  Цена - " + getPrice() + "\r\n" + getBuyLink() + "\r\n";
     }
 }

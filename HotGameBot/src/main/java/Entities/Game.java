@@ -1,3 +1,5 @@
+package Entities;
+
 import java.util.HashSet;
 
 /**
@@ -20,7 +22,7 @@ public class Game {
      * @param title {@link Game#title}
      * @param users {@link Game#users}
      */
-    Game(Title title, HashSet<User> users) {
+    public Game(Title title, HashSet<User> users) {
         this.title = title;
         this.users = users;
     }
@@ -32,7 +34,7 @@ public class Game {
     void setTitle(Title title){
         this.title = title;
     }
-    Title getTitle(){
+    public Title getTitle(){
         return title;
     }
 }
