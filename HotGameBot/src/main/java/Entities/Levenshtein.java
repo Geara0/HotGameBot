@@ -1,15 +1,38 @@
+package Entities;
+
+import java.util.*;
+
 public class Levenshtein {
+    public String getClosestName(Set<String> names, String nameToCompare){
+        String closestName = "";
+        int minDistance = Integer.MAX_VALUE;
+        for (var name : names){
+            var distance = calculateDistance(name.toLowerCase(), nameToCompare.toLowerCase(), false);
+            if (distance==0)
+                return name;
+            if(distance<minDistance){
+                minDistance = distance;
+                closestName = name;
+            }
+        }
+        return closestName;
+    }
+
+
+
+
+
     /**
-     * Calculate the Levenshtein distance between two strings. Basically, the number of
+     * Calculate the Entities.Levenshtein distance between two strings. Basically, the number of
      * changes that need to be made to convert one string into another. Very useful when
      * determining string similarties.
      *
      * @param stringOne - первая строка для сравнения
      * @param stringTwo - вторая строка для сравнения
      * @param caseSensitive Should differences in case be treated as changes.
-     * @return The Levenshtein distance
+     * @return The Entities.Levenshtein distance
      */
-    public static int levenshtein(String stringOne, String stringTwo, boolean caseSensitive) {
+    private static int calculateDistance(String stringOne, String stringTwo, boolean caseSensitive) {
         // if we want to ignore case sensitivity, lower case the strings
         if (!caseSensitive) {
             stringOne = stringOne.toLowerCase();
