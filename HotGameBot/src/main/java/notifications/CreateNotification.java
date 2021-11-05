@@ -1,6 +1,5 @@
-package commands;
-//TODO: Не импортируется
-import src.main.java.*;
+package notifications;
+import Entities.*;
 
 public class CreateNotification {
     public static String createNotification(Game game, Title titleUpdated) {
@@ -8,7 +7,7 @@ public class CreateNotification {
         Title title = game.getTitle();
         if (titleUpdated.getPrice() < title.getPrice()) {
             notification = String.format("New best price for %s:\n Prev: %s,\nCurrent: %s\nHotGame link: %s,\nBuy link: %s",
-                    title.getName(), title.getPrice(), titleUpdated.getPrice(), title.getLink(), titleUpdated.BuyLink);
+                    title.getName(), title.getPrice(), titleUpdated.getPrice(), title.getLink(), titleUpdated.getBuyLink());
         }
         return notification;
     }
