@@ -1,3 +1,5 @@
+package Entities;
+
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -9,6 +11,16 @@ import java.util.Objects;
  * @version 1.0
  */
 public class User {
+
+    private boolean isActive = false;
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
     /**
      * Словарь <название, тайтл>
      */
