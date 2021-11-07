@@ -1,50 +1,50 @@
 {
-  "Ghost of Tsushima - Director's Cut":{
-    "name" : "Ghost of Tsushima - Director's Cut",
-    "link" : "https://hot-game.info/game/Ghost-of-Tsushima-Directors-Cut",
-    "BuyLink" : "link1",
-    "Price" : 41999
+  "Ghost of Tsushima - Director's Cut": {
+    "name": "Ghost of Tsushima - Director's Cut",
+    "link": "https://hot-game.info/game/Ghost-of-Tsushima-Directors-Cut",
+    "buyLink": "link1",
+    "price": 41999
   },
   "Battlefield V": {
     "name": "Battlefield V",
-    "link" : "https://hot-game.info/game/Battlefield-V",
-    "BuyLink" : "link1",
-    "Price" : 8
+    "link": "https://hot-game.info/game/Battlefield-V",
+    "buyLink": "link1",
+    "price": 8
   },
   "Knockout City": {
     "name": "Knockout City",
-    "link" : "https://hot-game.info/game/Knockout-City",
-    "BuyLink" : "link1",
-    "Price" : 51
+    "link": "https://hot-game.info/game/Knockout-City",
+    "buyLink": "link1",
+    "price": 51
   },
   "Horizon Zero Dawn": {
     "name": "Horizon Zero Dawn",
-    "link" : "https://hot-game.info/game/Horizon-Zero-Dawn",
-    "BuyLink" : "link1",
-    "Price" : 148
+    "link": "https://hot-game.info/game/Horizon-Zero-Dawn",
+    "buyLink": "link1",
+    "price": 148
   },
   "Rust": {
     "name": "Rust",
-    "link" : "https://hot-game.info/game/rust",
-    "BuyLink" : "link1",
-    "Price" : 11491
+    "link": "https://hot-game.info/game/rust",
+    "buyLink": "link1",
+    "price": 11491
   },
   "Minecraft": {
     "name": "Minecraft",
-    "link" : "https://hot-game.info/game/minecraft",
-    "BuyLink" : "link1",
-    "Price" : 155
+    "link": "https://hot-game.info/game/minecraft",
+    "buyLink": "link1",
+    "price": 155
   },
   "Grand Theft Auto V": {
     "name": "Grand Theft Auto V",
-    "link" : "https://hot-game.info/game/grand-theft-auto-5",
-    "BuyLink" : "link1",
-    "Price" : 6621
+    "link": "https://hot-game.info/game/grand-theft-auto-5",
+    "buyLink": "link1",
+    "price": 6621
   },
   "New World": {
     "name": "New World",
-    "link" : "https://hot-game.info/game/New-World",
-    "BuyLink" : "link1",
-    "Price" : 129
+    "link": "https://hot-game.info/game/New-World",
+    "buyLink": "link1",
+    "price": 129
   }
 }

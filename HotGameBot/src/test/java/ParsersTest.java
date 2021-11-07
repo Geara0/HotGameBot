@@ -1,11 +1,5 @@
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-
 /**
  * Тесты для parseUsers & parseUserData
  *
@@ -14,10 +8,17 @@ import java.util.Map;
  * @see Main()
  */
 public class ParsersTest {
+    private static final String usersPath = ".\\JSONs\\HWUserSubsList";
+    private static final String usersPathTest = ".\\JSONs\\Users";
     @Test
     public void parseUsers() throws InterruptedException {
         var a = 0;
         new Main();
         Thread.sleep( 10 * 1000);
+    }
+
+    @Test
+    public void writingParsingTest()  {
+
     }
 }
