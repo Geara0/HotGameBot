@@ -28,7 +28,7 @@ public class MySubs implements ICommand {
         StringBuilder subs = new StringBuilder();
         int i = 1;
         for (Title title : currentUser.getTitles().values())
-            subs.append(String.format("#%d ---- ", i++)).append(title.getStringForm());
+            subs.append(String.format("#%d ---- ", i++)).append(title.toString());
         return subs.toString();
     }
 }

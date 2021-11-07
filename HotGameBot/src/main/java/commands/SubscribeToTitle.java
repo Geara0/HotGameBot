@@ -53,7 +53,7 @@ public class SubscribeToTitle implements ICommand {
     }
 
     private Answer getUserAnswer(String name) {
-        String titleString = titleMapping.get(name).getStringForm();
+        String titleString = titleMapping.get(name).toString();
         System.out.println("Это игра, которую вы искали?(yes/no/stop)\r\n" + titleString);
         var answer = scanner.nextLine().toLowerCase();
         return switch (answer) {

@@ -34,7 +34,7 @@ public class WantToPlay implements ICommand {
         StringBuilder recs = new StringBuilder();//стрингбилдер для формирования строки с рекомендациями
         for (var title : titleMapping.values())
             if (cash >= title.getPrice())
-                recs.append(title.getStringForm()).append("\r\n");
+                recs.append(title).append("\r\n");
         return recs.toString();
     }
 
