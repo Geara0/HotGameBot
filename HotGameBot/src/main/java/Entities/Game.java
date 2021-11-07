@@ -31,7 +31,7 @@ public class Game {
      * Метод, изменяющий данные об игре
      * @param title тайтл на замену старому
      */
-    void setTitle(Title title){
+    public void setTitle(Title title){
         this.title = title;
     }
     public Title getTitle(){
