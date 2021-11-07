@@ -1,3 +1,5 @@
+package entitiesTests;
+
 import Entities.Title;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -13,5 +15,14 @@ public class TitleTest {
 
         Assertions.assertArrayEquals(title.toString().toCharArray(),
                 "name Цена - 0\r\nbLink\r\n".toCharArray());
+    }
+
+    @Test
+    void emptyConstructorTest(){
+        var title = new Title();
+        Assertions.assertNull(title.getName());
+        Assertions.assertNull(title.getLink());
+        Assertions.assertNull(title.getBuyLink());
+        Assertions.assertEquals(title.getPrice(), 0);
     }
 }

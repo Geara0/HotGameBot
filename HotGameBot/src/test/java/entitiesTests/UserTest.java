@@ -1,3 +1,5 @@
+package entitiesTests;
+
 import Entities.Title;
 import Entities.User;
 import org.junit.jupiter.api.Assertions;
@@ -16,7 +18,7 @@ public class UserTest {
                     String.format("link%d", i),
                     String.format("bLink%d", i),
                     i);
-            titles.put(String.format("title%d", i), title);
+            titles.put(String.format("name%d", i), title);
             if (i == 0) someTitle = title;
         }
 
@@ -25,14 +27,32 @@ public class UserTest {
         Assertions.assertTrue(HashMapsEqual(user.getTitles(), titles));
 
         user.Unwatch(someTitle);
-        titles.remove("title0");
+        user.Unwatch(someTitle);
+        titles.remove("name0");
         Assertions.assertTrue(HashMapsEqual(user.getTitles(), titles));
 
         user.Watch(someTitle);
-        titles.put("title0", someTitle);
+        user.Watch(someTitle);
+        titles.put("name0", someTitle);
         Assertions.assertTrue(HashMapsEqual(user.getTitles(), titles));
     }
 
+    @Test
+    void gettersTest(){
+        var titles = new HashMap<String, Title>();
+        for (int i = 0; i < 5; i++)
+            titles.put(String.format("name%d", i), new Title(
+                    String.format("name%d", i),
+                    String.format("link%d", i),
+                    String.format("bLink%d", i),
+                    i));
+
+
+        var user = new User("user", titles);
+
+        Assertions.assertArrayEquals(user.getUsername().toCharArray(), "user".toCharArray());
+        Assertions.assertTrue(HashMapsEqual(user.getTitles(), titles));
+    }
     @Test
     void activeTest() {
         var user = new User("user", new HashMap<>());
