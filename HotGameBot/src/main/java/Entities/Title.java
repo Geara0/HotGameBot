@@ -81,10 +81,6 @@ public class Title {
         return price;
     }
 
-    public String getStringForm(){
-        return this.toString();
-    }
-
     @Override
     public String toString() {
         return String.format("%s Цена - %d\r\n%s\r\n", getName(), getPrice(), getBuyLink());
