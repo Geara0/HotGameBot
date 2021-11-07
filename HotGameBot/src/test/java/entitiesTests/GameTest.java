@@ -1,3 +1,5 @@
+package entitiesTests;
+
 import Entities.Game;
 import Entities.Title;
 import Entities.User;
