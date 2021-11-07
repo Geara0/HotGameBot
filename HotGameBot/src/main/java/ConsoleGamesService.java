@@ -72,11 +72,10 @@ public class ConsoleGamesService {
     }
 
     public void runCommand(String message, User currentUser) {
-        try{
+        try {
             ICommand command = commands.get(message.toLowerCase());
             command.execute(currentUser);
-        }
-        catch(NullPointerException ex){
+        } catch (NullPointerException ex) {
             System.out.println("Введенное вами сообщение не является командой, введите /help для помощи");
         }
         isThereAUser = currentUser.isActive();
@@ -110,7 +109,7 @@ public class ConsoleGamesService {
         var sc = new Scanner(System.in);
         System.out.println("Введите имя пользователя или /stop чтобы остановить бота");
         var username = sc.nextLine();
-        if("/stop".equals(username)){
+        if ("/stop".equals(username)) {
             stop();
             return null;
         }
@@ -119,7 +118,7 @@ public class ConsoleGamesService {
         isThereAUser = true;
         User user = usersMapper.get(username);
         user.setActive();
-        runCommand("/help",user);
+        runCommand("/help", user);
         return user;
     }
 }

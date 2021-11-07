@@ -54,9 +54,9 @@ public class SubscribeToTitle implements ICommand {
 
     private Answer getUserAnswer(String name) {
         String titleString = titleMapping.get(name).getStringForm();
-        System.out.println("Это тайтл, который вы искали?(yes/no/stop)\r\n" + titleString);
+        System.out.println("Это игра, которую вы искали?(yes/no/stop)\r\n" + titleString);
         var answer = scanner.nextLine().toLowerCase();
-        return switch (answer){
+        return switch (answer) {
             case "yes" -> Answer.YES;
             case "no" -> Answer.NO;
             case "stop" -> Answer.STOP;
@@ -65,7 +65,7 @@ public class SubscribeToTitle implements ICommand {
     }
 
     private String getUserInput() {
-        System.out.println("Введите название тайтла как можно точнее");
+        System.out.println("Введите название игры как можно точнее");
         return scanner.nextLine().toLowerCase();
     }
 }
