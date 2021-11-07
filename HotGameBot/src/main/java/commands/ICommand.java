@@ -8,6 +8,7 @@ import Entities.User;
 public interface ICommand {
     /**
      * Метод для запуска выполнения программ
+     *
      * @param user - пользователь, для которого выполняется команда
      */
     void execute(User user);

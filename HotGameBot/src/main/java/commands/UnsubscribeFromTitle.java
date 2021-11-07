@@ -18,12 +18,13 @@ public class UnsubscribeFromTitle implements ICommand {
     /**
      * Конструктор с инициализацией сканнера
      */
-    public UnsubscribeFromTitle(){
+    public UnsubscribeFromTitle() {
         scanner = new Scanner(System.in);
     }
 
     /**
      * Реализация ICommand
+     *
      * @param user - пользователь, для которого выполняется команда
      */
     @Override
@@ -33,16 +34,17 @@ public class UnsubscribeFromTitle implements ICommand {
 
     /**
      * Метод, отписывающий пользователя от тайтла(немного спагетти, но работает)
+     *
      * @param user - пользователь, для которого выполняется команда
      */
-    private void unsubscribeUserFromTitle(User user){
+    private void unsubscribeUserFromTitle(User user) {
         System.out.println("Тайтлы, на которые вы подписаны:");
 
         var titleArray = user.getTitles().values().toArray(new Title[]{});
         //чтобы была возможность выбрать тайтл по индексу
         //мне кажется так получится быстрее и удобнее чем в SubscribeToTitle с подбором по имени
 
-        if (titleArray.length==0)
+        if (titleArray.length == 0)
             return;
 
         new MySubs().execute(user);//вывод подписок пользователя, удобно получилось
@@ -53,32 +55,33 @@ public class UnsubscribeFromTitle implements ICommand {
 
     /**
      * Получает от пользователя индекс тайтла из выведенного на экран списка
+     *
      * @param upperBorder - верхняя граница списка чтоб проверять выход за пределы
      * @return целое число - индекс тайтла, от которого хочет отписаться пользователь
      */
-    private int getIndex(int upperBorder){
+    private int getIndex(int upperBorder) {
         int index = -1;
         do {
-            try{
+            try {
                 index = Integer.parseInt(scanner.nextLine());//может создать исключение если введено не целое число
                 index--;
-                if(isNotInBounds(index, upperBorder))
+                if (isNotInBounds(index, upperBorder))
                     throw new Exception();
-            }
-            catch (Exception e){
+            } catch (Exception e) {
                 System.out.println(CommandsConst.INCORRECT_INDEX.toStringValue());//и тут я их отлавливаю и говорю что индекс некорректный
             }
-        } while(isNotInBounds(index, upperBorder));
+        } while (isNotInBounds(index, upperBorder));
         return index;
     }
 
     /**
      * Простой метод для проверки принадлежности числа отрезку [0;upperBorder]
-     * @param i - число для проверки
+     *
+     * @param i           - число для проверки
      * @param upperBorder - верхня граница
      * @return true если число внутри отрезка, false если нет
      */
-    private boolean isNotInBounds(int i, int upperBorder){
+    private boolean isNotInBounds(int i, int upperBorder) {
         return !(i > -1 & i < upperBorder);
     }
 }

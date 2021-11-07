@@ -9,6 +9,7 @@ public class Help implements ICommand {
 
     /**
      * Реализация ICommand
+     *
      * @param user - пользователь, для которого вызывается команд(здесь не нужно но интерфейс)
      */
     @Override
@@ -19,15 +20,16 @@ public class Help implements ICommand {
     /**
      * Печатает сообщение
      */
-    private void printMessage(String message){
+    private void printMessage(String message) {
         System.out.print(message);
     }
 
     /**
      * Возвращает сообщение справки
+     *
      * @return строка-справка
      */
-    private String getHelpMessage(){
+    private String getHelpMessage() {
         return CommandsConst.HELP.toStringValue();
     }
 }

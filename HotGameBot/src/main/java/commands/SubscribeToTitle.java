@@ -39,6 +39,7 @@ public class SubscribeToTitle implements ICommand {
 
     /**
      * Конструктор команды, иницилизирует хешмап тайтлов, сет имен тайтлов и сканнер
+     *
      * @param titles - хешмап всех тайтлов которые знает бот
      */
     public SubscribeToTitle(HashMap<String, Title> titles) {
@@ -49,6 +50,7 @@ public class SubscribeToTitle implements ICommand {
 
     /**
      * Реализация интерфейса ICommand, метод для выполнения команды
+     *
      * @param user - пользователь, для которого команда выполняется
      */
     @Override
@@ -59,8 +61,9 @@ public class SubscribeToTitle implements ICommand {
 
     /**
      * Метод, подписывающий пользователя на тайтл
+     *
      * @param titleName - имя тайтла, на которой надо подписать
-     * @param user - пользователь, которого надо подписать
+     * @param user      - пользователь, которого надо подписать
      */
     private void subUserToTitle(String titleName, User user) {
         if (CommandsConst.STOPPING_LINE.toStringValue().equals(titleName))
@@ -70,6 +73,7 @@ public class SubscribeToTitle implements ICommand {
 
     /**
      * Метод в цикле просит у пользователя ввести название тайтла, и подбирает ближайшее к нему из известных боту
+     *
      * @return имя тайтла, которое хотел найти пользователь
      */
     private String getTitleName() {
@@ -85,15 +89,16 @@ public class SubscribeToTitle implements ICommand {
 
     /**
      * Спрашивает пользователя, правильный ли тайтл нашел бот, и возвращает ответ
+     *
      * @param name - имя тайтла, о котором надо спросить
      * @return Answer.YES если пользователь согласен, Answer.NO если пользователь не согласен,
      * Answer.STOP если пользователь хочет закончить перебор
      */
     private Answer askUserAboutTitle(String name) {
         String titleString = titleMapping.get(name).getStringForm();
-        System.out.println(CommandsConst.IS_THE_RIGHT_TITLE_WITH_OPTIONS.toStringValue()+"\r\n" + titleString);
+        System.out.println(CommandsConst.IS_THE_RIGHT_TITLE_WITH_OPTIONS.toStringValue() + "\r\n" + titleString);
         var answer = scanner.nextLine().toLowerCase();
-        return switch (answer){
+        return switch (answer) {
             case "yes" -> Answer.YES;
             case "no" -> Answer.NO;
             case "stop" -> Answer.STOP;
@@ -103,6 +108,7 @@ public class SubscribeToTitle implements ICommand {
 
     /**
      * Запрашивает у пользователя название тайтла
+     *
      * @return введенное пользователем название тайтла в виде строки
      */
     private String getUserInput() {

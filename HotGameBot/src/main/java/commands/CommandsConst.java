@@ -5,13 +5,13 @@ package commands;
  */
 public enum CommandsConst {
     HELP("""
-                Доступны следующие команды:\r
-                1. /wantToPlay переключит вас на рекомендации\r
-                2. /sub позволит вам добавить тайтл в ваши подписки\r
-                3. /quit выведет вас из меню\r
-                4. /unsub позволит удалить тайтл из ваших подписок\r
-                5. /mySubs выводит ваши подписки
-                """),
+            Доступны следующие команды:\r
+            1. /wantToPlay переключит вас на рекомендации\r
+            2. /sub позволит вам добавить тайтл в ваши подписки\r
+            3. /quit выведет вас из меню\r
+            4. /unsub позволит удалить тайтл из ваших подписок\r
+            5. /mySubs выводит ваши подписки
+            """),
     NO_SUBS("У вас пока нет подписок"),
     QUIT("Вы вышли!"),
     STOPPING_LINE("specialStoppingLineThatMightBeAnEnumOrAnotherSpecialObjectButIDon'tWantToDoThisKittensAreCute"),
@@ -26,10 +26,12 @@ public enum CommandsConst {
      * Конструкция для присвоения и получения текстового значения енаму
      */
     private final String value;
-    CommandsConst(String value){
+
+    CommandsConst(String value) {
         this.value = value;
     }
-    public String toStringValue(){
+
+    public String toStringValue() {
         return value;
     }
 }

@@ -20,7 +20,7 @@ public class QuitTest {
     @Test
     public void checkIsActiveChanges(){
         testUser = new User("test", new HashMap<>());
-        testUser.setActive(true);
+        testUser.setInactive();
         new Quit().execute(testUser);
         Assertions.assertFalse(testUser.isActive());
     }

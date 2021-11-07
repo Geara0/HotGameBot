@@ -1,4 +1,7 @@
-import Entities.*;
+import Entities.CheckGamesUpdateTimer;
+import Entities.Game;
+import Entities.Title;
+import Entities.User;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import commands.*;
@@ -6,7 +9,10 @@ import commands.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Scanner;
+import java.util.Timer;
 
 /**
  * Класс с логикой работы бота
@@ -21,12 +27,12 @@ public class ConsoleGamesService {
      * словари пользователей и тайтлов
      */
     private final HashMap<Title, Game> gamesMapper;
-    private HashMap<String, User> usersMapper;
-    private HashMap<String, Title> titlesMapper;
     /**
      * словарь команд
      */
     private final HashMap<String, ICommand> commands;
+    private HashMap<String, User> usersMapper;
+    private HashMap<String, Title> titlesMapper;
     /**
      * флаги для работы бота на наличие пользователя и активности бота в целом
      */
@@ -57,6 +63,7 @@ public class ConsoleGamesService {
 
     /**
      * геттер для флага наличия активного пользователя
+     *
      * @return - true если пользователь работает с ботом, false если нет
      */
     public boolean isThereAUser() {
@@ -65,6 +72,7 @@ public class ConsoleGamesService {
 
     /**
      * геттер для флага активности бота
+     *
      * @return - true если бот ждет команд, false если бот выключен
      */
     public boolean isRunning() {
@@ -73,6 +81,7 @@ public class ConsoleGamesService {
 
     /**
      * метод для заполнения словаря Title:Game по словарю String:User
+     *
      * @param users - словарь со списком пользователей
      * @return словарь с парами Title:Game
      */
@@ -107,7 +116,8 @@ public class ConsoleGamesService {
 
     /**
      * метод, выполняющий команду
-     * @param message - сообщение пользователя, которое должно быть интерпретировано в команду
+     *
+     * @param message     - сообщение пользователя, которое должно быть интерпретировано в команду
      * @param currentUser - текущий пользователь, для которого должна быть выполнена команда
      */
     public void runCommand(String message, User currentUser) {
@@ -150,6 +160,7 @@ public class ConsoleGamesService {
 
     /**
      * метод для записи данных о пользовательских подписках в жсон файл
+     *
      * @param userMapping - словарь с пользователями
      */
     private void writeUserSubs(HashMap<String, User> userMapping) {
@@ -162,6 +173,7 @@ public class ConsoleGamesService {
 
     /**
      * метод для логина, читает ввод имени пользователя и находит объект пользователя в словаре или заводит новую запись
+     *
      * @return объект пользователя из словаря пользователей
      */
     public User getUser() {
