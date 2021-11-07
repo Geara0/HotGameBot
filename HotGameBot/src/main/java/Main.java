@@ -8,12 +8,12 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         ConsoleGamesService bot = new ConsoleGamesService();
         bot.start();
-        while(bot.isRunning()){
+        while (bot.isRunning()) {
             User currentUser = bot.getUser();
-            while(bot.isThereAUser()){
+            while (bot.isThereAUser()) {
                 System.out.println("Введите комманду:");
                 String message = scanner.nextLine();
-                bot.runCommand(message,currentUser);
+                bot.runCommand(message, currentUser);
             }
         }
     }

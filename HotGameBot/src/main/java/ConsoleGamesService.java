@@ -111,11 +111,10 @@ public class ConsoleGamesService {
      * @param currentUser - текущий пользователь, для которого должна быть выполнена команда
      */
     public void runCommand(String message, User currentUser) {
-        try{
+        try {
             ICommand command = commands.get(message.toLowerCase());
             command.execute(currentUser);
-        }
-        catch(NullPointerException ex){
+        } catch (NullPointerException ex) {
             System.out.println("Введенное вами сообщение не является командой, введите /help для помощи");
         }
         isThereAUser = currentUser.isActive();//три строчки комментариев ниже относятся только к этому присваиванию
@@ -169,7 +168,7 @@ public class ConsoleGamesService {
         var sc = new Scanner(System.in);
         System.out.println("Введите имя пользователя или /stop чтобы остановить бота");
         var username = sc.nextLine();
-        if("/stop".equals(username)){
+        if ("/stop".equals(username)) {
             stop();
             return null;
         }
@@ -177,8 +176,8 @@ public class ConsoleGamesService {
             usersMapper.put(username, new User(username, new HashMap<>()));
         isThereAUser = true;
         User user = usersMapper.get(username);
-        user.setActive(true);
-        runCommand("/help",user);
+        user.setActive();
+        runCommand("/help", user);
         return user;
     }
 }
