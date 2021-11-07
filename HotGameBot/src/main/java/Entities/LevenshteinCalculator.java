@@ -2,46 +2,48 @@ package Entities;
 
 import java.util.*;
 
-public class Levenshtein {
-    public String getClosestName(Set<String> names, String nameToCompare){
-        String closestName = "";
+public class LevenshteinCalculator {
+    /**
+     * Метод принимает для определения строки из коллекции с минимальным расстоянием до данной
+     * @param stringSet - коллекция строк, среди которых надо сравнивать
+     * @param original - строка, с которой мы сравниваем коллекцию
+     * @return - ближайшую к данной строку из коллекции
+     */
+    public String getClosestString(Set<String> stringSet, String original){
+        String closestString = "";
         int minDistance = Integer.MAX_VALUE;
-        for (var name : names){
-            var distance = calculateDistance(name.toLowerCase(), nameToCompare.toLowerCase(), false);
+        for (var str : stringSet){
+            var distance = calculateDistance(str.toLowerCase(), original.toLowerCase(), false);
             if (distance==0)
-                return name;
+                return str;
             if(distance<minDistance){
                 minDistance = distance;
-                closestName = name;
+                closestString = str;
             }
         }
-        return closestName;
+        return closestString;
     }
-
-
-
-
 
     /**
      * Calculate the Entities.Levenshtein distance between two strings. Basically, the number of
      * changes that need to be made to convert one string into another. Very useful when
      * determining string similarties.
      *
-     * @param stringOne - первая строка для сравнения
-     * @param stringTwo - вторая строка для сравнения
+     * @param first - первая строка для сравнения
+     * @param second - вторая строка для сравнения
      * @param caseSensitive Should differences in case be treated as changes.
      * @return The Entities.Levenshtein distance
      */
-    private static int calculateDistance(String stringOne, String stringTwo, boolean caseSensitive) {
+    private static int calculateDistance(String first, String second, boolean caseSensitive) {
         // if we want to ignore case sensitivity, lower case the strings
         if (!caseSensitive) {
-            stringOne = stringOne.toLowerCase();
-            stringTwo = stringTwo.toLowerCase();
+            first = first.toLowerCase();
+            second = second.toLowerCase();
         }
 
         // store length
-        int m = stringOne.length();
-        int n = stringTwo.length();
+        int m = first.length();
+        int n = second.length();
 
         // matrix to store differences
         int[][] deltaM = new int[m + 1][n + 1];
@@ -56,7 +58,7 @@ public class Levenshtein {
 
         for (int j = 1; j <= n; j++) {
             for (int i = 1; i <= m; i++) {
-                if (stringOne.charAt(i - 1) == stringTwo.charAt(j - 1)) {
+                if (first.charAt(i - 1) == second.charAt(j - 1)) {
                     deltaM[i][j] = deltaM[i - 1][j - 1];
                 } else {
                     deltaM[i][j] = Math.min(

@@ -1,7 +1,4 @@
-import Entities.CheckGamesUpdateTimer;
-import Entities.Game;
-import Entities.Title;
-import Entities.User;
+import Entities.*;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import commands.*;
@@ -11,16 +8,37 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
+/**
+ * Класс с логикой работы бота
+ */
 public class ConsoleGamesService {
+    /**
+     * Пути до жсон файлов с данными о известных боту тайтлах и данными о подписках пользователей
+     */
     private final String titlesPath = ".\\JSONs\\Titles";
     private final String usersPath = ".\\JSONs\\HWUserSubsList";
+    /**
+     * словари пользователей и тайтлов
+     */
     private final HashMap<Title, Game> gamesMapper;
     private HashMap<String, User> usersMapper;
     private HashMap<String, Title> titlesMapper;
-    private HashMap<String, ICommand> commands;
+    /**
+     * словарь команд
+     */
+    private final HashMap<String, ICommand> commands;
+    /**
+     * флаги для работы бота на наличие пользователя и активности бота в целом
+     */
     private boolean isThereAUser;
     private boolean isRunning;
 
+    /**
+     * конструктор с чтением файлов из жсонов в словари пользователей и игр
+     * словарь с парами Title:Game заполняется отдельным методом
+     * Инициализируется и заполняется словарь с командами
+     * Инициализируются флаги
+     */
     public ConsoleGamesService() {
         try {
             usersMapper = new Gson().fromJson(Files.readString(Path.of(usersPath)), new TypeToken<HashMap<String, User>>() {
@@ -37,14 +55,27 @@ public class ConsoleGamesService {
         isRunning = false;
     }
 
+    /**
+     * геттер для флага наличия активного пользователя
+     * @return - true если пользователь работает с ботом, false если нет
+     */
     public boolean isThereAUser() {
         return isThereAUser;
     }
 
+    /**
+     * геттер для флага активности бота
+     * @return - true если бот ждет команд, false если бот выключен
+     */
     public boolean isRunning() {
         return isRunning;
     }
 
+    /**
+     * метод для заполнения словаря Title:Game по словарю String:User
+     * @param users - словарь со списком пользователей
+     * @return словарь с парами Title:Game
+     */
     private HashMap<Title, Game> parseUsers(HashMap<String, User> users) {
         HashMap<Title, Game> gameSet = new HashMap<>();
         HashMap<Title, HashSet<User>> gameList = new HashMap<>();
@@ -62,6 +93,9 @@ public class ConsoleGamesService {
         return gameSet;
     }
 
+    /**
+     * метод для заполнения словаря команд
+     */
     private void fillCommands() {
         commands.put("/help", new Help());
         commands.put("/mysubs", new MySubs());
@@ -71,6 +105,11 @@ public class ConsoleGamesService {
         commands.put("/quit", new Quit());
     }
 
+    /**
+     * метод, выполняющий команду
+     * @param message - сообщение пользователя, которое должно быть интерпретировано в команду
+     * @param currentUser - текущий пользователь, для которого должна быть выполнена команда
+     */
     public void runCommand(String message, User currentUser) {
         try{
             ICommand command = commands.get(message.toLowerCase());
@@ -79,25 +118,41 @@ public class ConsoleGamesService {
         catch(NullPointerException ex){
             System.out.println("Введенное вами сообщение не является командой, введите /help для помощи");
         }
-        isThereAUser = currentUser.isActive();
+        isThereAUser = currentUser.isActive();//три строчки комментариев ниже относятся только к этому присваиванию
+        //когда активный пользователь выполняет команду, поле isActive = true, и поле isThereAUser = true соответственно
+        //при выполнении команды /quit у пользователя поле isActive становится false
+        //по исполнению метода runCommand для команды /quit бот понимает что активного пользователя нет и переходит к ожиданию
     }
 
+    /**
+     * метод для запуска работы бота
+     */
     public void start() {
         startTimer();
         isRunning = true;
     }
 
+    /**
+     * метод для запуска таймера на обновление инфорфмации о тайтлах
+     */
     private void startTimer() {
         Timer timer = new Timer(true);
         var timerTask = new CheckGamesUpdateTimer(titlesPath, titlesMapper, gamesMapper);
         timer.scheduleAtFixedRate(timerTask, 10 * 1000, 10 * 1000);
     }
 
+    /**
+     * метод для остановки работы бота
+     */
     public void stop() {
         writeUserSubs(usersMapper);
         isRunning = false;
     }
 
+    /**
+     * метод для записи данных о пользовательских подписках в жсон файл
+     * @param userMapping - словарь с пользователями
+     */
     private void writeUserSubs(HashMap<String, User> userMapping) {
         try {
             Files.writeString(Path.of(usersPath), new Gson().toJson(userMapping));
@@ -106,6 +161,10 @@ public class ConsoleGamesService {
         }
     }
 
+    /**
+     * метод для логина, читает ввод имени пользователя и находит объект пользователя в словаре или заводит новую запись
+     * @return объект пользователя из словаря пользователей
+     */
     public User getUser() {
         var sc = new Scanner(System.in);
         System.out.println("Введите имя пользователя или /stop чтобы остановить бота");

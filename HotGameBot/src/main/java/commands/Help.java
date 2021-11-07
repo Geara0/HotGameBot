@@ -2,25 +2,32 @@ package commands;
 
 import Entities.User;
 
+/**
+ * Класс команды, возвращающей сообщение справки
+ */
 public class Help implements ICommand {
 
+    /**
+     * Реализация ICommand
+     * @param user - пользователь, для которого вызывается команд(здесь не нужно но интерфейс)
+     */
     @Override
     public void execute(User user) {
-        printHelp();
+        printMessage(getHelpMessage());
     }
 
-    private void printHelp(){
-        System.out.print(getHelpMessage());
+    /**
+     * Печатает сообщение
+     */
+    private void printMessage(String message){
+        System.out.print(message);
     }
 
+    /**
+     * Возвращает сообщение справки
+     * @return строка-справка
+     */
     private String getHelpMessage(){
-        return """
-                Доступны следующие команды:\r
-                1. /wantToPlay переключит вас на рекомендации\r
-                2. /sub позволит вам добавить тайтл в ваши подписки\r
-                3. /quit выведет вас из меню\r
-                4. /unsub позволит удалить тайтл из ваших подписок\r
-                5. /mySubs выводит ваши подписки
-                """;
+        return CommandsConst.HELP.toStringValue();
     }
 }
