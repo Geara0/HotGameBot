@@ -118,7 +118,7 @@ public class ConsoleGamesService {
             usersMapper.put(username, new User(username, new HashMap<>()));
         isThereAUser = true;
         User user = usersMapper.get(username);
-        user.setActive(true);
+        user.setActive();
         runCommand("/help",user);
         return user;
     }
