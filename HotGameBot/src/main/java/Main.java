@@ -1,10 +1,16 @@
 import Entities.User;
+import org.telegram.telegrambots.meta.TelegramBotsApi;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
+        startBot();
+
+
         Scanner scanner = new Scanner(System.in);
         ConsoleGamesService bot = new ConsoleGamesService();
         bot.start();
@@ -15,6 +21,15 @@ public class Main {
                 String message = scanner.nextLine();
                 bot.runCommand(message, currentUser);
             }
+        }
+    }
+
+    private static void startBot(){
+        try {
+            TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
+            telegramBotsApi.registerBot(new HelloBot());
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
         }
     }
 }
