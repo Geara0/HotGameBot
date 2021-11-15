@@ -28,12 +28,17 @@ public class Game {
     }
 
     /**
-     * Метод, изменяющий данные об игре
-     * @param title тайтл на замену старому
+     * Сеттер для поля title
+     * @param title тайтл для присвоения полю
      */
     public void setTitle(Title title){
         this.title = title;
     }
+
+    /**
+     * Геттер для поля title
+     * @return тайтл из поля title
+     */
     public Title getTitle(){
         return title;
     }

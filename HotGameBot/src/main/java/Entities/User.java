@@ -32,7 +32,7 @@ public class User {
     /**
      * имя пользователя
      */
-    private String username;
+    private final String username;
 
     /**
      * Конструктор класса

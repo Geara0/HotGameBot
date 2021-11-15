@@ -9,18 +9,9 @@ import java.util.Scanner;
 import java.util.Set;
 
 /**
- * Енам с ответами пользователя
- */
-enum Answer {
-    YES,
-    NO,
-    STOP
-}
-
-/**
  * Класс команды для подписки пользователя на игру
  */
-public class SubscribeToTitle implements ICommand {
+public class SubscribeToTitleCommand implements ICommand {
 
     /**
      * Поле со всеми тайтлами которые знает бот, чтобы среди них искать тайтл для пользователя
@@ -42,7 +33,7 @@ public class SubscribeToTitle implements ICommand {
      *
      * @param titles - хешмап всех тайтлов которые знает бот
      */
-    public SubscribeToTitle(HashMap<String, Title> titles) {
+    public SubscribeToTitleCommand(HashMap<String, Title> titles) {
         titleMapping = titles;
         titleNamesSet = titles.keySet();
         scanner = new Scanner(System.in);
@@ -66,7 +57,7 @@ public class SubscribeToTitle implements ICommand {
      * @param user      - пользователь, которого надо подписать
      */
     private void subUserToTitle(String titleName, User user) {
-        if (CommandsConst.STOPPING_LINE.toStringValue().equals(titleName))
+        if (CommandsConstants.STOPPING_LINE.toStringValue().equals(titleName))
             return;
         user.Watch(titleMapping.get(titleName));
     }
@@ -77,14 +68,14 @@ public class SubscribeToTitle implements ICommand {
      * @return имя тайтла, которое хотел найти пользователь
      */
     private String getTitleName() {
-        Answer answer;
+        AnswerConstants answer;
         String name;
         do {
             var input = getUserInput();
             name = new LevenshteinCalculator().getClosestString(titleNamesSet, input);
             answer = askUserAboutTitle(name);
-        } while (!Answer.YES.equals(answer) && !Answer.STOP.equals(answer));
-        return answer.equals(Answer.YES) ? name : CommandsConst.STOPPING_LINE.toStringValue();
+        } while (!AnswerConstants.YES.equals(answer) && !AnswerConstants.STOP.equals(answer));
+        return answer.equals(AnswerConstants.YES) ? name : CommandsConstants.STOPPING_LINE.toStringValue();
     }
 
     /**
@@ -94,14 +85,14 @@ public class SubscribeToTitle implements ICommand {
      * @return Answer.YES если пользователь согласен, Answer.NO если пользователь не согласен,
      * Answer.STOP если пользователь хочет закончить перебор
      */
-    private Answer askUserAboutTitle(String name) {
+    private AnswerConstants askUserAboutTitle(String name) {
         String titleString = titleMapping.get(name).getStringForm();
-        System.out.println(CommandsConst.IS_THE_RIGHT_TITLE_WITH_OPTIONS.toStringValue() + "\r\n" + titleString);
+        System.out.println(CommandsConstants.IS_THE_RIGHT_TITLE_WITH_OPTIONS.toStringValue() + "\r\n" + titleString);
         var answer = scanner.nextLine().toLowerCase();
         return switch (answer) {
-            case "yes" -> Answer.YES;
-            case "no" -> Answer.NO;
-            case "stop" -> Answer.STOP;
+            case "yes" -> AnswerConstants.YES;
+            case "no" -> AnswerConstants.NO;
+            case "stop" -> AnswerConstants.STOP;
             default -> null;
         };
     }

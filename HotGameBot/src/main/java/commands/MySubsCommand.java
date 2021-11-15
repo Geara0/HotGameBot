@@ -6,13 +6,7 @@ import Entities.User;
 /**
  * Класс для команды, выводящей список подписок пользователя
  */
-public class MySubs implements ICommand {
-
-    /**
-     * Конструктор для создания объекта команды
-     */
-    public MySubs() {
-    }
+public class MySubsCommand implements ICommand {
 
     /**
      * Реализация ICommand
@@ -21,16 +15,7 @@ public class MySubs implements ICommand {
      */
     @Override
     public void execute(User user) {
-        printMessage(getUserSubsMessage(user));
-    }
-
-    /**
-     * Печатает сообщение
-     *
-     * @param message - сообщение
-     */
-    private void printMessage(String message) {
-        System.out.println(message);
+        System.out.println(getUserSubsMessage(user));
     }
 
     /**
@@ -42,7 +27,7 @@ public class MySubs implements ICommand {
     private String getUserSubsMessage(User user) {
         StringBuilder subs = new StringBuilder();
         if (user.getTitles().size() == 0)
-            return CommandsConst.NO_SUBS.toStringValue();
+            return CommandsConstants.NO_SUBS.toStringValue();
         int i = 1;
         for (Title title : user.getTitles().values())
             subs.append(String.format("#%d ---- ", i++)).append(title.getStringForm());

@@ -1,7 +1,7 @@
 package commandsTests;
 
 import commands.ICommand;
-import commands.UnsubscribeFromTitle;
+import commands.UnsubscribeFromTitleCommand;
 import Entities.Title;
 import Entities.User;
 import org.junit.jupiter.api.AfterEach;
@@ -32,7 +32,7 @@ public class UnsubscribeFromTitleTest {
             put("testTitle", toUnsub);
         }};
         User testUser = new User("testUser", userMapping);
-        ICommand unsubCommand = new UnsubscribeFromTitle();
+        ICommand unsubCommand = new UnsubscribeFromTitleCommand();
         unsubCommand.execute(testUser);
         Assertions.assertTrue(testUser.getTitles().containsKey(anotherTitle.getName()) &
                 !testUser.getTitles().containsKey(toUnsub.getName()));

@@ -1,6 +1,6 @@
 package commandsTests;
 
-import commands.MySubs;
+import commands.MySubsCommand;
 import Entities.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -23,7 +23,7 @@ public class MySubsTest {
     @Test
     public void newUserSubscriptions(){
         testUser = new User("test", new HashMap<>());
-        new MySubs().execute(testUser);
+        new MySubsCommand().execute(testUser);
         Assertions.assertEquals("У вас пока нет подписок\r\n",output.toString());
     }
 

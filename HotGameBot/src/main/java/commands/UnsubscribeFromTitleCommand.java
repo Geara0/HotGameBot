@@ -8,7 +8,7 @@ import java.util.Scanner;
 /**
  * Класс с командой для отписки пользователя от тайтла
  */
-public class UnsubscribeFromTitle implements ICommand {
+public class UnsubscribeFromTitleCommand implements ICommand {
 
     /**
      * Сканнер
@@ -18,7 +18,7 @@ public class UnsubscribeFromTitle implements ICommand {
     /**
      * Конструктор с инициализацией сканнера
      */
-    public UnsubscribeFromTitle() {
+    public UnsubscribeFromTitleCommand() {
         scanner = new Scanner(System.in);
     }
 
@@ -40,17 +40,17 @@ public class UnsubscribeFromTitle implements ICommand {
     private void unsubscribeUserFromTitle(User user) {
         System.out.println("Тайтлы, на которые вы подписаны:");
 
-        var titleArray = user.getTitles().values().toArray(new Title[]{});
+        Title[] userTitles = user.getTitles().values().toArray(new Title[]{});
         //чтобы была возможность выбрать тайтл по индексу
         //мне кажется так получится быстрее и удобнее чем в SubscribeToTitle с подбором по имени
 
-        if (titleArray.length == 0)
+        if (userTitles.length == 0)
             return;
 
-        new MySubs().execute(user);//вывод подписок пользователя, удобно получилось
+        new MySubsCommand().execute(user);//вывод подписок пользователя, удобно получилось
         System.out.println("Выберите тайтл для отписки по индексу");
-        int index = getIndex(titleArray.length);
-        user.Unwatch(titleArray[index]);
+        int index = getIndex(userTitles.length);
+        user.Unwatch(userTitles[index]);
     }
 
     /**
@@ -68,7 +68,7 @@ public class UnsubscribeFromTitle implements ICommand {
                 if (isNotInBounds(index, upperBorder))
                     throw new Exception();
             } catch (Exception e) {
-                System.out.println(CommandsConst.INCORRECT_INDEX.toStringValue());//и тут я их отлавливаю и говорю что индекс некорректный
+                System.out.println(CommandsConstants.INCORRECT_INDEX.toStringValue());//и тут я их отлавливаю и говорю что индекс некорректный
             }
         } while (isNotInBounds(index, upperBorder));
         return index;

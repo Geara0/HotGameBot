@@ -28,7 +28,7 @@ public class SubscribeToTitleTest {
         testMapping.put(testTitleOne.getName(), testTitleOne);
         testMapping.put(testTitleTwo.getName(),testTitleTwo);
 
-        ICommand subscribeCommand = new SubscribeToTitle(testMapping);
+        ICommand subscribeCommand = new SubscribeToTitleCommand(testMapping);
         subscribeCommand.execute(testUser);
 
         Assertions.assertTrue(testUser.getTitles().containsKey(testTitleOne.getName())

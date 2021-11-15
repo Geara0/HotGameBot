@@ -5,7 +5,7 @@ import Entities.User;
 /**
  * Класс команды, возвращающей сообщение справки
  */
-public class Help implements ICommand {
+public class HelpCommand implements ICommand {
 
     /**
      * Реализация ICommand
@@ -14,14 +14,7 @@ public class Help implements ICommand {
      */
     @Override
     public void execute(User user) {
-        printMessage(getHelpMessage());
-    }
-
-    /**
-     * Печатает сообщение
-     */
-    private void printMessage(String message) {
-        System.out.print(message);
+        System.out.print(getHelpMessage());
     }
 
     /**
@@ -30,6 +23,6 @@ public class Help implements ICommand {
      * @return строка-справка
      */
     private String getHelpMessage() {
-        return CommandsConst.HELP.toStringValue();
+        return CommandsConstants.HELP.toStringValue();
     }
 }

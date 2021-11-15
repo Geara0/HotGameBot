@@ -1,7 +1,7 @@
 package commandsTests;
 
 import commands.ICommand;
-import commands.WantToPlay;
+import commands.WantToPlayCommand;
 import Entities.Title;
 import Entities.User;
 import org.junit.jupiter.api.AfterEach;
@@ -15,8 +15,8 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.HashMap;
 
-import static commands.CommandsConst.AVAILABLE_RECOMMENDATIONS;
-import static commands.CommandsConst.CANT_FIND_TITLE;
+import static commands.CommandsConstants.AVAILABLE_RECOMMENDATIONS;
+import static commands.CommandsConstants.CANT_FIND_TITLE;
 
 public class WantToPlayTest {
 
@@ -42,7 +42,7 @@ public class WantToPlayTest {
         input = new ByteArrayInputStream("-1".getBytes());
         System.setIn(input);
 
-        ICommand wantToPlayCommand = new WantToPlay(testMapping);
+        ICommand wantToPlayCommand = new WantToPlayCommand(testMapping);
         wantToPlayCommand.execute(new User("username", new HashMap<>()));
 
         String expected = AVAILABLE_RECOMMENDATIONS.toStringValue() +
@@ -62,7 +62,7 @@ public class WantToPlayTest {
         }
         input = new ByteArrayInputStream(Integer.toString(maxPrice).getBytes());
         System.setIn(input);
-        ICommand wantToPlayCommand = new WantToPlay(testMapping);
+        ICommand wantToPlayCommand = new WantToPlayCommand(testMapping);
         wantToPlayCommand.execute(new User("username", new HashMap<>()));
         Assertions.assertEquals(expected.toString(),output.toString());
     }

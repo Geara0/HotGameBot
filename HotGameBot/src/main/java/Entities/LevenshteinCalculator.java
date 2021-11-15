@@ -13,7 +13,7 @@ public class LevenshteinCalculator {
         String closestString = "";
         int minDistance = Integer.MAX_VALUE;
         for (var str : stringSet){
-            var distance = calculateDistance(str.toLowerCase(), original.toLowerCase(), false);
+            var distance = calculateDistance(str.toLowerCase(), original.toLowerCase());
             if (distance==0)
                 return str;
             if(distance<minDistance){
@@ -31,15 +31,12 @@ public class LevenshteinCalculator {
      *
      * @param first - первая строка для сравнения
      * @param second - вторая строка для сравнения
-     * @param caseSensitive Should differences in case be treated as changes.
      * @return The Entities.Levenshtein distance
      */
-    private static int calculateDistance(String first, String second, boolean caseSensitive) {
+    private static int calculateDistance(String first, String second) {
         // if we want to ignore case sensitivity, lower case the strings
-        if (!caseSensitive) {
-            first = first.toLowerCase();
-            second = second.toLowerCase();
-        }
+        first = first.toLowerCase();
+        second = second.toLowerCase();
 
         // store length
         int m = first.length();

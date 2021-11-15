@@ -1,6 +1,6 @@
 package commandsTests;
 
-import commands.Quit;
+import commands.QuitCommand;
 import Entities.User;
 import org.junit.jupiter.api.*;
 
@@ -21,14 +21,14 @@ public class QuitTest {
     public void checkIsActiveChanges(){
         testUser = new User("test", new HashMap<>());
         testUser.setInactive();
-        new Quit().execute(testUser);
+        new QuitCommand().execute(testUser);
         Assertions.assertFalse(testUser.isActive());
     }
 
     @Test
     public void checkMessageIsPrinted(){
         testUser = new User("test", new HashMap<>());
-        new Quit().execute(testUser);
+        new QuitCommand().execute(testUser);
         Assertions.assertEquals("Вы вышли!\r\n", output.toString());
     }
 

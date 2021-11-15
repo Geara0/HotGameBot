@@ -34,13 +34,13 @@ public class CheckGamesUpdateTimer extends TimerTask {
     /**
      * Конструктор
      * @param titlesPath {@link CheckGamesUpdateTimer#titlesPath}
-     * @param titleSet {@link CheckGamesUpdateTimer#titlesMapping}
-     * @param gameSet {@link CheckGamesUpdateTimer#gamesMapping}
+     * @param titleMapping {@link CheckGamesUpdateTimer#titlesMapping}
+     * @param gameMapping {@link CheckGamesUpdateTimer#gamesMapping}
      */
-    public CheckGamesUpdateTimer(String titlesPath, HashMap<String,Title> titleSet, HashMap<Title, Game> gameSet) {
+    public CheckGamesUpdateTimer(String titlesPath, HashMap<String,Title> titleMapping, HashMap<Title, Game> gameMapping) {
         this.titlesPath = titlesPath;
-        this.titlesMapping = titleSet;
-        this.gamesMapping = gameSet;
+        this.titlesMapping = titleMapping;
+        this.gamesMapping = gameMapping;
     }
 
     @Override
@@ -51,10 +51,10 @@ public class CheckGamesUpdateTimer extends TimerTask {
     /**
      * Метод, проверяющий обновления
      * @param titlesPath {@link CheckGamesUpdateTimer#titlesPath}
-     * @param titleSet {@link CheckGamesUpdateTimer#titlesMapping}
-     * @param gameSet {@link CheckGamesUpdateTimer#gamesMapping}
+     * @param titleMapping {@link CheckGamesUpdateTimer#titlesMapping}
+     * @param gameMapping {@link CheckGamesUpdateTimer#gamesMapping}
      */
-    private static void checkUpdates(String titlesPath, HashMap<String,Title> titleSet, HashMap<Title, Game> gameSet) {
+    private static void checkUpdates(String titlesPath, HashMap<String,Title> titleMapping, HashMap<Title, Game> gameMapping) {
         HashMap<String,Title> titleSetUpdates = new HashMap<>();
         try {
             titleSetUpdates = new Gson().fromJson(Files.readString(Path.of(titlesPath)), new TypeToken<HashMap<String,Title>>(){}.getType());
@@ -63,10 +63,10 @@ public class CheckGamesUpdateTimer extends TimerTask {
         }
 
         for (var titleUpdates : titleSetUpdates.values()) {
-            if (titleSet.containsKey(titleUpdates.getName()) &&
-                    titleSet.get(titleUpdates.getName()).getPrice() > titleUpdates.getPrice()) {
-                System.out.println(CreateNotification.createNotification(gameSet.get(titleUpdates), titleUpdates));
-                gameSet.get(titleUpdates).setTitle(titleUpdates);
+            if (titleMapping.containsKey(titleUpdates.getName()) &&
+                    titleMapping.get(titleUpdates.getName()).getPrice() > titleUpdates.getPrice()) {
+                System.out.println(CreateNotification.createNotification(gameMapping.get(titleUpdates), titleUpdates));
+                gameMapping.get(titleUpdates).setTitle(titleUpdates);
             }
         }
     }

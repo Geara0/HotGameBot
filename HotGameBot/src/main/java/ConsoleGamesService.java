@@ -1,7 +1,4 @@
-import Entities.CheckGamesUpdateTimer;
-import Entities.Game;
-import Entities.Title;
-import Entities.User;
+import Entities.*;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import commands.*;
@@ -9,10 +6,7 @@ import commands.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Scanner;
-import java.util.Timer;
+import java.util.*;
 
 /**
  * Класс с логикой работы бота
@@ -30,13 +24,19 @@ public class ConsoleGamesService {
     /**
      * словарь команд
      */
-    private final HashMap<String, ICommand> commands;
+    private final Map<String, ICommand> commands = new HashMap<>();
+    /**
+     * Словарь с данными о пользователях(пары "имя пользователя":"пользователь")
+     */
     private HashMap<String, User> usersMapper;
+    /**
+     * Словарь с данными о тайтлах(пары "название тайтла":"тайтл")
+     */
     private HashMap<String, Title> titlesMapper;
     /**
      * флаги для работы бота на наличие пользователя и активности бота в целом
      */
-    private boolean isThereAUser;
+    private boolean hasUser;
     private boolean isRunning;
 
     /**
@@ -55,10 +55,7 @@ public class ConsoleGamesService {
             e.printStackTrace();
         }
         gamesMapper = parseUsers(usersMapper);
-        commands = new HashMap<>();
         fillCommands();
-        isThereAUser = false;
-        isRunning = false;
     }
 
     /**
@@ -66,8 +63,8 @@ public class ConsoleGamesService {
      *
      * @return - true если пользователь работает с ботом, false если нет
      */
-    public boolean isThereAUser() {
-        return isThereAUser;
+    public boolean hasUser() {
+        return hasUser;
     }
 
     /**
@@ -106,12 +103,12 @@ public class ConsoleGamesService {
      * метод для заполнения словаря команд
      */
     private void fillCommands() {
-        commands.put("/help", new Help());
-        commands.put("/mysubs", new MySubs());
-        commands.put("/sub", new SubscribeToTitle(titlesMapper));
-        commands.put("/unsub", new UnsubscribeFromTitle());
-        commands.put("/wanttoplay", new WantToPlay(titlesMapper));
-        commands.put("/quit", new Quit());
+        commands.put("/help", new HelpCommand());
+        commands.put("/mysubs", new MySubsCommand());
+        commands.put("/sub", new SubscribeToTitleCommand(titlesMapper));
+        commands.put("/unsub", new UnsubscribeFromTitleCommand());
+        commands.put("/wanttoplay", new WantToPlayCommand(titlesMapper));
+        commands.put("/quit", new QuitCommand());
     }
 
     /**
@@ -127,7 +124,7 @@ public class ConsoleGamesService {
         } catch (NullPointerException ex) {
             System.out.println("Введенное вами сообщение не является командой, введите /help для помощи");
         }
-        isThereAUser = currentUser.isActive();//три строчки комментариев ниже относятся только к этому присваиванию
+        hasUser = currentUser.isActive();//три строчки комментариев ниже относятся только к этому присваиванию
         //когда активный пользователь выполняет команду, поле isActive = true, и поле isThereAUser = true соответственно
         //при выполнении команды /quit у пользователя поле isActive становится false
         //по исполнению метода runCommand для команды /quit бот понимает что активного пользователя нет и переходит к ожиданию
@@ -154,7 +151,7 @@ public class ConsoleGamesService {
      * метод для остановки работы бота
      */
     public void stop() {
-        writeUserSubs(usersMapper);
+        writeUserData(usersMapper);
         isRunning = false;
     }
 
@@ -163,7 +160,7 @@ public class ConsoleGamesService {
      *
      * @param userMapping - словарь с пользователями
      */
-    private void writeUserSubs(HashMap<String, User> userMapping) {
+    private void writeUserData(HashMap<String, User> userMapping) {
         try {
             Files.writeString(Path.of(usersPath), new Gson().toJson(userMapping));
         } catch (IOException e) {
@@ -186,7 +183,7 @@ public class ConsoleGamesService {
         }
         if (!usersMapper.containsKey(username))
             usersMapper.put(username, new User(username, new HashMap<>()));
-        isThereAUser = true;
+        hasUser = true;
         User user = usersMapper.get(username);
         user.setActive();
         runCommand("/help", user);

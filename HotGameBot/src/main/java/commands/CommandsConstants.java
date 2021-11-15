@@ -3,7 +3,7 @@ package commands;
 /**
  * Енам со строковыми константами, не совсем понимаю зачем он нужен, но все равно сделал, может когда-нибудь пойму
  */
-public enum CommandsConst {
+public enum CommandsConstants {
     HELP("""
             Доступны следующие команды:\r
             1. /wantToPlay переключит вас на рекомендации\r
@@ -27,7 +27,7 @@ public enum CommandsConst {
      */
     private final String value;
 
-    CommandsConst(String value) {
+    CommandsConstants(String value) {
         this.value = value;
     }
 
