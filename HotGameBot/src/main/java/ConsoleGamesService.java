@@ -38,6 +38,8 @@ public class ConsoleGamesService {
      */
     private boolean hasUser;
     private boolean isRunning;
+    private final int timerDelay = 10 * 1000;
+    private final int timerPeriod = 10 * 1000;
 
     /**
      * конструктор с чтением файлов из жсонов в словари пользователей и игр
@@ -144,7 +146,7 @@ public class ConsoleGamesService {
     private void startTimer() {
         Timer timer = new Timer(true);
         var timerTask = new CheckGamesUpdateTimer(titlesPath, titlesMapper, gamesMapper);
-        timer.scheduleAtFixedRate(timerTask, 10 * 1000, 10 * 1000);
+        timer.scheduleAtFixedRate(timerTask, timerDelay, timerPeriod);
     }
 
     /**

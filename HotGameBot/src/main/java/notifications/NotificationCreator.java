@@ -1,8 +1,9 @@
 package notifications;
+
 import Entities.*;
 
-public class CreateNotification {
-    public static String createNotification(Game game, Title titleUpdated) {
+public class NotificationCreator {
+    public static String create(Game game, Title titleUpdated) {
         String notification = null;
         Title title = game.getTitle();
         if (titleUpdated.getPrice() < title.getPrice()) {

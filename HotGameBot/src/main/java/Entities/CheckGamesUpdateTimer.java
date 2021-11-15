@@ -2,11 +2,12 @@ package Entities;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import notifications.CreateNotification;
+import notifications.NotificationCreator;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.TimerTask;
 
@@ -25,19 +26,20 @@ public class CheckGamesUpdateTimer extends TimerTask {
     /**
      * Старые тайтлы
      */
-    private final HashMap<String,Title> titlesMapping;
+    private final AbstractMap<String, Title> titlesMapping;
     /**
      * Старые игры
      */
-    private final HashMap<Title, Game> gamesMapping;
+    private final AbstractMap<Title, Game> gamesMapping;
 
     /**
      * Конструктор
-     * @param titlesPath {@link CheckGamesUpdateTimer#titlesPath}
+     *
+     * @param titlesPath   {@link CheckGamesUpdateTimer#titlesPath}
      * @param titleMapping {@link CheckGamesUpdateTimer#titlesMapping}
-     * @param gameMapping {@link CheckGamesUpdateTimer#gamesMapping}
+     * @param gameMapping  {@link CheckGamesUpdateTimer#gamesMapping}
      */
-    public CheckGamesUpdateTimer(String titlesPath, HashMap<String,Title> titleMapping, HashMap<Title, Game> gameMapping) {
+    public CheckGamesUpdateTimer(String titlesPath, AbstractMap<String, Title> titleMapping, AbstractMap<Title, Game> gameMapping) {
         this.titlesPath = titlesPath;
         this.titlesMapping = titleMapping;
         this.gamesMapping = gameMapping;
@@ -50,22 +52,25 @@ public class CheckGamesUpdateTimer extends TimerTask {
 
     /**
      * Метод, проверяющий обновления
-     * @param titlesPath {@link CheckGamesUpdateTimer#titlesPath}
+     *
+     * @param titlesPath   {@link CheckGamesUpdateTimer#titlesPath}
      * @param titleMapping {@link CheckGamesUpdateTimer#titlesMapping}
-     * @param gameMapping {@link CheckGamesUpdateTimer#gamesMapping}
+     * @param gameMapping  {@link CheckGamesUpdateTimer#gamesMapping}
      */
-    private static void checkUpdates(String titlesPath, HashMap<String,Title> titleMapping, HashMap<Title, Game> gameMapping) {
-        HashMap<String,Title> titleSetUpdates = new HashMap<>();
+    private static void checkUpdates(String titlesPath, AbstractMap<String, Title> titleMapping, AbstractMap<Title, Game> gameMapping) {
+        HashMap<String, Title> titleSetUpdates = new HashMap<>();
         try {
-            titleSetUpdates = new Gson().fromJson(Files.readString(Path.of(titlesPath)), new TypeToken<HashMap<String,Title>>(){}.getType());
+            titleSetUpdates = new Gson().fromJson(Files.readString(Path.of(titlesPath)), new TypeToken<HashMap<String, Title>>() {
+            }.getType());
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         for (var titleUpdates : titleSetUpdates.values()) {
-            if (titleMapping.containsKey(titleUpdates.getName()) &&
-                    titleMapping.get(titleUpdates.getName()).getPrice() > titleUpdates.getPrice()) {
-                System.out.println(CreateNotification.createNotification(gameMapping.get(titleUpdates), titleUpdates));
+            var updatedTitleName = titleUpdates.getName();
+            if (titleMapping.containsKey(updatedTitleName) &&
+                    titleMapping.get(updatedTitleName).getPrice() > titleUpdates.getPrice()) {
+                System.out.println(NotificationCreator.create(gameMapping.get(titleUpdates), titleUpdates));
                 gameMapping.get(titleUpdates).setTitle(titleUpdates);
             }
         }
