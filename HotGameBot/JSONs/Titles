@@ -1,0 +1,50 @@
+{
+  "Ghost of Tsushima - Director's Cut": {
+    "name": "Ghost of Tsushima - Director's Cut",
+    "link": "https://hot-game.info/game/Ghost-of-Tsushima-Directors-Cut",
+    "buyLink": "link1",
+    "price": 4999
+  },
+  "Battlefield V": {
+    "name": "Battlefield V",
+    "link": "https://hot-game.info/game/Battlefield-V",
+    "buyLink": "link1",
+    "price": 85
+  },
+  "Knockout City": {
+    "name": "Knockout City",
+    "link": "https://hot-game.info/game/Knockout-City",
+    "buyLink": "link1",
+    "price": 5
+  },
+  "Horizon Zero Dawn": {
+    "name": "Horizon Zero Dawn",
+    "link": "https://hot-game.info/game/Horizon-Zero-Dawn",
+    "buyLink": "link1",
+    "price": 1484
+  },
+  "Rust": {
+    "name": "Rust",
+    "link": "https://hot-game.info/game/rust",
+    "buyLink": "link1",
+    "price": 1149
+  },
+  "Minecraft": {
+    "name": "Minecraft",
+    "link": "https://hot-game.info/game/minecraft",
+    "buyLink": "link1",
+    "price": 1559
+  },
+  "Grand Theft Auto V": {
+    "name": "Grand Theft Auto V",
+    "link": "https://hot-game.info/game/grand-theft-auto-5",
+    "buyLink": "link1",
+    "price": 662
+  },
+  "New World": {
+    "name": "New World",
+    "link": "https://hot-game.info/game/New-World",
+    "buyLink": "link1",
+    "price": 1299
+  }
+}
