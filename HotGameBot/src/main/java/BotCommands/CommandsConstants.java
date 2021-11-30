@@ -5,11 +5,15 @@ package BotCommands;
  */
 public enum CommandsConstants {
     HELP_NAME("help"),
-    HELP_DESCRIPTION("list of all known commands"),
+    HELP_DESCRIPTION("Список всех доступных команд"),
     START_NAME("start"),
-    START_DESCRIPTION("start using bot"),
+    START_DESCRIPTION("Начать использование бота"),
     MY_GAMES_NAME("myGames"),
-    MY_GAMES_DESCRIPTION("my subscriptions list"),
+    MY_GAMES_DESCRIPTION("Мои подписки"),
+    SUBSCRIBE_NAME("subscribe"),
+    SUBSCRIBE_DESCRIPTION("Подписаться на игру"),
+    UNSUBSCRIBE_NAME("unsubscribe"),
+    UNSUBSCRIBE_DESCRIPTION("Отписаться от игры"),
     NO_SUBS("У вас пока нет подписок"),
     QUIT("Вы вышли!"),
     STOPPING_LINE("specialStoppingLineThatMightBeAnEnumOrAnotherSpecialObjectButIDon'tWantToDoThisKittensAreCute"),

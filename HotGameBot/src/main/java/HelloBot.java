@@ -1,6 +1,4 @@
-import BotCommands.HelpCommand;
-import BotCommands.MyGamesCommand;
-import BotCommands.StartCommand;
+import BotCommands.*;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -16,6 +14,8 @@ public final class HelloBot extends TelegramLongPollingCommandBot {
         //Регистрация комманд
         register(new StartCommand());
         register(new MyGamesCommand());
+        register(new SubscribeCommand());
+        register(new UnsubscribeCommand());
         var helpCommand = new HelpCommand(this);
         register(helpCommand);
 
@@ -23,6 +23,7 @@ public final class HelloBot extends TelegramLongPollingCommandBot {
             var text = new SendMessage();
             text.setText(String.format("Command not found: %s", message.getText()));
             try {
+                //TODO: Почему-то не видит userId
                 absSender.execute(text);
             } catch (TelegramApiException e) {
                 e.printStackTrace();
