@@ -6,11 +6,14 @@ import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
+import static BotCommands.CommandsConstants.HELP_DESCRIPTION;
+import static BotCommands.CommandsConstants.HELP_NAME;
+
 public class HelpCommand extends Command {
     private final ICommandRegistry commandRegistry;
 
     public HelpCommand(ICommandRegistry commandRegistry) {
-        super("help", "list all known commands");
+        super(HELP_NAME.toStringValue(), HELP_DESCRIPTION.toStringValue());
         this.commandRegistry = commandRegistry;
     }
 

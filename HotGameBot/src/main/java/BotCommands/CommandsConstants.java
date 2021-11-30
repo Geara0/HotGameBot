@@ -4,6 +4,12 @@ package BotCommands;
  * Енам со строковыми константами, не совсем понимаю зачем он нужен, но все равно сделал, может когда-нибудь пойму
  */
 public enum CommandsConstants {
+    HELP_NAME("help"),
+    HELP_DESCRIPTION("list of all known commands"),
+    START_NAME("start"),
+    START_DESCRIPTION("start using bot"),
+    MY_GAMES_NAME("myGames"),
+    MY_GAMES_DESCRIPTION("my subscriptions list"),
     NO_SUBS("У вас пока нет подписок"),
     QUIT("Вы вышли!"),
     STOPPING_LINE("specialStoppingLineThatMightBeAnEnumOrAnotherSpecialObjectButIDon'tWantToDoThisKittensAreCute"),

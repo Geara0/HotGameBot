@@ -7,9 +7,12 @@ import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
+import static BotCommands.CommandsConstants.MY_GAMES_DESCRIPTION;
+import static BotCommands.CommandsConstants.MY_GAMES_NAME;
+
 public class MyGamesCommand extends Command {
     public MyGamesCommand() {
-        super("myGames", "my subscriptions list");
+        super(MY_GAMES_NAME.toStringValue(), MY_GAMES_DESCRIPTION.toStringValue());
     }
 
     @Override
