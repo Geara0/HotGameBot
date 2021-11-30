@@ -39,8 +39,6 @@ public class Title {
      */
     private boolean isMultiplayer;
 
-
-
     /**
      * Конструктор класса
      *
@@ -48,6 +46,25 @@ public class Title {
      * @param link    {@link Title#link}
      * @param buyLink {@link Title#buyLink}
      * @param price   {@link Title#price}
+     */
+    public Title(String name, String link, String buyLink, int price){
+        this.name = name;
+        this.link=link;
+        this.buyLink=buyLink;
+        this.price=price;
+    }
+
+    /**
+     * Расширенный рабочий конструктор класся
+     * @param name название тайтла
+     * @param link ссылка на тайтл
+     * @param buyLink ссылка на покупку с минимальной ценой
+     * @param price минимальная цена
+     * @param publisher издатель
+     * @param developer разбраточик
+     * @param releaseDate дата релиза
+     * @param genres список жанров
+     * @param multiplayer является ли мултиплеерной
      */
     public Title(String name, String link, String buyLink, int price, String publisher, String developer,
                  Date releaseDate, String[] genres, boolean multiplayer) {
