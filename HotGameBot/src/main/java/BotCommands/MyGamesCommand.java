@@ -18,7 +18,7 @@ public class MyGamesCommand extends Command {
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
         var message = new SendMessage();
-        message.setText(dbWorker.getSubscriptions(user.getUserName()));
+        message.setText(dbWorker.getSubscriptions(user.getId()));
         execute(absSender, message, user);
     }
 
