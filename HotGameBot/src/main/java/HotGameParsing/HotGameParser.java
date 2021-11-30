@@ -8,7 +8,10 @@ import org.springframework.format.datetime.joda.DateTimeParser;
 
 import java.io.IOException;
 import java.text.DateFormat;
+import java.time.Instant;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class HotGameParser implements Parser {
     @Override
@@ -42,8 +45,8 @@ public class HotGameParser implements Parser {
         return result;
     }
 
-    public String getTitleInfoSelect(String link){
-        String result;
+    public Title getTitleInfoSelect(String link){
+        Title result;
         try {
             Document doc = Jsoup.connect(link).get();
             var gameInfo = doc.selectFirst("body > div.container.content-container > section.game.clearfix > aside > div.hg-block.short-game-description > div");
@@ -57,9 +60,39 @@ public class HotGameParser implements Parser {
             var bestMarket = doc.selectFirst("#prices_block > div.game-prices-wrap > div.game-prices-list.game-prices-new > div:nth-child(1)");
             var bestPrice = bestMarket.child(1).selectFirst("div.price-col-3 > div.game-price > span").text();
             var bestLink = bestMarket.child(0).attributes().get("data-href");
+            var date = parseDate(releaseDate);
+            var isMultiplayer = isMultiplayer(mode);
+            result = new Title(name,link,bestLink,Integer.parseInt(bestPrice),publisher,developer,date,genres,isMultiplayer);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("error 404");
+            result = new Title();
         }
-        return "";
+        return result;
+    }
+
+    private Date parseDate(String date){
+        var splitDate = date.split(" ");
+        var day = Integer.parseInt(splitDate[0]);
+        var year = Integer.parseInt(splitDate[2].split("г")[0]);
+        var month = switch (splitDate[1]){
+            case "янв." -> Calendar.JANUARY;
+            case "февр." -> Calendar.FEBRUARY;
+            case "март" -> Calendar.MARCH;
+            case "апр." -> Calendar.APRIL;
+            case "май" -> Calendar.MAY;
+            case "июнь" -> Calendar.JUNE;
+            case "июль" -> Calendar.JULY;
+            case "авг." -> Calendar.AUGUST;
+            case "сент." -> Calendar.SEPTEMBER;
+            case "окт." -> Calendar.OCTOBER;
+            case "нояб." -> Calendar.NOVEMBER;
+            case "дек." -> Calendar.DECEMBER;
+            default -> Calendar.UNDECIMBER;
+        };
+        return new GregorianCalendar(year,month,day).getTime();
+    }
+
+    private boolean isMultiplayer(String mode){
+        return !"Режим игры: singleplayer".equals(mode);
     }
 }

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class HotGameParserTest {
-    String link = "https://hot-game.info/game/Control-Ultimate-Edition";
+    String link = "https://hot-game.info/game/1";
     HotGameParser parser = new HotGameParser();
 
     @Test
