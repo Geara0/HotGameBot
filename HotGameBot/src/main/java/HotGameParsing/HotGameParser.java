@@ -1,43 +1,55 @@
 package HotGameParsing;
 
-import Entities.Title;
+import entities.Title;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
+import javax.xml.crypto.URIReferenceException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-public class HotGameParser implements Parser {
-    @Override
-    public Title parseTitle(String link) {
-        return getTitleInfoSelect(link);
+
+public class HotGameParser{
+    private ReportState report;
+
+    public ReportState getReport(){
+        return report;
     }
 
-    public ArrayList<Title> getTitlesByName(String name) {
+    public ArrayList<Title> parseTitle(String link) {
+        if(link.contains("https://"))
+            return getTitleInfoSelect(link);
+        else return getTitlesByName(link);
+    }
+
+    private ArrayList<Title> getTitlesByName(String name) {
         ArrayList<Title> result = new ArrayList<>();
-        String searchName = name.strip().toLowerCase();
+        String searchName = name.strip().toLowerCase().replaceAll("[^a-zA-Z]","");
         String searchUrl = "https://hot-game.info/q=".concat(searchName);
         try {
             Document doc = Jsoup.connect(searchUrl).get();
             Element searchResults = doc.selectFirst("body > div.container.content-container > section.yui3-cssreset.result-block.content-table");
+            if(searchResults.child(0).className().equals("no-results"))
+                throw new URIReferenceException();
             int childrenCount = searchResults.children().size();
             for (var i=0;i<childrenCount;i++) {
                 var href = searchResults.child(i).selectFirst("a").attr("href");
-                result.add(getTitleInfoSelect("https://hot-game.info".concat(href)));
+                result.addAll(getTitleInfoSelect("https://hot-game.info".concat(href)));
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (URIReferenceException e){
+            report = ReportState.BAD_URL;
         }
         return result;
     }
 
-    public Title getTitleInfoSelect(String link) {
-        Title result;
+    private ArrayList<Title> getTitleInfoSelect(String link) {
+        ArrayList<Title> result = new ArrayList<>();
         try {
             Document doc = Jsoup.connect(link).get();
             var gameInfo = doc.selectFirst("body > div.container.content-container > section.game.clearfix > aside > div.hg-block.short-game-description > div");
@@ -49,14 +61,24 @@ public class HotGameParser implements Parser {
             var genres = gameInfo.selectFirst("div.game-genres").getElementsByAttributeValueStarting("class", "hidden-link genre").text().split(" ");
             var mode = gameInfo.selectFirst("div.game-genres > div > span:nth-child(1)").attributes().get("title");
             var bestMarket = doc.selectFirst("#prices_block > div.game-prices-wrap > div.game-prices-list.game-prices-new > div:nth-child(1)");
-            var bestPrice = bestMarket.child(1).selectFirst("div.price-col-3 > div.game-price > span").text();
+            var length = bestMarket.children().size();
+            var price = length == 2 ? bestMarket.child(1).selectFirst("div > div.game-price"):
+                    bestMarket.child(2).selectFirst("div > div.game-price");
             var bestLink = bestMarket.child(0).attributes().get("data-href");
+            String bestPrice;
+            if("нет в наличии".equals(price.text())){
+                bestPrice = "0";
+                bestLink+="\r\nСмотрите по ссылке чтобы узнать о наличии";
+            } else{
+                bestPrice = price.selectFirst("span").text();
+            }
             var date = parseDate(releaseDate);
             var isMultiplayer = isMultiplayer(mode);
-            result = new Title(name, link, bestLink, Integer.parseInt(bestPrice), publisher, developer, date, genres, isMultiplayer);
+            result.add(new Title(name, link, bestLink, Integer.parseInt(bestPrice), publisher, developer, date, genres, isMultiplayer));
         } catch (IOException e) {
-            System.out.println("error 404");
-            result = new Title();
+            report = ReportState.BAD_URL;
+        } catch (IllegalArgumentException e){
+            System.out.println("AAAAAa");
         }
         return result;
     }
