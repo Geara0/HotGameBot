@@ -1,4 +1,4 @@
-package Entities;
+package entities;
 
 /**
  * Класс для хранения тайтла

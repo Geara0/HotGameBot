@@ -1,8 +1,8 @@
 package commands;
 
-import Entities.LevenshteinCalculator;
-import Entities.Title;
-import Entities.User;
+import entities.LevenshteinCalculator;
+import entities.Title;
+import entities.User;
 
 import java.util.HashMap;
 import java.util.Scanner;

@@ -1,4 +1,4 @@
-package BotCommands;
+package botCommands;
 
 /**
  * Енам со строковыми константами, не совсем понимаю зачем он нужен, но все равно сделал, может когда-нибудь пойму
@@ -14,6 +14,10 @@ public enum CommandsConstants {
     SUBSCRIBE_DESCRIPTION("Подписаться на игру"),
     UNSUBSCRIBE_NAME("unsubscribe"),
     UNSUBSCRIBE_DESCRIPTION("Отписаться от игры"),
+    UNSUBSCRIBE_ALL_NAME("unsubscribeAll"),
+    UNSUBSCRIBE_ALL_DESCRIPTION("Отписаться от всех игр"),
+    WANT_TO_PLAY_NAME("wantToPlay"),
+    WANT_TO_PLAY_DESCRIPTION("Подборка игр по параметру"),
     NO_SUBS("У вас пока нет подписок"),
     QUIT("Вы вышли!"),
     STOPPING_LINE("specialStoppingLineThatMightBeAnEnumOrAnotherSpecialObjectButIDon'tWantToDoThisKittensAreCute"),

@@ -1,14 +1,14 @@
-package BotCommands;
+package botCommands;
 
-import Entities.Title;
-import db.dbWorker;
+import entities.Title;
+import db.DBWorker;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
-import static BotCommands.CommandsConstants.MY_GAMES_DESCRIPTION;
-import static BotCommands.CommandsConstants.MY_GAMES_NAME;
+import static botCommands.CommandsConstants.MY_GAMES_DESCRIPTION;
+import static botCommands.CommandsConstants.MY_GAMES_NAME;
 
 public class MyGamesCommand extends Command {
     public MyGamesCommand() {
@@ -18,11 +18,12 @@ public class MyGamesCommand extends Command {
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
         var message = new SendMessage();
-        message.setText(dbWorker.getSubscriptions(user.getId()));
+        message.setChatId(chat.getId().toString());
+        message.setText(DBWorker.getSubscriptions(user.getId()));
         execute(absSender, message, user);
     }
 
-    private String getUserSubsMessage(Entities.User user) {
+    private String getUserSubsMessage(entities.User user) {
         var subs = new StringBuilder();
         if (user.getTitles().size() == 0)
             return CommandsConstants.NO_SUBS.toStringValue();

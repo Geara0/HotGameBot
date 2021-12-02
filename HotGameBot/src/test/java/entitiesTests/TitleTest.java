@@ -1,6 +1,6 @@
 package entitiesTests;
 
-import Entities.Title;
+import entities.Title;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

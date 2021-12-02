@@ -1,13 +1,13 @@
-package BotCommands;
+package botCommands;
 
-import db.dbWorker;
+import db.DBWorker;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
-import static BotCommands.CommandsConstants.SUBSCRIBE_DESCRIPTION;
-import static BotCommands.CommandsConstants.SUBSCRIBE_NAME;
+import static botCommands.CommandsConstants.SUBSCRIBE_DESCRIPTION;
+import static botCommands.CommandsConstants.SUBSCRIBE_NAME;
 
 public class SubscribeCommand extends Command {
     public SubscribeCommand() {
@@ -31,7 +31,7 @@ public class SubscribeCommand extends Command {
         message.setText("Здесь должны быть варианты подписки:");
         execute(absSender, message, user);
 
-        if (dbWorker.subscribeUser(user.getId(), title)) {
+        if (DBWorker.subscribeUser(user.getId(), title)) {
             message.setText(String.format("Вы успешно подписались на %s", title));
         } else {
             //TODO: Причины сбоя подписки

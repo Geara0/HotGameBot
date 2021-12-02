@@ -1,7 +1,7 @@
 package entitiesTests;
 
-import Entities.Title;
-import Entities.User;
+import entities.Title;
+import entities.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

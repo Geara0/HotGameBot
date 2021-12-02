@@ -1,7 +1,7 @@
 package commandsTests;
 
 import commands.*;
-import Entities.*;
+import entities.*;
 import org.junit.jupiter.api.*;
 
 import java.io.ByteArrayInputStream;

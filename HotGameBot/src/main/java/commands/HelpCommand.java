@@ -1,6 +1,6 @@
 package commands;
 
-import Entities.User;
+import entities.User;
 
 /**
  * Класс команды, возвращающей сообщение справки

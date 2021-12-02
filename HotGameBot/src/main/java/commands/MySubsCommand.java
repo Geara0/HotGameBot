@@ -1,7 +1,7 @@
 package commands;
 
-import Entities.Title;
-import Entities.User;
+import entities.Title;
+import entities.User;
 
 /**
  * Класс для команды, выводящей список подписок пользователя

@@ -1,6 +1,6 @@
 package notifications;
 
-import Entities.*;
+import entities.*;
 
 public class NotificationCreator {
     public static String create(Game game, Title titleUpdated) {

@@ -1,13 +1,13 @@
-package BotCommands;
+package botCommands;
 
-import db.dbWorker;
+import db.DBWorker;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
-import static BotCommands.CommandsConstants.UNSUBSCRIBE_DESCRIPTION;
-import static BotCommands.CommandsConstants.UNSUBSCRIBE_NAME;
+import static botCommands.CommandsConstants.UNSUBSCRIBE_DESCRIPTION;
+import static botCommands.CommandsConstants.UNSUBSCRIBE_NAME;
 
 public class UnsubscribeCommand extends Command {
     public UnsubscribeCommand() {
@@ -31,7 +31,7 @@ public class UnsubscribeCommand extends Command {
         message.setText("Здесь должны быть варианты подписки:");
         execute(absSender, message, user);
 
-        if (dbWorker.unsubscribeUser(user.getId(), title)) {
+        if (DBWorker.unsubscribeUser(user.getId(), title)) {
             message.setText(String.format("Вы успешно отписались от %s", title));
         } else {
             //TODO: Причины сбоя отписки

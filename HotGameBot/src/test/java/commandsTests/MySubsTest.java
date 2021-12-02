@@ -1,7 +1,7 @@
 package commandsTests;
 
 import commands.MySubsCommand;
-import Entities.User;
+import entities.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

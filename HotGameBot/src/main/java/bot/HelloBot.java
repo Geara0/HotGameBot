@@ -1,5 +1,6 @@
-import BotCommands.*;
-import org.telegram.telegrambots.bots.DefaultBotOptions;
+package bot;
+
+import botCommands.*;
 import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -19,11 +20,11 @@ public final class HelloBot extends TelegramLongPollingCommandBot {
         var helpCommand = new HelpCommand(this);
         register(helpCommand);
 
-        registerDefaultAction(((absSender, message)->{
+        registerDefaultAction(((absSender, message) -> {
             var text = new SendMessage();
             text.setText(String.format("Command not found: %s", message.getText()));
+            text.setChatId(message.getChatId().toString());
             try {
-                //TODO: Почему-то не видит userId
                 absSender.execute(text);
             } catch (TelegramApiException e) {
                 e.printStackTrace();

@@ -1,7 +1,7 @@
 package commandsTests;
 
 import commands.QuitCommand;
-import Entities.User;
+import entities.User;
 import org.junit.jupiter.api.*;
 
 import java.io.ByteArrayOutputStream;

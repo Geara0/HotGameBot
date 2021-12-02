@@ -1,6 +1,6 @@
 package db;
 
-public class dbWorker {
+public class DBWorker {
     //TODO: Получить подписки с бд
     public static String getSubscriptions(long userId) {
         return "not implemented";
@@ -8,6 +8,10 @@ public class dbWorker {
 
     //TODO: Подписать пользователя
     public static boolean subscribeUser(long userId, String title) {
+        return false;
+    }
+
+    public static boolean unsubscribeAllUser(long userId) {
         return false;
     }
 
