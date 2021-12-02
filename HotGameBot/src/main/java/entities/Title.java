@@ -126,8 +126,7 @@ public class Title {
     }
 
     @Override
-    public String toString() {
-        return String.format("%s Цена - %d\r\n%s\r\n", getName(), getPrice(), getBuyLink());
+    public String toString() {return String.format("%s Цена - %d\r\n%s\r\n%s\r\n", getName(), getPrice(), getBuyLink(),getLink());
     }
 
     public String getPublisher() {
