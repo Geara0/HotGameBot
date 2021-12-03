@@ -1,5 +1,8 @@
 package HotGameParsing;
 
 public enum ReportState {
-    BAD_URL;
+    DEFAULT,
+    OK,
+    BAD_URL,
+    BAD_NAME
 }

@@ -14,18 +14,42 @@ import java.util.GregorianCalendar;
 
 
 public class HotGameParser{
+    /**
+     * Поле с информацией о завершении процесса парсинга, хранит {@link ReportState}
+     */
     private ReportState report;
 
+    /**
+     * Конструктор, устанавливает {@link HotGameParser#report} в начальное положение
+     */
+    public HotGameParser(){
+        report=ReportState.DEFAULT;
+    }
+
+    /**
+     * Геттер для {@link HotGameParser#report}
+     * @return {@link HotGameParser#report}
+     */
     public ReportState getReport(){
         return report;
     }
 
-    public ArrayList<Title> parseTitle(String link) {
-        if(link.contains("https://"))
-            return getTitleInfoSelect(link);
-        else return getTitlesByName(link);
+    /**
+     * Метод осуществляющий парсинг тайтла с сайта Хот-Гейм
+     * @param text текст, содержащий имя тайтла или ссылку на тайтл
+     * @return список всех найденных по входным данным тайтлов
+     */
+    public ArrayList<Title> parseTitle(String text) {
+        if(text.contains("https://"))
+            return getTitleInfoSelect(text);
+        else return getTitlesByName(text);
     }
 
+    /**
+     * Парсит первый блок результатов на странице поиска по name
+     * @param name имя тайтла для поиска
+     * @return список найденных тайтлов
+     */
     private ArrayList<Title> getTitlesByName(String name) {
         ArrayList<Title> result = new ArrayList<>();
         String searchName = name.strip().toLowerCase().replaceAll("[^a-zA-Z]","");
@@ -43,8 +67,9 @@ public class HotGameParser{
         } catch (IOException e) {
             e.printStackTrace();
         } catch (URIReferenceException e){
-            report = ReportState.BAD_URL;
+            report = ReportState.BAD_NAME;
         }
+        setReportOK();
         return result;
     }
 
@@ -80,6 +105,7 @@ public class HotGameParser{
         } catch (IllegalArgumentException e){
             System.out.println("AAAAAa");
         }
+        setReportOK();
         return result;
     }
 
@@ -107,5 +133,9 @@ public class HotGameParser{
 
     private boolean isMultiplayer(String mode) {
         return !"Режим игры: singleplayer".equals(mode);
+    }
+
+    private void setReportOK(){
+        report = report.equals(ReportState.DEFAULT) ? ReportState.OK : report;
     }
 }
