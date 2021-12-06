@@ -23,7 +23,7 @@ public class HotGameParser implements IParser {
      * Конструктор, устанавливает {@link HotGameParser#report} в начальное положение
      */
     public HotGameParser(){
-        report=ReportState.DEFAULT;
+        report=ReportState.INITIAL;
     }
 
     /**
@@ -79,12 +79,12 @@ public class HotGameParser implements IParser {
                 var href = searchResults.child(i).selectFirst("a").attr("href");
                 result.add(getTitleInfoSelect("https://hot-game.info".concat(href)));
             }
+            setReportOK();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (URIReferenceException e){
             report = ReportState.BAD_NAME;
         }
-        setReportOK();
         return result;
     }
 
@@ -116,13 +116,13 @@ public class HotGameParser implements IParser {
             var date = parseDate(releaseDate);
             var isMultiplayer = isMultiplayer(mode);
             result = new Title(name, link, bestLink, Integer.parseInt(bestPrice), publisher, developer, date, genres, isMultiplayer,description);
+            setReportOK();
         } catch (IOException e) {
             report = ReportState.BAD_URL;
         } catch (NullPointerException | NumberFormatException e){
             //ignored
             //тайтлы на отсчете и дата "/" откуда-то
         }
-        setReportOK();
         return result;
     }
 
@@ -153,6 +153,6 @@ public class HotGameParser implements IParser {
     }
 
     private void setReportOK(){
-        report = report.equals(ReportState.DEFAULT) ? ReportState.OK : report;
+        report = report.equals(ReportState.INITIAL) ? ReportState.OK : report;
     }
 }
