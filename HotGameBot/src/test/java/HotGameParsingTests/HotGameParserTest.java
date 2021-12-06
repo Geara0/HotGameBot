@@ -13,7 +13,7 @@ import java.time.Instant;
 import java.util.Timer;
 
 public class HotGameParserTest {
-    String link = "https://hot-game.info/game/Control-Ultimate-Edition";
+    String link = "https://hot-game.info/game/Fallout-76";
     String goodName = "control";
     String badName = "control deluxe editiob";
     HotGameParser parser = new HotGameParser();

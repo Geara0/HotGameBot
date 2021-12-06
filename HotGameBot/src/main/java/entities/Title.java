@@ -9,6 +9,8 @@ import java.util.Date;
  * @version 1.0
  */
 public class Title {
+
+    private String description;
     /**
      * Поле названия
      */
@@ -67,7 +69,7 @@ public class Title {
      * @param multiplayer является ли мултиплеерной
      */
     public Title(String name, String link, String buyLink, int price, String publisher, String developer,
-                 Date releaseDate, String[] genres, boolean multiplayer) {
+                 Date releaseDate, String[] genres, boolean multiplayer, String description) {
         this.name = name;
         this.link = link;
         this.buyLink = buyLink;
@@ -77,6 +79,7 @@ public class Title {
         this.releaseDate = releaseDate;
         this.genres = genres;
         this.isMultiplayer = multiplayer;
+        this.description = description;
     }
 
     /**
@@ -148,4 +151,6 @@ public class Title {
     public boolean isMultiplayer() {
         return isMultiplayer;
     }
+
+    public String getDescription(){ return description;}
 }

@@ -5,6 +5,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import javax.validation.constraints.Null;
 import javax.xml.crypto.URIReferenceException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -52,7 +53,7 @@ public class HotGameParser{
      */
     private ArrayList<Title> getTitlesByName(String name) {
         ArrayList<Title> result = new ArrayList<>();
-        String searchName = name.strip().toLowerCase().replaceAll("[^a-zA-Z]","");
+        String searchName = name.strip().toLowerCase(); //replaceAll("[^a-zA-Z]","");
         String searchUrl = "https://hot-game.info/q=".concat(searchName);
         try {
             Document doc = Jsoup.connect(searchUrl).get();
@@ -86,6 +87,7 @@ public class HotGameParser{
             var genres = gameInfo.selectFirst("div.game-genres").getElementsByAttributeValueStarting("class", "hidden-link genre").text().split(" ");
             var mode = gameInfo.selectFirst("div.game-genres > div > span:nth-child(1)").attributes().get("title");
             var bestMarket = doc.selectFirst("#prices_block > div.game-prices-wrap > div.game-prices-list.game-prices-new > div:nth-child(1)");
+            var description = doc.selectFirst("body > div.container.content-container > section.game.clearfix > div.right-side > div.hg-block.description > div:nth-child(2)").text();
             var length = bestMarket.children().size();
             var price = length == 2 ? bestMarket.child(1).selectFirst("div > div.game-price"):
                     bestMarket.child(2).selectFirst("div > div.game-price");
@@ -99,11 +101,12 @@ public class HotGameParser{
             }
             var date = parseDate(releaseDate);
             var isMultiplayer = isMultiplayer(mode);
-            result.add(new Title(name, link, bestLink, Integer.parseInt(bestPrice), publisher, developer, date, genres, isMultiplayer));
+            result.add(new Title(name, link, bestLink, Integer.parseInt(bestPrice), publisher, developer, date, genres, isMultiplayer,description));
         } catch (IOException e) {
             report = ReportState.BAD_URL;
-        } catch (IllegalArgumentException e){
-            System.out.println("AAAAAa");
+        } catch (NullPointerException | NumberFormatException e){
+            //ignored
+            //тайтлы на отсчете и дата "/" откуда-то
         }
         setReportOK();
         return result;
