@@ -1,11 +1,10 @@
-package HotGameParsing;
+package parsing;
 
 import entities.Title;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import javax.validation.constraints.Null;
 import javax.xml.crypto.URIReferenceException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 
-public class HotGameParser{
+public class HotGameParser implements IParser {
     /**
      * Поле с информацией о завершении процесса парсинга, хранит {@link ReportState}
      */
@@ -37,13 +36,28 @@ public class HotGameParser{
 
     /**
      * Метод осуществляющий парсинг тайтла с сайта Хот-Гейм
-     * @param text текст, содержащий имя тайтла или ссылку на тайтл
+     * @param name текст, содержащий имя тайтла
      * @return список всех найденных по входным данным тайтлов
      */
-    public ArrayList<Title> parseTitle(String text) {
-        if(text.contains("https://"))
-            return getTitleInfoSelect(text);
-        else return getTitlesByName(text);
+    public ArrayList<Title> parseTitlesByName(String name) {
+        if(name.contains("https://")){
+            report = ReportState.BAD_NAME;
+            return new ArrayList<>();
+        }
+        else return getTitlesByName(name);
+    }
+
+    @Override
+    public String[] getRecommendations(String... params) {
+        return new String[0];
+    }
+
+    public Title parseTitleByLink(String link){
+        if(!link.contains("https://")){
+            report = ReportState.BAD_URL;
+            return new Title();
+        }
+        else return getTitleInfoSelect(link);
     }
 
     /**
@@ -63,7 +77,7 @@ public class HotGameParser{
             int childrenCount = searchResults.children().size();
             for (var i=0;i<childrenCount;i++) {
                 var href = searchResults.child(i).selectFirst("a").attr("href");
-                result.addAll(getTitleInfoSelect("https://hot-game.info".concat(href)));
+                result.add(getTitleInfoSelect("https://hot-game.info".concat(href)));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -74,8 +88,8 @@ public class HotGameParser{
         return result;
     }
 
-    private ArrayList<Title> getTitleInfoSelect(String link) {
-        ArrayList<Title> result = new ArrayList<>();
+    private Title getTitleInfoSelect(String link) {
+        Title result = new Title();
         try {
             Document doc = Jsoup.connect(link).get();
             var gameInfo = doc.selectFirst("body > div.container.content-container > section.game.clearfix > aside > div.hg-block.short-game-description > div");
@@ -101,7 +115,7 @@ public class HotGameParser{
             }
             var date = parseDate(releaseDate);
             var isMultiplayer = isMultiplayer(mode);
-            result.add(new Title(name, link, bestLink, Integer.parseInt(bestPrice), publisher, developer, date, genres, isMultiplayer,description));
+            result = new Title(name, link, bestLink, Integer.parseInt(bestPrice), publisher, developer, date, genres, isMultiplayer,description);
         } catch (IOException e) {
             report = ReportState.BAD_URL;
         } catch (NullPointerException | NumberFormatException e){
