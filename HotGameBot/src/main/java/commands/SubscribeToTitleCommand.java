@@ -1,6 +1,6 @@
 package commands;
 
-import entities.LevenshteinCalculator;
+import entities.Levenshtein.LevenshteinCalculator;
 import entities.Title;
 import entities.User;
 
