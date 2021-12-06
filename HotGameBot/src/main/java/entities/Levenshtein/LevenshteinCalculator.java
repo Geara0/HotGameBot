@@ -33,7 +33,7 @@ public class LevenshteinCalculator {
     }
 
     public String getClosestString(Set<String> stringSet, String original){
-        return "Больше не поддерживается";
+        return search(stringSet,original).get(0).text;
     }
 
     /**
@@ -94,7 +94,7 @@ public class LevenshteinCalculator {
         }
 
         result.sort(Pair::compareTo);
-        return result.subList(0,7);
+        return result;
     }
 
     private double getRangePhrase(AnalizeObject source, AnalizeObject target){
