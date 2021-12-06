@@ -1,4 +1,4 @@
-package HotGameParsing;
+package parsing;
 
 public enum ReportState {
     DEFAULT,
