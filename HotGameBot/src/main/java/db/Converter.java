@@ -15,7 +15,17 @@ public class Converter {
         var titles = new ArrayList<Title>();
         try {
             while (resultSet.next()) {
-                titles.add(new Title(resultSet.getString("title"), resultSet.getString("link"), resultSet.getString("buy_link"), Integer.parseInt(resultSet.getString("price")), resultSet.getString("publisher"), resultSet.getString("developer"), resultSet.getDate("release_date"), NormalizeArray(resultSet.getArray("genres")), resultSet.getBoolean("is_multiplayer"), resultSet.getString("description"), resultSet.getBlob("picture_jpeg")));
+                titles.add(new Title(
+                        resultSet.getString("title"),
+                        resultSet.getString("link"),
+                        resultSet.getString("buy_link"),
+                        Float.parseFloat(resultSet.getString("price")),
+                        resultSet.getString("publisher"), resultSet.getString("developer"),
+                        resultSet.getDate("release_date"),
+                        NormalizeArray(resultSet.getArray("genres")),
+                        resultSet.getBoolean("is_multiplayer"),
+                        resultSet.getString("description"),
+                        resultSet.getBlob("picture_jpeg")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
