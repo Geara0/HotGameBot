@@ -11,9 +11,7 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) {
-        //startBot();
-        db();
-
+        startBot();
 
         //Scanner scanner = new Scanner(System.in);
         //ConsoleGamesService bot = new ConsoleGamesService();
@@ -28,20 +26,6 @@ public class Main {
         //}
     }
 
-    private static void db() {
-        var jdbcURL = "jdbc:postgresql://localhost:5432/postgres";
-        var userName = "postgres";
-        var password = "ChPs2345";
-        try {
-            var connection = DriverManager.getConnection(jdbcURL, userName, password);
-            String sql = "INSERT INTO users (id, subscriptions)" +
-                    "VALUES ('12', '\"1\"=>null, \"2\"=>null');";
-            var statement = connection.createStatement();
-            statement.execute(sql);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 
     private static void startBot() {
         try {

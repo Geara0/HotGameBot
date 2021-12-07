@@ -1,8 +1,10 @@
 package bot;
 
 import botCommands.*;
+import db.DBWorker;
 import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -45,6 +47,7 @@ public final class HelloBot extends TelegramLongPollingCommandBot {
 
     @Override
     public void processNonCommandUpdate(Update update) {
+        if (update.hasCallbackQuery()) processCallbackUpdate(update.getCallbackQuery());
         if (!(update.hasMessage() && update.getMessage().hasText())) return;
 
         var msg = update.getMessage();
@@ -52,6 +55,21 @@ public final class HelloBot extends TelegramLongPollingCommandBot {
         String userName = getUserName(msg);
         var answer = String.format("Hi, %s", userName);
         sendAnswer(chatId, userName, answer);
+
+    }
+
+    private void processCallbackUpdate(CallbackQuery query){
+        //TODO: коллбек по спецсимволу
+        var db = new DBWorker();
+        var title = db.getTitle(query.getData());
+        var answer = new SendMessage();
+        answer.setText(title.toString());
+        answer.setChatId(query.getMessage().getChatId().toString());
+        try {
+            execute(answer);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
     }
 
     private String getUserName(Message msg) {

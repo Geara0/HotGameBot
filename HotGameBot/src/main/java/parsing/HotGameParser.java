@@ -22,29 +22,30 @@ public class HotGameParser implements IParser {
     /**
      * Конструктор, устанавливает {@link HotGameParser#report} в начальное положение
      */
-    public HotGameParser(){
-        report=ReportState.INITIAL;
+    public HotGameParser() {
+        report = ReportState.INITIAL;
     }
 
     /**
      * Геттер для {@link HotGameParser#report}
+     *
      * @return {@link HotGameParser#report}
      */
-    public ReportState getReport(){
+    public ReportState getReport() {
         return report;
     }
 
     /**
      * Метод осуществляющий парсинг тайтла с сайта Хот-Гейм
+     *
      * @param name текст, содержащий имя тайтла
      * @return список всех найденных по входным данным тайтлов
      */
     public ArrayList<Title> parseTitlesByName(String name) {
-        if(name.contains("https://")){
+        if (name.contains("https://")) {
             report = ReportState.BAD_NAME;
             return new ArrayList<>();
-        }
-        else return getTitlesByName(name);
+        } else return getTitlesByName(name);
     }
 
     @Override
@@ -52,16 +53,16 @@ public class HotGameParser implements IParser {
         return new String[0];
     }
 
-    public Title parseTitleByLink(String link){
-        if(!link.contains("https://")){
+    public Title parseTitleByLink(String link) {
+        if (!link.contains("https://")) {
             report = ReportState.BAD_URL;
             return new Title();
-        }
-        else return getTitleInfoSelect(link);
+        } else return getTitleInfoSelect(link);
     }
 
     /**
      * Парсит первый блок результатов на странице поиска по name
+     *
      * @param name имя тайтла для поиска
      * @return список найденных тайтлов
      */
@@ -72,17 +73,17 @@ public class HotGameParser implements IParser {
         try {
             Document doc = Jsoup.connect(searchUrl).get();
             Element searchResults = doc.selectFirst("body > div.container.content-container > section.yui3-cssreset.result-block.content-table");
-            if(searchResults.child(0).className().equals("no-results"))
+            if (searchResults.child(0).className().equals("no-results"))
                 throw new URIReferenceException();
             int childrenCount = searchResults.children().size();
-            for (var i=0;i<childrenCount;i++) {
+            for (var i = 0; i < childrenCount; i++) {
                 var href = searchResults.child(i).selectFirst("a").attr("href");
                 result.add(getTitleInfoSelect("https://hot-game.info".concat(href)));
             }
             setReportOK();
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (URIReferenceException e){
+        } catch (URIReferenceException e) {
             report = ReportState.BAD_NAME;
         }
         return result;
@@ -103,23 +104,23 @@ public class HotGameParser implements IParser {
             var bestMarket = doc.selectFirst("#prices_block > div.game-prices-wrap > div.game-prices-list.game-prices-new > div:nth-child(1)");
             var description = doc.selectFirst("body > div.container.content-container > section.game.clearfix > div.right-side > div.hg-block.description > div:nth-child(2)").text();
             var length = bestMarket.children().size();
-            var price = length == 2 ? bestMarket.child(1).selectFirst("div > div.game-price"):
+            var price = length == 2 ? bestMarket.child(1).selectFirst("div > div.game-price") :
                     bestMarket.child(2).selectFirst("div > div.game-price");
             var bestLink = bestMarket.child(0).attributes().get("data-href");
             String bestPrice;
-            if("нет в наличии".equals(price.text())){
+            if ("нет в наличии".equals(price.text())) {
                 bestPrice = "0";
-                bestLink+="\r\nСмотрите по ссылке чтобы узнать о наличии";
-            } else{
+                bestLink += "\r\nСмотрите по ссылке чтобы узнать о наличии";
+            } else {
                 bestPrice = price.selectFirst("span").text();
             }
             var date = parseDate(releaseDate);
             var isMultiplayer = isMultiplayer(mode);
-            result = new Title(name, link, bestLink, Integer.parseInt(bestPrice), publisher, developer, date, genres, isMultiplayer,description);
+            result = new Title(name, link, bestLink, Integer.parseInt(bestPrice), publisher, developer, date, genres, isMultiplayer, description, null);
             setReportOK();
         } catch (IOException e) {
             report = ReportState.BAD_URL;
-        } catch (NullPointerException | NumberFormatException e){
+        } catch (NullPointerException | NumberFormatException e) {
             //ignored
             //тайтлы на отсчете и дата "/" откуда-то
         }
@@ -152,7 +153,7 @@ public class HotGameParser implements IParser {
         return !"Режим игры: singleplayer".equals(mode);
     }
 
-    private void setReportOK(){
+    private void setReportOK() {
         report = report.equals(ReportState.INITIAL) ? ReportState.OK : report;
     }
 }

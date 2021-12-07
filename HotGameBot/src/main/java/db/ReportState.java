@@ -4,8 +4,8 @@ public enum ReportState {
     INITIAL("БД в начальном положении"),
     OK("Все хорошо"),
     BAD_URL("Вы ввели некорректную ссылку"),
-    BAD_NAME("Вы ввели некорректное название");
-
+    BAD_NAME("Вы ввели некорректное название"),
+    FAILURE("Проблема на нашей стороне");
 
     private final String value;
 

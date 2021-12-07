@@ -1,5 +1,6 @@
 package botCommands;
 
+import db.DBWorker;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
@@ -15,6 +16,8 @@ public class StartCommand extends Command {
 
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
+        var db = new DBWorker();
+        db.addUser(user.getId());
         var message = new SendMessage();
         message.setChatId(chat.getId().toString());
         message.setText(String.format("Hi, %s!", user.getUserName()));

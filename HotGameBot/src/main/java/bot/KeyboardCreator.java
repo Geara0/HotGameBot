@@ -7,11 +7,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class KeyboardCreator {
-    public static InlineKeyboardMarkup createKeyboardMarkUp(String... buttons) {
+    public static InlineKeyboardMarkup createKeyboardMarkUp(String[] buttons) {
         return createKeyboardMarkUp(1, buttons);
     }
 
-    public static InlineKeyboardMarkup createKeyboardMarkUp(int columnCount, String... buttonNames) {
+    public static InlineKeyboardMarkup createKeyboardMarkUp(String[] buttons, String button) {
+        var newButtons = new String[buttons.length + 1];
+        System.arraycopy(buttons, 0, newButtons, 0, buttons.length);
+        newButtons[buttons.length] = button;
+        return createKeyboardMarkUp(1, newButtons);
+    }
+
+    public static InlineKeyboardMarkup createKeyboardMarkUp(int columnCount, String[] buttonNames) {
         List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
         var keyboardRow = new ArrayList<InlineKeyboardButton>();
         var count = 0;
@@ -33,6 +40,7 @@ public class KeyboardCreator {
     private static InlineKeyboardButton createButton(String name) {
         var inlineKeyboardButton = new InlineKeyboardButton();
         inlineKeyboardButton.setText(name);
+        //TODO: setCallbackData со спецсимволом
         inlineKeyboardButton.setCallbackData(name);
         return inlineKeyboardButton;
     }

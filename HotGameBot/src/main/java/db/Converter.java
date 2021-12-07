@@ -15,23 +15,36 @@ public class Converter {
         var titles = new ArrayList<Title>();
         try {
             while (resultSet.next()) {
-                titles.add(new Title(
-                        resultSet.getString("title"),
-                        resultSet.getString("link"),
-                        resultSet.getString("buy_link"),
-                        Integer.parseInt(resultSet.getString("price")),
-                        resultSet.getString("publisher"),
-                        resultSet.getString("developer"),
-                        resultSet.getDate("release_date"),
-                        NormalizeArray(resultSet.getArray("genres")),
-                        resultSet.getBoolean("is_multiplayer"),
-                        resultSet.getString("description"),
-                        resultSet.getBlob("picture_jpeg")));
+                titles.add(new Title(resultSet.getString("title"), resultSet.getString("link"), resultSet.getString("buy_link"), Integer.parseInt(resultSet.getString("price")), resultSet.getString("publisher"), resultSet.getString("developer"), resultSet.getDate("release_date"), NormalizeArray(resultSet.getArray("genres")), resultSet.getBoolean("is_multiplayer"), resultSet.getString("description"), resultSet.getBlob("picture_jpeg")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return titles;
+    }
+
+    public static String[] ConvertStringRows(ResultSet resultSet, String column) {
+        var titles = new ArrayList<String>();
+        try {
+            while (resultSet.next()) {
+                titles.add(resultSet.getString(column));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return titles.toArray(new String[0]);
+    }
+
+    public static Long[] ConvertLongRows(ResultSet resultSet, String column) {
+        var titles = new ArrayList<Long>();
+        try {
+            while (resultSet.next()) {
+                titles.add(resultSet.getLong(column));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return titles.toArray(new Long[0]);
     }
 
     public static <T> T[] ArrayToSet(Array array, Class<T> tClass) {
@@ -44,10 +57,17 @@ public class Converter {
         return set;
     }
 
-    public static <T> Set<T> HstoreToSet(ResultSet resultSet, Class<T> tClass) {
-        Set<T> set;
-        var map = (Map<T, String>) resultSet;
-        set = map.keySet();
+    public static <T> Set<T> HstoreToSet(ResultSet resultSet, String column, Class<T> tClass) {
+        Set<T> set = null;
+        Map<T, String> map = null;
+        try {
+            if (resultSet.next()) {
+                map = (Map<T, String>) resultSet.getObject(column);
+                set = map.keySet();
+            }
+        } catch (SQLException | NullPointerException e) {
+            e.printStackTrace();
+        }
         return set;
     }
 

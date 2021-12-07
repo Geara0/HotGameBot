@@ -1,6 +1,6 @@
 package entities.Levenshtein;
 
-import org.springframework.lang.NonNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class Pair implements Comparable<Pair> {
     public String text;
