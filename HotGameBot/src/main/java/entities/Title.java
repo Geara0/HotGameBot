@@ -29,7 +29,7 @@ public class Title {
     /**
      * Поле цены
      */
-    private final int price;
+    private final float price;
     private String publisher;
     private String developer;
     private Date releaseDate;
@@ -49,7 +49,7 @@ public class Title {
      * @param buyLink {@link Title#buyLink}
      * @param price   {@link Title#price}
      */
-    public Title(String name, String link, String buyLink, int price) {
+    public Title(String name, String link, String buyLink, float price) {
         this.name = name;
         this.link = link;
         this.buyLink = buyLink;
@@ -69,7 +69,7 @@ public class Title {
      * @param genres      список жанров
      * @param multiplayer является ли мултиплеерной
      */
-    public Title(String name, String link, String buyLink, int price, String publisher, String developer,
+    public Title(String name, String link, String buyLink, float price, String publisher, String developer,
                  Date releaseDate, String[] genres, boolean multiplayer, String description, Blob pictureJpeg) {
         this.name = name;
         this.link = link;
@@ -123,7 +123,7 @@ public class Title {
      *
      * @return {@link Title#price}
      */
-    public int getPrice() {
+    public float getPrice() {
         return price;
     }
 
@@ -133,7 +133,7 @@ public class Title {
 
     @Override
     public String toString() {
-        return String.format("%s Цена - %d\r\n%s\r\n%s\r\n", getName(), getPrice(), getBuyLink(), getLink());
+        return String.format("%s Цена - %s\r\n%s\r\n%s\r\n", getName(), getPrice(), getBuyLink(), getLink());
     }
 
     public String getPublisher() {
@@ -158,5 +158,31 @@ public class Title {
 
     public String getDescription() {
         return description;
+    }
+
+    public String toDB() {
+        var genres = new StringBuilder("{");
+        for (var genre : getGenres()) genres.append(genre).append(", ");
+        if (genres.length() > 1)
+            genres.delete(genres.length() - 2, genres.length() - 1);
+        genres.append("}");
+        var params = new String[]{getName(),
+                getLink(),
+                getBuyLink(),
+                String.valueOf(getPrice()),
+                getDeveloper(),
+                getPublisher(),
+                genres.toString(),
+                getDescription(),
+                null,
+                String.valueOf(getReleaseDate()),
+                isMultiplayer() ? "true" : "false"};
+        var result = new StringBuilder();
+        for (var param : params) {
+            if (param == null) result.append("null, ");
+            else result.append("'").append(param).append("', ");
+        }
+        result.delete(result.length() - 2, result.length() - 1);
+        return result.toString();
     }
 }
