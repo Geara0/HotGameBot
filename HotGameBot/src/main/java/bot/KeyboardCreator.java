@@ -7,18 +7,65 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class KeyboardCreator {
-    public static InlineKeyboardMarkup createKeyboardMarkUp(String[] buttons) {
+    public static InlineKeyboardMarkup createKeyboardMarkUp(Iterable<String> buttons) {
         return createKeyboardMarkUp(1, buttons);
     }
 
-    public static InlineKeyboardMarkup createKeyboardMarkUp(String[] buttons, String button) {
-        var newButtons = new String[buttons.length + 1];
-        System.arraycopy(buttons, 0, newButtons, 0, buttons.length);
-        newButtons[buttons.length] = button;
-        return createKeyboardMarkUp(1, newButtons);
+    public static InlineKeyboardMarkup createdbKeyboardMarkUp(int columnCount, Iterable<String> buttonNames) {
+        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
+        var keyboardRow = new ArrayList<InlineKeyboardButton>();
+        var count = 0;
+        for (var buttonName : buttonNames) {
+            if (count >= columnCount) {
+                keyboard.add(new ArrayList<>(keyboardRow));
+                keyboardRow.clear();
+                count = 0;
+            }
+            keyboardRow.add((createdbButton(buttonName)));
+            count++;
+        }
+        if (!keyboardRow.isEmpty()) {
+            keyboard.add(keyboardRow);
+        }
+        return new InlineKeyboardMarkup(keyboard);
     }
 
-    public static InlineKeyboardMarkup createKeyboardMarkUp(int columnCount, String[] buttonNames) {
+    private static InlineKeyboardButton createdbButton(String name) {
+        var inlineKeyboardButton = new InlineKeyboardButton();
+        inlineKeyboardButton.setText(name);
+        if (name.contains("Это не то"))
+            inlineKeyboardButton.setCallbackData("##".concat(name));
+        else inlineKeyboardButton.setCallbackData("$$".concat(name));
+        return inlineKeyboardButton;
+    }
+
+    public static InlineKeyboardMarkup createParsedKeyboardMarkUp(int columnCount, Iterable<String> buttonNames) {
+        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
+        var keyboardRow = new ArrayList<InlineKeyboardButton>();
+        var count = 0;
+        for (var buttonName : buttonNames) {
+            if (count >= columnCount) {
+                keyboard.add(new ArrayList<>(keyboardRow));
+                keyboardRow.clear();
+                count = 0;
+            }
+            keyboardRow.add((createParsedButton(buttonName)));
+            count++;
+        }
+        if (!keyboardRow.isEmpty()) {
+            keyboard.add(keyboardRow);
+        }
+        return new InlineKeyboardMarkup(keyboard);
+    }
+
+    private static InlineKeyboardButton createParsedButton(String name) {
+        var inlineKeyboardButton = new InlineKeyboardButton();
+        inlineKeyboardButton.setText(name);
+        inlineKeyboardButton.setCallbackData("%%".concat(name));
+        return inlineKeyboardButton;
+    }
+
+    public static InlineKeyboardMarkup createKeyboardMarkUp(int columnCount, Iterable<String> buttonNames) {
         List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
         var keyboardRow = new ArrayList<InlineKeyboardButton>();
         var count = 0;
@@ -40,10 +87,7 @@ public class KeyboardCreator {
     private static InlineKeyboardButton createButton(String name) {
         var inlineKeyboardButton = new InlineKeyboardButton();
         inlineKeyboardButton.setText(name);
-        //TODO: setCallbackData со спецсимволом
-        if(name.equals("Это не то, чего я хочу"))
-            inlineKeyboardButton.setCallbackData("&&".concat(name));
-        else inlineKeyboardButton.setCallbackData(name);
+        inlineKeyboardButton.setCallbackData(name);
         return inlineKeyboardButton;
     }
 }
