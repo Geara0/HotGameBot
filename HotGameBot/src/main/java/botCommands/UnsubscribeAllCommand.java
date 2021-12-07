@@ -13,7 +13,7 @@ import static botCommands.CommandsConstants.UNSUBSCRIBE_ALL_NAME;
 
 
 public class UnsubscribeAllCommand extends Command {
-    public UnsubscribeAllCommand(String commandIdentifier, String description) {
+    public UnsubscribeAllCommand() {
         super(UNSUBSCRIBE_ALL_NAME.toStringValue(), UNSUBSCRIBE_ALL_DESCRIPTION.toStringValue());
     }
 

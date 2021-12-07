@@ -30,7 +30,6 @@ public class UnsubscribeCommand extends Command {
         }
 
         //TODO: KeyboardMarkup с вариантами от чего отписаться
-        message.setText("Здесь должны быть варианты подписки:");
         execute(absSender, message, user);
 
         IDB db = new DBWorker();

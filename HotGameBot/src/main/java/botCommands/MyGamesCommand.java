@@ -9,6 +9,8 @@ import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
+import java.util.Arrays;
+
 import static botCommands.CommandsConstants.MY_GAMES_DESCRIPTION;
 import static botCommands.CommandsConstants.MY_GAMES_NAME;
 
@@ -22,7 +24,7 @@ public class MyGamesCommand extends Command {
         var message = new SendMessage();
         IDB db = new DBWorker();
         message.setChatId(chat.getId().toString());
-        var subscriptions = db.getSubscriptions(user.getId());
+        var subscriptions = Arrays.asList(db.getSubscriptions(user.getId()));
         var keyboard = KeyboardCreator.createKeyboardMarkUp(subscriptions);
         message.setText("Вы подписаны на:");
         message.setReplyMarkup(keyboard);

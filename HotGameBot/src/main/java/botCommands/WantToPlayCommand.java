@@ -9,6 +9,8 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
 import parsing.HotGameParser;
 import parsing.IParser;
 
+import java.util.ArrayList;
+
 import static botCommands.CommandsConstants.WANT_TO_PLAY_DESCRIPTION;
 import static botCommands.CommandsConstants.WANT_TO_PLAY_NAME;
 
@@ -27,8 +29,8 @@ public class WantToPlayCommand extends Command {
         if (strings != null && strings.length >= 1) {
             message.setText("По заданным параметрам рекомендуем:");
             var titles = parser.getRecommendations();
-            var titleNames = new String[titles.size()];
-            for (var i = 0; i < titleNames.length; i++) titleNames[i] = titles.get(i).getName();
+            var titleNames = new ArrayList<String>(titles.size());
+            for (entities.Title title : titles) titleNames.add(title.getName());
             var keyboard = KeyboardCreator.createKeyboardMarkUp(titleNames);
             message.setReplyMarkup(keyboard);
         } else {
