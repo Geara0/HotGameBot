@@ -12,7 +12,9 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
 import parsing.HotGameParser;
 import parsing.IParser;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static botCommands.CommandsConstants.SUBSCRIBE_DESCRIPTION;
 import static botCommands.CommandsConstants.SUBSCRIBE_NAME;
@@ -36,23 +38,26 @@ public class SubscribeCommand extends Command {
         }
 
         IDB db = new DBWorker();
-        var closest = db.getClosest(title);
-        var keyboard = KeyboardCreator.createKeyboardMarkUp(closest, "Это не то, чего я хочу");
+        var closest = new ArrayList<>(Arrays.asList(db.getClosest(title)));
+        closest.add(String.format("Это не то '%s'", title));
+        var keyboard = KeyboardCreator.createdbKeyboardMarkUp(1, closest);
         if (db.subscribeUser(user.getId(), title) == ReportState.OK) {
             message.setText(String.format("Вы успешно подписались на %s", title));
         } else {
-            IParser parser = new HotGameParser();
-            var titles = parser.parseTitlesByName(title);
-            if (parser.getReport() == parsing.ReportState.OK) {
-                var names = new ArrayList<String>(titles.size());
-                for (var e : titles) names.add(e.getName());
-                keyboard = KeyboardCreator.createKeyboardMarkUp(names.toArray(new String[0]));
-                message.setText("Мы нашли несколько вариантов по вашему запросу");
-                message.setReplyMarkup(keyboard);
-            } else {
-                message.setText(String.format("Произошла ошибка, вы не смогли подписаться на %s по причине: %s",
-                        title, parser.getReport().toStringValue()));
-            }
+            message.setText("Мы нашли несколько вариантов по вашему запросу");
+            message.setReplyMarkup(keyboard);
+            //IParser parser = new HotGameParser();
+            //var titles = parser.parseTitlesByName(title);
+            //if (parser.getReport() == parsing.ReportState.OK) {
+            //    var names = new ArrayList<String>(titles.size());
+            //    for (var e : titles) names.add(e.getName());
+            //    keyboard = KeyboardCreator.createSpecialKeyboardMarkUp(1, names.toArray(new String[0]));
+            //    message.setText("Мы нашли несколько вариантов по вашему запросу");
+            //    message.setReplyMarkup(keyboard);
+            //} else {
+            //    message.setText(String.format("Произошла ошибка, вы не смогли подписаться на %s по причине: %s",
+            //            title, parser.getReport().toStringValue()));
+            //}
         }
         execute(absSender, message, user);
     }
