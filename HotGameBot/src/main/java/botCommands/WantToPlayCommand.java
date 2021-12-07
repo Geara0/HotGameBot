@@ -26,9 +26,10 @@ public class WantToPlayCommand extends Command {
         message.setChatId(chat.getId().toString());
         new KeyboardRow();
         IParser parser = new HotGameParser();
+        ///wanttoplay year=2010,2013 price=0,100
         if (strings != null && strings.length >= 1) {
             message.setText("По заданным параметрам рекомендуем:");
-            var titles = parser.getRecommendations();
+            var titles = parser.getRecommendations(strings);
             var titleNames = new ArrayList<String>(titles.size());
             for (entities.Title title : titles) titleNames.add(title.getName());
             var keyboard = KeyboardCreator.createKeyboardMarkUp(titleNames);

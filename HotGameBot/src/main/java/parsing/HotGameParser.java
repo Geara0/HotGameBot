@@ -9,10 +9,7 @@ import javax.sql.rowset.serial.SerialBlob;
 import javax.xml.crypto.URIReferenceException;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.util.*;
 
 
 public class HotGameParser implements IParser {
@@ -60,7 +57,8 @@ public class HotGameParser implements IParser {
     @Override
     public ArrayList<Title> getRecommendations(String... params) {
         var url = new StringBuilder().append("https://hot-game.info/");
-        for (String param : params) url.append(param);
+        var parameters = String.join(";",params);
+        for (String param : params) url.append(parameters);
         ArrayList<Title> result = new ArrayList<>();
         try {
             Document doc = Jsoup.connect(url.toString()).get();
@@ -68,9 +66,11 @@ public class HotGameParser implements IParser {
             if (searchResults.child(0).className().equals("no-results"))
                 throw new URIReferenceException();
             int childrenCount = searchResults.children().size();
-            for (var i = 0; i < childrenCount; i++) {
+            for (var i = 0; i < childrenCount && result.size() < 5; i++) {
                 var href = searchResults.child(i).selectFirst("a").attr("href");
-                result.add(getTitleInfoSelect("https://hot-game.info".concat(href)));
+                var toAdd = getTitleInfoSelect("https://hot-game.info".concat(href));
+                if(toAdd.getName()!=null)
+                    result.add(toAdd);
             }
             setReportOK();
         } catch (IOException e) {
@@ -112,7 +112,9 @@ public class HotGameParser implements IParser {
             int childrenCount = searchResults.children().size();
             for (var i = 0; i < childrenCount; i++) {
                 var href = searchResults.child(i).selectFirst("a").attr("href");
-                result.add(getTitleInfoSelect("https://hot-game.info".concat(href)));
+                var toAdd = getTitleInfoSelect("https://hot-game.info".concat(href));
+                if (toAdd.getName() != null)
+                    result.add(toAdd);
             }
             setReportOK();
         } catch (IOException e) {
