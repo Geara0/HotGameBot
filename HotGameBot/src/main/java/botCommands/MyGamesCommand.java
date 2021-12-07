@@ -1,7 +1,9 @@
 package botCommands;
 
-import entities.Title;
+import bot.KeyboardCreator;
 import db.DBWorker;
+import db.IDB;
+import entities.Title;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
@@ -18,18 +20,12 @@ public class MyGamesCommand extends Command {
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
         var message = new SendMessage();
+        IDB db = new DBWorker();
         message.setChatId(chat.getId().toString());
-        message.setText(DBWorker.getSubscriptions(user.getId()));
+        var subscriptions = db.getSubscriptions(user.getId());
+        var keyboard = KeyboardCreator.createKeyboardMarkUp(subscriptions);
+        message.setText("Вы подписаны на:");
+        message.setReplyMarkup(keyboard);
         execute(absSender, message, user);
-    }
-
-    private String getUserSubsMessage(entities.User user) {
-        var subs = new StringBuilder();
-        if (user.getTitles().size() == 0)
-            return CommandsConstants.NO_SUBS.toStringValue();
-        int i = 1;
-        for (Title title : user.getTitles().values())
-            subs.append(String.format("#%d ---- ", i++)).append(title.getStringForm());
-        return subs.toString();
     }
 }
