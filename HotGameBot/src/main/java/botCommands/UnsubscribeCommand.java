@@ -1,6 +1,8 @@
 package botCommands;
 
 import db.DBWorker;
+import db.IDB;
+import db.ReportState;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
@@ -31,11 +33,13 @@ public class UnsubscribeCommand extends Command {
         message.setText("Здесь должны быть варианты подписки:");
         execute(absSender, message, user);
 
-        if (DBWorker.unsubscribeUser(user.getId(), title)) {
+        IDB db = new DBWorker();
+        var report = db.unsubscribeUser(user.getId(), title);
+        if (report == ReportState.OK) {
             message.setText(String.format("Вы успешно отписались от %s", title));
         } else {
-            //TODO: Причины сбоя отписки
-            message.setText(String.format("Произошла ошибка, вы не смогли отписаться от %s по причине: хахахаха", title));
+            message.setText(String.format("Произошла ошибка, вы не смогли отписаться от %s по причине: %s",
+                    title, report));
         }
         execute(absSender, message, user);
     }

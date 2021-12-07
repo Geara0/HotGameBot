@@ -1,6 +1,8 @@
 package botCommands;
 
 import db.DBWorker;
+import db.IDB;
+import db.ReportState;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
@@ -20,10 +22,13 @@ public class UnsubscribeAllCommand extends Command {
         var message = new SendMessage();
         message.setChatId(chat.getId().toString());
 
-        if (DBWorker.unsubscribeAllUser(user.getId())) {
+        IDB db = new DBWorker();
+        var report = db.unsubscribeAllUser(user.getId());
+
+        if (report == ReportState.OK) {
             message.setText("Вы успешно отписались от всех игр");
         } else {
-            message.setText("Произошла ошибка");
+            message.setText(String.format("Произошла ошибка по причине %s", report.toStringValue()));
         }
 
         execute(absSender, message, user);

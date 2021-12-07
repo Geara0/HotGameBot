@@ -1,6 +1,8 @@
 package botCommands;
 
 import db.DBWorker;
+import db.IDB;
+import db.ReportState;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
@@ -31,11 +33,14 @@ public class SubscribeCommand extends Command {
         message.setText("Здесь должны быть варианты подписки:");
         execute(absSender, message, user);
 
-        if (DBWorker.subscribeUser(user.getId(), title)) {
+        IDB db = new DBWorker();
+        var report = db.subscribeUser(user.getId(), title);
+
+        if (report == ReportState.OK) {
             message.setText(String.format("Вы успешно подписались на %s", title));
         } else {
-            //TODO: Причины сбоя подписки
-            message.setText(String.format("Произошла ошибка, вы не смогли подписаться на %s по причине: хихихихи", title));
+            message.setText(String.format("Произошла ошибка, вы не смогли подписаться на %s по причине: %s",
+                    title, report.toStringValue()));
         }
         execute(absSender, message, user);
     }
