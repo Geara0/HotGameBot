@@ -5,8 +5,10 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import javax.sql.rowset.serial.SerialBlob;
 import javax.xml.crypto.URIReferenceException;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -36,11 +38,12 @@ public class HotGameParser implements IParser {
     }
 
     /**
-     * Метод осуществляющий парсинг тайтла с сайта Хот-Гейм
+     * Реализация интерфейса для сайта hot-game.info
      *
-     * @param name текст, содержащий имя тайтла
-     * @return список всех найденных по входным данным тайтлов
+     * @param name имя тайтла для поиска
+     * @return - первая страница результатов поиска
      */
+    @Override
     public ArrayList<Title> parseTitlesByName(String name) {
         if (name.contains("https://")) {
             report = ReportState.BAD_NAME;
@@ -48,11 +51,23 @@ public class HotGameParser implements IParser {
         } else return getTitlesByName(name);
     }
 
+    /**
+     * Пока не реализовано
+     *
+     * @param params параметры для запроса рекомендаций
+     * @return лучше бы переделать
+     */
     @Override
     public String[] getRecommendations(String... params) {
         return new String[0];
     }
 
+    /**
+     * Реализация интерфейса
+     *
+     * @param link ссылка hot-game.info/game/* на тайтл
+     * @return экземпляр тайтла, на который ведёт link
+     */
     public Title parseTitleByLink(String link) {
         if (!link.contains("https://")) {
             report = ReportState.BAD_URL;
@@ -89,6 +104,12 @@ public class HotGameParser implements IParser {
         return result;
     }
 
+    /**
+     * Парсит страницу тайтла
+     *
+     * @param link страница для парсинга
+     * @return экземпляр тайтла со страницы
+     */
     private Title getTitleInfoSelect(String link) {
         Title result = new Title();
         try {
@@ -107,26 +128,46 @@ public class HotGameParser implements IParser {
             var price = length == 2 ? bestMarket.child(1).selectFirst("div > div.game-price") :
                     bestMarket.child(2).selectFirst("div > div.game-price");
             var bestLink = bestMarket.child(0).attributes().get("data-href");
-            String bestPrice;
-            if ("нет в наличии".equals(price.text())) {
-                bestPrice = "0";
-                bestLink += "\r\nСмотрите по ссылке чтобы узнать о наличии";
-            } else {
-                bestPrice = price.selectFirst("span").text();
-            }
+            String bestPrice = getBestPrice(price);
+            bestLink = bestPrice.equals("0") ? bestLink.concat("\r\nСмотрите по ссылке чтобы узнать о наличии") : bestLink;
             var date = parseDate(releaseDate);
             var isMultiplayer = isMultiplayer(mode);
-            result = new Title(name, link, bestLink, Integer.parseInt(bestPrice), publisher, developer, date, genres, isMultiplayer, description, null);
+            result = new Title(name, link, bestLink, Integer.parseInt(bestPrice), publisher, developer, date, genres, isMultiplayer, description, new SerialBlob(new byte[1]));
             setReportOK();
         } catch (IOException e) {
             report = ReportState.BAD_URL;
         } catch (NullPointerException | NumberFormatException e) {
             //ignored
             //тайтлы на отсчете и дата "/" откуда-то
+        } catch (SQLException e) {
+            //idk what to do....
         }
         return result;
     }
 
+    /**
+     * Получает лучшую тайтла строкой
+     *
+     * @param price элемент содержащий цену тайтла
+     * @return строку с ценой или 0 если "нет в наличии"
+     */
+    private String getBestPrice(Element price) {
+        String bestPrice;
+
+        if ("нет в наличии".equals(price.text())) {
+            bestPrice = "0";
+        } else {
+            bestPrice = price.selectFirst("span").text();
+        }
+        return bestPrice;
+    }
+
+    /**
+     * Метод для парсинга даты из формата hot-game.info
+     *
+     * @param date строковое представление даты со страницы тайтла
+     * @return экземпляр Date соотетствующий date
+     */
     private Date parseDate(String date) {
         var splitDate = date.split(" ");
         var day = Integer.parseInt(splitDate[0]);

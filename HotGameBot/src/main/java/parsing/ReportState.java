@@ -1,5 +1,8 @@
 package parsing;
 
+/**
+ * Енам состояний парсера
+ */
 public enum ReportState {
     INITIAL("парсер в начальном положении"),
     OK("все хорошо"),
