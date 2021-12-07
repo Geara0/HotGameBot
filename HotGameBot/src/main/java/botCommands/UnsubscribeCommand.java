@@ -30,7 +30,6 @@ public class UnsubscribeCommand extends Command {
         }
 
         //TODO: KeyboardMarkup с вариантами от чего отписаться
-        execute(absSender, message, user);
 
         IDB db = new DBWorker();
         var report = db.unsubscribeUser(user.getId(), title);
