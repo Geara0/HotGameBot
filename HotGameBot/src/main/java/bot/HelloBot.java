@@ -7,10 +7,11 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import parsing.HotGameParser;
 import parsing.IParser;
+
+import java.util.ArrayList;
 
 public final class HelloBot extends TelegramLongPollingCommandBot {
     private final String BOT_USERNAME = "@HotGameInfo_bot";
@@ -22,6 +23,7 @@ public final class HelloBot extends TelegramLongPollingCommandBot {
         register(new MyGamesCommand());
         register(new SubscribeCommand());
         register(new UnsubscribeCommand());
+        register(new UnsubscribeAllCommand());
         register(new WantToPlayCommand());
         var helpCommand = new HelpCommand(this);
         register(helpCommand);
@@ -66,7 +68,20 @@ public final class HelloBot extends TelegramLongPollingCommandBot {
         //TODO: коллбек по спецсимволу
         var queryData = query.getData();
         var answer = new SendMessage();
-        if (queryData.startsWith("&&")) {
+        if (queryData.startsWith("##")) {
+            IParser parser = new HotGameParser();
+            var titles = parser.parseTitlesByName(
+                    queryData.substring(queryData.indexOf("'"), queryData.lastIndexOf("'"))
+            );
+            var names = new ArrayList<String>(titles.size());
+            for (var e : titles) names.add(e.getName());
+            var keyboard = KeyboardCreator.createParsedKeyboardMarkUp(1, names);
+            if (names.size() != 0)
+                answer.setText("Тогда вот другие предложения:");
+            else
+                answer.setText("Мы ничего не нашли(");
+            answer.setReplyMarkup(keyboard);
+        } else if (queryData.startsWith("%%")) {
             IParser parser = new HotGameParser();
             var titles = parser.parseTitlesByName(queryData.split("&&")[0]);
             var titleNames = new String[titles.size()];
