@@ -54,13 +54,13 @@ public class WantToPlayTest {
     @Test
     public void maximumPricePrintsAll() {
         var expected = new StringBuilder().append(AVAILABLE_RECOMMENDATIONS.toStringValue()).append("\r\n");
-        int maxPrice = 0;
+        var maxPrice = 0f;
         for (Title title : testMapping.values()) {
             if (maxPrice < title.getPrice())
                 maxPrice = title.getPrice();
             expected.append(title.getStringForm());
         }
-        input = new ByteArrayInputStream(Integer.toString(maxPrice).getBytes());
+        input = new ByteArrayInputStream(Float.toString(maxPrice).getBytes());
         System.setIn(input);
         ICommand wantToPlayCommand = new WantToPlayCommand(testMapping);
         wantToPlayCommand.execute(new User("username", new HashMap<>()));
