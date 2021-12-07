@@ -8,7 +8,7 @@ import java.util.List;
 
 public class KeyboardCreator {
     public static InlineKeyboardMarkup createKeyboardMarkUp(String... buttons) {
-        return createKeyboardMarkUp(3, buttons);
+        return createKeyboardMarkUp(1, buttons);
     }
 
     public static InlineKeyboardMarkup createKeyboardMarkUp(int columnCount, String... buttonNames) {
