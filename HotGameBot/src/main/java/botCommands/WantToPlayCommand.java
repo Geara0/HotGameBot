@@ -32,7 +32,7 @@ public class WantToPlayCommand extends Command {
             var titles = parser.getRecommendations(strings);
             var titleNames = new ArrayList<String>(titles.size());
             for (entities.Title title : titles) titleNames.add(title.getName());
-            var keyboard = KeyboardCreator.createKeyboardMarkUp(titleNames);
+            var keyboard = KeyboardCreator.createParsedKeyboardMarkUp(1, titleNames);
             message.setReplyMarkup(keyboard);
         } else {
             message.setText("По заданным параметрам ничего не найдено");
