@@ -83,12 +83,17 @@ public final class HelloBot extends TelegramLongPollingCommandBot {
             answer.setReplyMarkup(keyboard);
         } else if (queryData.startsWith("%%")) {
             IParser parser = new HotGameParser();
-            var titles = parser.parseTitlesByName(queryData.split("&&")[0]);
-            var titleNames = new String[titles.size()];
-            for(var i=0;i<titleNames.length;i++)
-                titleNames[i]=titles.get(i).getName();
-            var keyboard = KeyboardCreator.createKeyboardMarkUp(titleNames);
-            answer.setReplyMarkup(keyboard);
+            var db = new DBWorker();
+            var title = parser.parseTitlesByName(queryData.replaceAll("%", "")).get(0);
+            db.addTitle(title);
+            db.subscribeUser(query.getFrom().getId(), title.getName());
+            answer.setText(String.format("Вы подписаны на %s", title.getName()));
+        } else if (queryData.startsWith("$$")) {
+            var db = new DBWorker();
+            var title = queryData.replaceAll("\\$", "");
+            db.subscribeUser(query.getFrom().getId(), title);
+            answer.setText(String.format("Вы подписаны на %s", title));
+
         } else {
             var db = new DBWorker();
             var title = db.getTitle(queryData);
