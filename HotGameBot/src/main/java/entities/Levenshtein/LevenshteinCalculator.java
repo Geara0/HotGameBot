@@ -177,7 +177,7 @@ public class LevenshteinCalculator {
         double minDistance = Double.MAX_VALUE;
         Word croppedSource = new Word();
         int length = Math.min(source.text.length(), target.text.length() + 1);
-        for (int i = 0; i <= source.text.length() - length; i++) {
+        for (int i = 0; i <= source.text.length() - length && i <= length; i++) {
             croppedSource.text = source.text.substring(i, length);
             croppedSource.codes = source.codes.subList(i, length + i);
             minDistance = Math.min(minDistance, calculate(croppedSource, target, croppedSource.text.length() == source.text.length()));
