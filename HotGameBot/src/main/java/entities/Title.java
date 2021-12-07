@@ -1,5 +1,8 @@
 package entities;
 
+import javassist.bytecode.ByteArray;
+
+import java.sql.Blob;
 import java.util.Date;
 
 /**
@@ -27,14 +30,11 @@ public class Title {
      * Поле цены
      */
     private final int price;
-
     private String publisher;
-
     private String developer;
-
     private Date releaseDate;
-
     private String[] genres;
+    private Blob pictureJpeg;
 
     /**
      * синглплеер или мультиплеер
@@ -49,37 +49,39 @@ public class Title {
      * @param buyLink {@link Title#buyLink}
      * @param price   {@link Title#price}
      */
-    public Title(String name, String link, String buyLink, int price){
-        this.name = name;
-        this.link=link;
-        this.buyLink=buyLink;
-        this.price=price;
-    }
-
-    /**
-     * Расширенный рабочий конструктор класся
-     * @param name название тайтла
-     * @param link ссылка на тайтл
-     * @param buyLink ссылка на покупку с минимальной ценой
-     * @param price минимальная цена
-     * @param publisher издатель
-     * @param developer разбраточик
-     * @param releaseDate дата релиза
-     * @param genres список жанров
-     * @param multiplayer является ли мултиплеерной
-     */
-    public Title(String name, String link, String buyLink, int price, String publisher, String developer,
-                 Date releaseDate, String[] genres, boolean multiplayer, String description) {
+    public Title(String name, String link, String buyLink, int price) {
         this.name = name;
         this.link = link;
         this.buyLink = buyLink;
         this.price = price;
-        this.publisher=publisher;
-        this.developer=developer;
+    }
+
+    /**
+     * Расширенный рабочий конструктор класся
+     *
+     * @param name        название тайтла
+     * @param link        ссылка на тайтл
+     * @param buyLink     ссылка на покупку с минимальной ценой
+     * @param price       минимальная цена
+     * @param publisher   издатель
+     * @param developer   разбраточик
+     * @param releaseDate дата релиза
+     * @param genres      список жанров
+     * @param multiplayer является ли мултиплеерной
+     */
+    public Title(String name, String link, String buyLink, int price, String publisher, String developer,
+                 Date releaseDate, String[] genres, boolean multiplayer, String description, Blob pictureJpeg) {
+        this.name = name;
+        this.link = link;
+        this.buyLink = buyLink;
+        this.price = price;
+        this.publisher = publisher;
+        this.developer = developer;
         this.releaseDate = releaseDate;
         this.genres = genres;
         this.isMultiplayer = multiplayer;
         this.description = description;
+        this.pictureJpeg = pictureJpeg;
     }
 
     /**
@@ -109,6 +111,7 @@ public class Title {
 
     /**
      * Геттер ссылки на покупку
+     *
      * @return {@link Title#buyLink}
      */
     public String getBuyLink() {
@@ -124,12 +127,13 @@ public class Title {
         return price;
     }
 
-    public String getStringForm(){
+    public String getStringForm() {
         return this.toString();
     }
 
     @Override
-    public String toString() {return String.format("%s Цена - %d\r\n%s\r\n%s\r\n", getName(), getPrice(), getBuyLink(),getLink());
+    public String toString() {
+        return String.format("%s Цена - %d\r\n%s\r\n%s\r\n", getName(), getPrice(), getBuyLink(), getLink());
     }
 
     public String getPublisher() {
@@ -152,5 +156,7 @@ public class Title {
         return isMultiplayer;
     }
 
-    public String getDescription(){ return description;}
+    public String getDescription() {
+        return description;
+    }
 }
