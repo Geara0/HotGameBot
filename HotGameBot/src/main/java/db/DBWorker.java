@@ -32,7 +32,11 @@ public class DBWorker implements IDB {
         ExecuteSQL(connection, String.format(
                 "INSERT INTO users(id) VALUES (%s)", userId));
     }
-
+    public void addTitle(Title title){
+        ExecuteSQL(connection, String.format(
+                "INSERT INTO games(title, link, buy_link, price, developer, publisher, genres, description, picture_jpeg, release_date, is_multiplayer) VALUES (%s)", title.toDB()));
+    }
+// null'Thu Oct 03 00:00:00 YEKT 2019', 'true',
     public Title getTitle(String title) {
         title = title.replaceAll("'", "");
         var result = ExecuteSQL(connection, String.format(
@@ -59,20 +63,14 @@ public class DBWorker implements IDB {
         var allTitles = new HashSet<String>();
         Collections.addAll(allTitles, ConvertStringRows(result, "title"));
         var levenshtein = new LevenshteinCalculator();
-        return levenshtein.getClosestStrings(allTitles, title, 5);
+        return levenshtein.getClosestStrings(allTitles, title, 1);
     }
 
     @Override
     public ReportState subscribeUser(long userId, String title) {
         title = title.replaceAll("'", "");
 
-        var result = ExecuteSQL(connection, "SELECT title FROM games");
-        var allTitles = new HashSet<String>();
-        Collections.addAll(allTitles, ConvertStringRows(result, "title"));
-        var levenshtein = new LevenshteinCalculator();
-        title = levenshtein.getClosestString(allTitles, title);
-
-        result = ExecuteSQL(connection, String.format(
+        var result = ExecuteSQL(connection, String.format(
                 "SELECT id FROM games WHERE (title = '%s')", title));
         var titles = ConvertLongRows(result, "id");
 
