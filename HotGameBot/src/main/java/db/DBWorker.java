@@ -63,7 +63,7 @@ public class DBWorker implements IDB {
         var allTitles = new HashSet<String>();
         Collections.addAll(allTitles, ConvertStringRows(result, "title"));
         var levenshtein = new LevenshteinCalculator();
-        return levenshtein.getClosestStrings(allTitles, title, 1);
+        return levenshtein.getClosestStrings(allTitles, title, 4);
     }
 
     @Override
