@@ -41,7 +41,9 @@ public class KeyboardCreator {
         var inlineKeyboardButton = new InlineKeyboardButton();
         inlineKeyboardButton.setText(name);
         //TODO: setCallbackData со спецсимволом
-        inlineKeyboardButton.setCallbackData(name);
+        if(name.equals("Это не то, чего я хочу"))
+            inlineKeyboardButton.setCallbackData("&&".concat(name));
+        else inlineKeyboardButton.setCallbackData(name);
         return inlineKeyboardButton;
     }
 }

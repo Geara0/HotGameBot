@@ -35,7 +35,6 @@ public class SubscribeCommand extends Command {
             return;
         }
 
-
         IDB db = new DBWorker();
         var closest = db.getClosest(title);
         var keyboard = KeyboardCreator.createKeyboardMarkUp(closest, "Это не то, чего я хочу");
@@ -54,7 +53,6 @@ public class SubscribeCommand extends Command {
                 message.setText(String.format("Произошла ошибка, вы не смогли подписаться на %s по причине: %s",
                         title, parser.getReport().toStringValue()));
             }
-
         }
         execute(absSender, message, user);
     }

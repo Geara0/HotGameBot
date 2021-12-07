@@ -7,7 +7,10 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import parsing.HotGameParser;
+import parsing.IParser;
 
 public final class HelloBot extends TelegramLongPollingCommandBot {
     private final String BOT_USERNAME = "@HotGameInfo_bot";
@@ -19,6 +22,7 @@ public final class HelloBot extends TelegramLongPollingCommandBot {
         register(new MyGamesCommand());
         register(new SubscribeCommand());
         register(new UnsubscribeCommand());
+        register(new WantToPlayCommand());
         var helpCommand = new HelpCommand(this);
         register(helpCommand);
 
@@ -58,12 +62,24 @@ public final class HelloBot extends TelegramLongPollingCommandBot {
 
     }
 
-    private void processCallbackUpdate(CallbackQuery query){
+    private void processCallbackUpdate(CallbackQuery query) {
         //TODO: коллбек по спецсимволу
-        var db = new DBWorker();
-        var title = db.getTitle(query.getData());
+        var queryData = query.getData();
         var answer = new SendMessage();
-        answer.setText(title.toString());
+        if (queryData.startsWith("&&")) {
+            IParser parser = new HotGameParser();
+            var titles = parser.parseTitlesByName(queryData.split("&&")[0]);
+            var titleNames = new String[titles.size()];
+            for(var i=0;i<titleNames.length;i++)
+                titleNames[i]=titles.get(i).getName();
+            var keyboard = KeyboardCreator.createKeyboardMarkUp(titleNames);
+            answer.setReplyMarkup(keyboard);
+        } else {
+            var db = new DBWorker();
+            var title = db.getTitle(queryData);
+            answer.setText(title.toString());
+        }
+
         answer.setChatId(query.getMessage().getChatId().toString());
         try {
             execute(answer);

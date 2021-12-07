@@ -9,7 +9,7 @@ import java.util.ArrayList;
  */
 public interface IParser {
     //TODO: Получить рекомендации с парсера
-    String[] getRecommendations(String... params);
+    ArrayList<Title> getRecommendations(String... params);
 
     /**
      * Получает экземпляр тайтла по переданной ссылке

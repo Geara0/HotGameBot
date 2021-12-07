@@ -44,7 +44,16 @@ public class LevenshteinCalculator {
      * @return ближайшая по расстоянию строка
      */
     public String getClosestString(Set<String> stringSet, String original) {
-        return search(stringSet, original).get(0).getText();
+        return getClosestStrings(stringSet, original, 1)[0];
+    }
+
+    public String[] getClosestStrings(Set<String> stringSet, String original, int count) {
+        var strings = new String[count];
+        var pairs = search(stringSet, original);
+        for (int i = 0; i < count; i++) {
+            strings[i] = pairs.get(i).getText();
+        }
+        return strings;
     }
 
     /**

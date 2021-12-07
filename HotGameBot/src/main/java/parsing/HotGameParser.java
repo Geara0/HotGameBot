@@ -58,8 +58,27 @@ public class HotGameParser implements IParser {
      * @return лучше бы переделать
      */
     @Override
-    public String[] getRecommendations(String... params) {
-        return new String[0];
+    public ArrayList<Title> getRecommendations(String... params) {
+        var url = new StringBuilder().append("https://hot-game.info/");
+        for (String param : params) url.append(param);
+        ArrayList<Title> result = new ArrayList<>();
+        try {
+            Document doc = Jsoup.connect(url.toString()).get();
+            Element searchResults = doc.selectFirst("body > div.container.content-container > section.yui3-cssreset.result-block.content-table");
+            if (searchResults.child(0).className().equals("no-results"))
+                throw new URIReferenceException();
+            int childrenCount = searchResults.children().size();
+            for (var i = 0; i < childrenCount; i++) {
+                var href = searchResults.child(i).selectFirst("a").attr("href");
+                result.add(getTitleInfoSelect("https://hot-game.info".concat(href)));
+            }
+            setReportOK();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (URIReferenceException e) {
+            report = ReportState.BAD_NAME;
+        }
+        return result;
     }
 
     /**
