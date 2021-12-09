@@ -12,6 +12,9 @@ import static botCommands.CommandsConstants.UNSUBSCRIBE_ALL_DESCRIPTION;
 import static botCommands.CommandsConstants.UNSUBSCRIBE_ALL_NAME;
 
 
+/**
+ * Отписывает пользователя от всех игр
+ */
 public class UnsubscribeAllCommand extends Command {
     public UnsubscribeAllCommand() {
         super(UNSUBSCRIBE_ALL_NAME.toStringValue(), UNSUBSCRIBE_ALL_DESCRIPTION.toStringValue());

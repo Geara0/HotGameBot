@@ -11,6 +11,9 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
 import static botCommands.CommandsConstants.UNSUBSCRIBE_DESCRIPTION;
 import static botCommands.CommandsConstants.UNSUBSCRIBE_NAME;
 
+/**
+ * Команда отписки от игры
+ */
 public class UnsubscribeCommand extends Command {
     public UnsubscribeCommand() {
         super(UNSUBSCRIBE_NAME.toStringValue(), UNSUBSCRIBE_DESCRIPTION.toStringValue());
@@ -29,7 +32,7 @@ public class UnsubscribeCommand extends Command {
             return;
         }
 
-        //TODO: KeyboardMarkup с вариантами от чего отписаться
+        //TODO: KeyboardMarkup с вариантами от чего отписаться task3
 
         IDB db = new DBWorker();
         var report = db.unsubscribeUser(user.getId(), title);

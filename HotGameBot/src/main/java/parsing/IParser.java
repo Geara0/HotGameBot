@@ -8,7 +8,6 @@ import java.util.ArrayList;
  * Интерфейс парсера
  */
 public interface IParser {
-    //TODO: Получить рекомендации с парсера
     ArrayList<Title> getRecommendations(String... params);
 
     /**

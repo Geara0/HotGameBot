@@ -13,12 +13,16 @@ import parsing.IParser;
 
 import java.util.ArrayList;
 
+import static bot.KeyboardMarkupTypes.*;
+
 public final class HelloBot extends TelegramLongPollingCommandBot {
     private final String BOT_USERNAME = "@HotGameInfo_bot";
-    private final String BOT_TOKEN = "2108249890:AAGc5p5xMiLHGuPmqZcDK7r4QnA-pHqatto";
+    private final String BOT_TOKEN = System.getenv("HotGameBotToken");
 
+    /**
+     * Регистрация комманд
+     */
     public HelloBot() {
-        //Регистрация комманд
         register(new StartCommand());
         register(new MyGamesCommand());
         register(new SubscribeCommand());
@@ -64,40 +68,21 @@ public final class HelloBot extends TelegramLongPollingCommandBot {
 
     }
 
+    /**
+     * Обработка callback с Markup кнопок
+     */
     private void processCallbackUpdate(CallbackQuery query) {
-        //TODO: коллбек по спецсимволу
         var queryData = query.getData();
         var answer = new SendMessage();
-        if (queryData.startsWith("##")) {
-            IParser parser = new HotGameParser();
-            var titles = parser.parseTitlesByName(
-                    queryData.substring(queryData.indexOf("'"), queryData.lastIndexOf("'"))
-            );
-            var names = new ArrayList<String>(titles.size());
-            for (var e : titles) names.add(e.getName());
-            var keyboard = KeyboardCreator.createParsedKeyboardMarkUp(1, names);
-            if (names.size() != 0)
-                answer.setText("Тогда вот другие предложения:");
-            else
-                answer.setText("Мы ничего не нашли(");
-            answer.setReplyMarkup(keyboard);
-        } else if (queryData.startsWith("%%")) {
-            IParser parser = new HotGameParser();
-            var db = new DBWorker();
-            var title = parser.parseTitlesByName(queryData.replaceAll("%", "")).get(0);
-            db.addTitle(title);
-            db.subscribeUser(query.getFrom().getId(), title.getName());
-            answer.setText(String.format("Вы подписаны на %s", title.getName()));
-        } else if (queryData.startsWith("$$")) {
-            var db = new DBWorker();
-            var title = queryData.replaceAll("\\$", "");
-            db.subscribeUser(query.getFrom().getId(), title);
-            answer.setText(String.format("Вы подписаны на %s", title));
 
+        if (queryData.startsWith(NOT_IT.toStringValue())) {
+            CallbackProcessor.processCallbackNotIt(query, answer);
+        } else if (queryData.startsWith(PARSER.toStringValue())) {
+            CallbackProcessor.processCallbackParser(query, answer);
+        } else if (queryData.startsWith(DB.toStringValue())) {
+            CallbackProcessor.processCallbackDB(query, answer);
         } else {
-            var db = new DBWorker();
-            var title = db.getTitle(queryData);
-            answer.setText(title.toString());
+            CallbackProcessor.processCallbackDefault(query, answer);
         }
 
         answer.setChatId(query.getMessage().getChatId().toString());
@@ -108,12 +93,23 @@ public final class HelloBot extends TelegramLongPollingCommandBot {
         }
     }
 
+    /**
+     * Получить имя пользователя по сообщению
+     *
+     * @param msg сообщение
+     * @return имя пользователя
+     */
     private String getUserName(Message msg) {
         var user = msg.getFrom();
         var userName = user.getUserName();
         return userName != null ? userName : String.format("%s %s", user.getLastName(), user.getFirstName());
     }
 
+    //TODO: replace in task3
+
+    /**
+     * Отправить пользователю ответ
+     */
     private void sendAnswer(Long chatId, String userName, String text) {
         var answer = new SendMessage();
         answer.setText(text);
@@ -121,9 +117,7 @@ public final class HelloBot extends TelegramLongPollingCommandBot {
         try {
             execute(answer);
         } catch (TelegramApiException e) {
-            // лог, что не вышло отправить юзернейму
             e.printStackTrace();
         }
-
     }
 }

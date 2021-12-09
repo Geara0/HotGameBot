@@ -9,6 +9,9 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
 import static botCommands.CommandsConstants.HELP_DESCRIPTION;
 import static botCommands.CommandsConstants.HELP_NAME;
 
+/**
+ * Команда помощи пользователю
+ */
 public class HelpCommand extends Command {
     private final ICommandRegistry commandRegistry;
 

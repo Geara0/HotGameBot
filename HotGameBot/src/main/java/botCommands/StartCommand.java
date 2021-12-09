@@ -9,6 +9,10 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
 import static botCommands.CommandsConstants.START_DESCRIPTION;
 import static botCommands.CommandsConstants.START_NAME;
 
+/**
+ * Команда запуска бота
+ * Записывает оного в бд
+ */
 public class StartCommand extends Command {
     public StartCommand() {
         super(START_NAME.toStringValue(), START_DESCRIPTION.toStringValue());

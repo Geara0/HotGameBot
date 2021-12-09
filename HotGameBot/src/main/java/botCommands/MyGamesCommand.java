@@ -14,6 +14,9 @@ import java.util.Arrays;
 import static botCommands.CommandsConstants.MY_GAMES_DESCRIPTION;
 import static botCommands.CommandsConstants.MY_GAMES_NAME;
 
+/**
+ * Команда получения списка игр пользователя
+ */
 public class MyGamesCommand extends Command {
     public MyGamesCommand() {
         super(MY_GAMES_NAME.toStringValue(), MY_GAMES_DESCRIPTION.toStringValue());
