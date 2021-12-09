@@ -18,11 +18,7 @@ public class HotGameParser implements IParser {
      */
     private ReportState report;
 
-    /**
-     * Конструктор, устанавливает {@link HotGameParser#report} в начальное положение
-     */
     public HotGameParser() {
-        report = ReportState.INITIAL;
     }
 
     /**
@@ -42,43 +38,32 @@ public class HotGameParser implements IParser {
      */
     @Override
     public ArrayList<Title> parseTitlesByName(String name) {
+        report = ReportState.INITIAL;
         if (name.contains("https://")) {
             report = ReportState.BAD_NAME;
             return new ArrayList<>();
-        } else return getTitlesByName(name);
+        }
+        ArrayList<Title> result = new ArrayList<>();
+        for (int i = 0; i < 5 && !report.equals(ReportState.OK); i++)
+            result = getTitlesByRequest("q=".concat(name));
+        return result;
     }
 
     /**
-     * Пока не реализовано
+     * Реализация интерфейса
      *
      * @param params параметры для запроса рекомендаций
-     * @return лучше бы переделать
+     * @return первые 5 тайтлов со страницы результатов
      */
     @Override
     public ArrayList<Title> getRecommendations(String... params) {
-        var url = new StringBuilder().append("https://hot-game.info/");
-        var parameters = String.join(";",params);
-        for (String param : params) url.append(parameters);
+        report = ReportState.INITIAL;
+        String parameters = String.join(";", params);
         ArrayList<Title> result = new ArrayList<>();
-        try {
-            Document doc = Jsoup.connect(url.toString()).get();
-            Element searchResults = doc.selectFirst("body > div.container.content-container > section.yui3-cssreset.result-block.content-table");
-            if (searchResults.child(0).className().equals("no-results"))
-                throw new URIReferenceException();
-            int childrenCount = searchResults.children().size();
-            for (var i = 0; i < childrenCount && result.size() < 5; i++) {
-                var href = searchResults.child(i).selectFirst("a").attr("href");
-                var toAdd = getTitleInfoSelect("https://hot-game.info".concat(href));
-                if(toAdd.getName()!=null)
-                    result.add(toAdd);
-            }
-            setReportOK();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (URIReferenceException e) {
-            report = ReportState.BAD_NAME;
-        }
-        return result;
+        for (int i = 0; i < 5 && !report.equals(ReportState.OK); i++)
+            result = getTitlesByRequest(parameters);
+        if (!report.equals(ReportState.OK)) report = ReportState.BAD_PARAMETERS;
+        return (ArrayList<Title>) result.subList(0, 5);
     }
 
     /**
@@ -91,19 +76,24 @@ public class HotGameParser implements IParser {
         if (!link.contains("https://")) {
             report = ReportState.BAD_URL;
             return new Title();
-        } else return getTitleInfoSelect(link);
+        }
+        Title result = new Title();
+        for (int i = 0; i < 5 && !report.equals(ReportState.OK); i++)
+            result = getTitleInfoSelect(link);
+        return result;
     }
 
     /**
      * Парсит первый блок результатов на странице поиска по name
      *
-     * @param name имя тайтла для поиска
+     * @param request имя тайтла для поиска
      * @return список найденных тайтлов
      */
-    private ArrayList<Title> getTitlesByName(String name) {
+    private ArrayList<Title> getTitlesByRequest(String request) {
         ArrayList<Title> result = new ArrayList<>();
-        String searchName = name.strip().toLowerCase(); //replaceAll("[^a-zA-Z]","");
-        String searchUrl = "https://hot-game.info/q=".concat(searchName);
+        String searchRequest = request.strip().toLowerCase(); //replaceAll("[^a-zA-Z]","");
+        String domainUrl = "https://hot-game.info";
+        String searchUrl = domainUrl.concat("/").concat(searchRequest);
         try {
             Document doc = Jsoup.connect(searchUrl).get();
             Element searchResults = doc.selectFirst("body > div.container.content-container > section.yui3-cssreset.result-block.content-table");
@@ -111,8 +101,8 @@ public class HotGameParser implements IParser {
                 throw new URIReferenceException();
             int childrenCount = searchResults.children().size();
             for (var i = 0; i < childrenCount; i++) {
-                var href = searchResults.child(i).selectFirst("a").attr("href");
-                var toAdd = getTitleInfoSelect("https://hot-game.info".concat(href));
+                String href = searchResults.child(i).selectFirst("a").attr("href");
+                Title toAdd = getTitleInfoSelect(domainUrl.concat(href));
                 if (toAdd.getName() != null)
                     result.add(toAdd);
             }
@@ -135,31 +125,31 @@ public class HotGameParser implements IParser {
         Title result = new Title();
         try {
             Document doc = Jsoup.connect(link).get();
-            var gameInfo = doc.selectFirst("body > div.container.content-container > section.game.clearfix > aside > div.hg-block.short-game-description > div");
-            var name = gameInfo.selectFirst("div.game-title > span:nth-child(1)").text();
-            var developer = gameInfo.selectFirst("div.game-developer > span").text();
-            var publisher = gameInfo.selectFirst("div.game-publisher > span").text();
-            var platforms = gameInfo.selectFirst("div.game-title > span.red").text().split(",");
-            var releaseDate = gameInfo.selectFirst("div.game-release-date > span").text();
-            var genres = gameInfo.selectFirst("div.game-genres").getElementsByAttributeValueStarting("class", "hidden-link genre").text().split(" ");
-            var mode = gameInfo.selectFirst("div.game-genres > div > span:nth-child(1)").attributes().get("title");
-            var bestMarket = doc.selectFirst("#prices_block > div.game-prices-wrap > div.game-prices-list.game-prices-new > div:nth-child(1)");
-            var description = doc.selectFirst("body > div.container.content-container > section.game.clearfix > div.right-side > div.hg-block.description > div:nth-child(2)").text();
-            var length = bestMarket.children().size();
-            var price = length == 2 ? bestMarket.child(1).selectFirst("div > div.game-price") :
+            Element gameInfo = doc.selectFirst("body > div.container.content-container > section.game.clearfix > aside > div.hg-block.short-game-description > div");
+            String name = gameInfo.selectFirst("div.game-title > span:nth-child(1)").text();
+            String developer = gameInfo.selectFirst("div.game-developer > span").text();
+            String publisher = gameInfo.selectFirst("div.game-publisher > span").text();
+            String[] platforms = gameInfo.selectFirst("div.game-title > span.red").text().split(",");
+            String releaseDate = gameInfo.selectFirst("div.game-release-date > span").text();
+            String[] genres = gameInfo.selectFirst("div.game-genres").getElementsByAttributeValueStarting("class", "hidden-link genre").text().split(" ");
+            String mode = gameInfo.selectFirst("div.game-genres > div > span:nth-child(1)").attributes().get("title");
+            Element bestMarket = doc.selectFirst("#prices_block > div.game-prices-wrap > div.game-prices-list.game-prices-new > div:nth-child(1)");
+            String description = doc.selectFirst("body > div.container.content-container > section.game.clearfix > div.right-side > div.hg-block.description > div:nth-child(2)").text();
+            int length = bestMarket.children().size();
+            Element price = length == 2 ? bestMarket.child(1).selectFirst("div > div.game-price") :
                     bestMarket.child(2).selectFirst("div > div.game-price");
-            var bestLink = bestMarket.child(0).attributes().get("data-href");
+            String bestLink = bestMarket.child(0).attributes().get("data-href");
             String bestPrice = getBestPrice(price);
             bestLink = bestPrice.equals("0") ? bestLink.concat("\r\nСмотрите по ссылке чтобы узнать о наличии") : bestLink;
-            var date = parseDate(releaseDate);
-            var isMultiplayer = isMultiplayer(mode);
+            Date date = parseDate(releaseDate);
+            boolean isMultiplayer = isMultiplayer(mode);
             result = new Title(name, link, bestLink, Integer.parseInt(bestPrice), publisher, developer, date, genres, isMultiplayer, description, new SerialBlob(new byte[1]));
             setReportOK();
         } catch (IOException e) {
             report = ReportState.BAD_URL;
         } catch (NullPointerException | NumberFormatException e) {
             //ignored
-            //тайтлы на отсчете и дата "/" откуда-то
+            //тайтлы на отсчете и дата "/" откуда-то, будет обработано при переходе на апи
         } catch (SQLException e) {
             //idk what to do....
         }
@@ -190,10 +180,10 @@ public class HotGameParser implements IParser {
      * @return экземпляр Date соотетствующий date
      */
     private Date parseDate(String date) {
-        var splitDate = date.split(" ");
-        var day = Integer.parseInt(splitDate[0]);
-        var year = Integer.parseInt(splitDate[2].split("г")[0]);
-        var month = switch (splitDate[1]) {
+        String[] splitDate = date.split(" ");
+        int day = Integer.parseInt(splitDate[0]);
+        int year = Integer.parseInt(splitDate[2].split("г")[0]);
+        int month = switch (splitDate[1]) {
             case "янв." -> Calendar.JANUARY;
             case "февр." -> Calendar.FEBRUARY;
             case "март" -> Calendar.MARCH;

@@ -12,18 +12,6 @@ public class Main {
 
     public static void main(String[] args) {
         startBot();
-
-        //Scanner scanner = new Scanner(System.in);
-        //ConsoleGamesService bot = new ConsoleGamesService();
-        //bot.start();
-        //while (bot.isRunning()) {
-        //    User currentUser = bot.getUser();
-        //    while (bot.hasUser()) {
-        //        System.out.println("Введите комманду:");
-        //        String message = scanner.nextLine();
-        //        bot.runCommand(message, currentUser);
-        //    }
-        //}
     }
 
 
