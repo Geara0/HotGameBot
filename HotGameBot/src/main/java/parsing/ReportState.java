@@ -7,7 +7,8 @@ public enum ReportState {
     INITIAL("парсер в начальном положении"),
     OK("все хорошо"),
     BAD_URL("Вы ввели некорректную ссылку"),
-    BAD_NAME("Вы ввели некорректное название");
+    BAD_NAME("Вы ввели некорректное название"),
+    BAD_PARAMETERS("Некорректный формат параметров");
 
 
     private final String value;
