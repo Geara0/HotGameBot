@@ -11,10 +11,10 @@ import java.time.Duration;
 import java.time.Instant;
 
 public class HotGameParserTest {
-    String link = "https://hot-game.info/game/Fallout-76";
-    String goodName = "control";
+    final String link = "https://hot-game.info/game/Fallout-76";
+    final String goodName = "control";
     String badName = "control deluxe editiob";
-    IParser parser = new HotGameParser();
+    final IParser parser = new HotGameParser();
 
     @BeforeEach
     public void warmUp(){

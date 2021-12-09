@@ -19,11 +19,12 @@ public class LevenshteinCalculator {
     private HashMap<Integer, ArrayList<Integer>> codeFamilies;
 
     /**
-     * Конструктор калькулятора, заполняет словарь с группами клавиш
+     * Конструктор класса, заполняет словарь с группами клавиш
      */
     public LevenshteinCalculator() {
         Gson gson = new Gson();
         try {
+            //надо все это руками переписать непосредственно внутрь класса, чтобы занимало меньше вренми, но так лениво
             codeFamilies = gson.fromJson(Files.readString(Path.of(".\\JSONs\\DistanceCodeKey.json")), new TypeToken<HashMap<Integer, ArrayList<Integer>>>() {
             }.getType());
             keyCodes.putAll(gson.fromJson(Files.readString(Path.of(".\\JSONs\\CodeKeysEng.json")), new TypeToken<HashMap<Character, Integer>>() {
@@ -37,7 +38,7 @@ public class LevenshteinCalculator {
     }
 
     /**
-     * Внешний интерфейс, ищет ближайшее совпадение в коллекции stringSet со строкой original
+     * Метод для поиска ближайшего совпадения в коллекции stringSet со строкой original
      *
      * @param stringSet коллекция строк для поиска
      * @param original  строка, расстояние до которой считаем
@@ -47,9 +48,17 @@ public class LevenshteinCalculator {
         return getClosestStrings(stringSet, original, 1)[0];
     }
 
+    /**
+     * Метод для поиска count ближайших строк в коллекции stringSet со строкой original
+     *
+     * @param stringSet коллекия строк для поиска
+     * @param original  строка, расстояние до которой считаем
+     * @param count     количество желаемых результатов
+     * @return массив строк в порядке увеличения расстояния до original
+     */
     public String[] getClosestStrings(Set<String> stringSet, String original, int count) {
-        var strings = new String[count];
-        var pairs = search(stringSet, original);
+        String[] strings = new String[count];
+        List<StringDoublePair> pairs = search(stringSet, original);
         for (int i = 0; i < count; i++) {
             strings[i] = pairs.get(i).getText();
         }
@@ -117,8 +126,8 @@ public class LevenshteinCalculator {
      * @param userText  строка для сравнения
      * @return Получает лист пар "строка"-"расстояние до userText" упорядоченный по убыванию веса
      */
-    public List<Pair> search(Set<String> stringSet, String userText) {
-        ArrayList<Pair> result = new ArrayList<>();
+    public List<StringDoublePair> search(Set<String> stringSet, String userText) {
+        ArrayList<StringDoublePair> result = new ArrayList<>();
         AnaliseObject searchObj;
         if (userText.length() > 0)
             searchObj = new AnaliseObject(userText.toLowerCase(), keyCodes);
@@ -127,10 +136,10 @@ public class LevenshteinCalculator {
         for (String toCompare : stringSet) {
             AnaliseObject objToCompare = new AnaliseObject(toCompare.toLowerCase(), keyCodes);
             double cost = getRangePhrase(objToCompare, searchObj);
-            result.add(new Pair(toCompare, cost));
+            result.add(new StringDoublePair(toCompare, cost));
         }
 
-        result.sort(Pair::compareTo);
+        result.sort(StringDoublePair::compareTo);
         return result;
     }
 

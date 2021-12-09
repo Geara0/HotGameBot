@@ -1,12 +1,7 @@
 import bot.HelloBot;
-import entities.User;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
-
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.Scanner;
 
 public class Main {
 

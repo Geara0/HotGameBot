@@ -9,6 +9,7 @@ import java.util.HashMap;
  * @author Geara0
  * @version 1.0
  */
+@SuppressWarnings("CanBeFinal")
 public class User {
 
     private boolean isActive = false;

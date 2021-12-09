@@ -5,7 +5,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 /**
  * Объект, представляющий пару "строка"-"расстояние до искомой строки", должен использоваться только в LevenshteinCalculator
  */
-public class Pair implements Comparable<Pair> {
+public class StringDoublePair implements Comparable<StringDoublePair> {
     /**
      * строка для которой было проведено сравнение
      */
@@ -17,38 +17,40 @@ public class Pair implements Comparable<Pair> {
 
     /**
      * Конструктор пары
-     * @param text строка для которой было проведено сравнение
+     *
+     * @param text   строка для которой было проведено сравнение
      * @param number расстояние для данной строки
      */
-    public Pair(String text, Double number){
+    public StringDoublePair(String text, Double number) {
         this.text = text;
         this.number = number;
     }
 
-    public String getTextWithWeight(){
+    public String getTextWithWeight() {
         return toString();
     }
 
-    public String getText(){
+    public String getText() {
         return text;
     }
 
-    public Double getWeight(){
+    public Double getWeight() {
         return number;
     }
 
     /**
      * реализация интерфейса Comparable
+     *
      * @param o - элемент для сравнения
      * @return результат сравнения
      */
     @Override
-    public int compareTo(@NonNull Pair o) {
+    public int compareTo(@NonNull StringDoublePair o) {
         return this.number.compareTo(o.number);
     }
 
     @Override
-    public String toString(){
-        return text+"---- weight = "+number;
+    public String toString() {
+        return text + "---- weight = " + number;
     }
 }

@@ -16,7 +16,7 @@ class AnaliseObject {
     /**
      * Оригинал строки для анализа
      */
-    private String original;
+    private final String original;
 
     /**
      * Пустой конструктор для нужд трудящихся
