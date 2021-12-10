@@ -42,9 +42,9 @@ public class KeyboardCreator {
             if (name.contains("Это не то"))
                 inlineKeyboardButton.setCallbackData(KeyboardMarkupTypes.NOT_IT.toStringValue().concat(name));
             else inlineKeyboardButton.setCallbackData(type.toStringValue());
-        } else
-            inlineKeyboardButton.setCallbackData(type.toStringValue());
-        inlineKeyboardButton.setCallbackData(name);
+            return inlineKeyboardButton;
+        }
+        inlineKeyboardButton.setCallbackData(type.toStringValue().concat(name));
         return inlineKeyboardButton;
     }
 }

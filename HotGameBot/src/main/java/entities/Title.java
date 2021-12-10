@@ -1,7 +1,5 @@
 package entities;
 
-import javassist.bytecode.ByteArray;
-
 import java.sql.Blob;
 import java.util.Date;
 
@@ -180,7 +178,7 @@ public class Title {
         var result = new StringBuilder();
         for (var param : params) {
             if (param == null) result.append("null, ");
-            else result.append("'").append(param).append("', ");
+            else result.append("'").append(param.replaceAll("'","")).append("', ");
         }
         result.delete(result.length() - 2, result.length() - 1);
         return result.toString();
