@@ -2,17 +2,20 @@ package bot;
 
 import botCommands.*;
 import db.DBWorker;
+import entities.Title;
 import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import parsing.HotGameParser;
 import parsing.IParser;
 
 import java.util.ArrayList;
 
+import static bot.ConstantReplies.*;
 import static bot.KeyboardMarkupTypes.*;
 
 public final class HelloBot extends TelegramLongPollingCommandBot {
@@ -75,15 +78,14 @@ public final class HelloBot extends TelegramLongPollingCommandBot {
         var queryData = query.getData();
         var answer = new SendMessage();
 
-        if (queryData.startsWith(NOT_IT.toStringValue())) {
-            CallbackProcessor.processCallbackNotIt(query, answer);
-        } else if (queryData.startsWith(PARSER.toStringValue())) {
-            CallbackProcessor.processCallbackParser(query, answer);
-        } else if (queryData.startsWith(DB.toStringValue())) {
-            CallbackProcessor.processCallbackDB(query, answer);
-        } else {
-            CallbackProcessor.processCallbackDefault(query, answer);
-        }
+        if (queryData.startsWith(NOT_IT.toStringValue()))
+            processCallbackNotIt(query, answer);
+        else if (queryData.startsWith(PARSER.toStringValue()))
+            processCallbackParser(query, answer);
+        else if (queryData.startsWith(DB.toStringValue()))
+            processCallbackDB(query, answer);
+        else
+            processCallbackDefault(query, answer);
 
         answer.setChatId(query.getMessage().getChatId().toString());
         try {
@@ -100,7 +102,7 @@ public final class HelloBot extends TelegramLongPollingCommandBot {
      * @return имя пользователя
      */
     private String getUserName(Message msg) {
-        var user = msg.getFrom();
+        User user = msg.getFrom();
         var userName = user.getUserName();
         return userName != null ? userName : String.format("%s %s", user.getLastName(), user.getFirstName());
     }
@@ -119,5 +121,64 @@ public final class HelloBot extends TelegramLongPollingCommandBot {
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Обработать callback с обычной кнопки
+     *
+     * @param answer ответное сообщение пользователю
+     */
+    public static void processCallbackDefault(CallbackQuery query, SendMessage answer) {
+        var db = new DBWorker();
+        Title title = db.getTitle(query.getData());
+        answer.setText(title.toString());
+
+    }
+
+    /**
+     * Обработать callback с кнопки, работающей с бд
+     *
+     * @param answer ответное сообщение пользователю
+     */
+    public static void processCallbackDB(CallbackQuery query, SendMessage answer) {
+        var db = new DBWorker();
+        String titleName = query.getData().replaceAll("\\$", "");
+        db.subscribeUser(query.getFrom().getId(), titleName);
+        answer.setText(U_R_SUBSCRIBED_ON.toStringValue() + titleName);
+    }
+
+    /**
+     * Обработать callback с кнопки, работающей с парсером
+     *
+     * @param answer ответное сообщение пользователю
+     */
+    public static void processCallbackParser(CallbackQuery query, SendMessage answer) {
+        IParser parser = new HotGameParser();
+        var db = new DBWorker();
+        Title title = parser.parseTitlesByName(query.getData().replaceAll("%", "")).get(0);
+        db.addTitle(title);
+        db.subscribeUser(query.getFrom().getId(), title.getName());
+        answer.setText(U_R_SUBSCRIBED_ON.toStringValue() + title.getName());
+    }
+
+    /**
+     * Обработать callback с кнопки, переводящей работу с бд на парсер
+     *
+     * @param answer ответное сообщение пользователю
+     */
+    public static void processCallbackNotIt(CallbackQuery query, SendMessage answer) {
+        IParser parser = new HotGameParser();
+        String queryData = query.getData();
+        ArrayList<Title> titleNames = parser.parseTitlesByName(
+                queryData.substring(queryData.indexOf("'"), queryData.lastIndexOf("'"))
+        );
+        var names = new ArrayList<String>(titleNames.size());
+        for (var e : titleNames) names.add(e.getName());
+        var keyboard = KeyboardCreator.createKeyboardMarkUp(1, names, PARSER);
+        if (names.size() != 0)
+            answer.setText(OTHER_SUGGESTIONS.toStringValue());
+        else
+            answer.setText(NOTHING_FOUND.toStringValue());
+        answer.setReplyMarkup(keyboard);
     }
 }

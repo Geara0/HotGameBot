@@ -10,9 +10,9 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
 import java.util.Arrays;
+import java.util.List;
 
-import static botCommands.CommandsConstants.MY_GAMES_DESCRIPTION;
-import static botCommands.CommandsConstants.MY_GAMES_NAME;
+import static botCommands.CommandsConstants.*;
 
 /**
  * Команда получения списка игр пользователя
@@ -27,9 +27,9 @@ public class MyGamesCommand extends Command {
         var message = new SendMessage();
         IDB db = new DBWorker();
         message.setChatId(chat.getId().toString());
-        var subscriptions = Arrays.asList(db.getSubscriptions(user.getId()));
-        var keyboard = KeyboardCreator.createKeyboardMarkUp(subscriptions);
-        message.setText("Вы подписаны на:");
+        List<String> subscriptionsNames = Arrays.asList(db.getSubscriptions(user.getId()));
+        var keyboard = KeyboardCreator.createKeyboardMarkUp(subscriptionsNames);
+        message.setText(UR_SUBSCRIPTIONS.toStringValue());
         message.setReplyMarkup(keyboard);
         execute(absSender, message, user);
     }

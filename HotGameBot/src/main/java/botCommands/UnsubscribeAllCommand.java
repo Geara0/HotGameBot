@@ -8,8 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
-import static botCommands.CommandsConstants.UNSUBSCRIBE_ALL_DESCRIPTION;
-import static botCommands.CommandsConstants.UNSUBSCRIBE_ALL_NAME;
+import static botCommands.CommandsConstants.*;
 
 
 /**
@@ -28,11 +27,10 @@ public class UnsubscribeAllCommand extends Command {
         IDB db = new DBWorker();
         var report = db.unsubscribeAllUser(user.getId());
 
-        if (report == ReportState.OK) {
-            message.setText("Вы успешно отписались от всех игр");
-        } else {
-            message.setText(String.format("Произошла ошибка по причине %s", report.toStringValue()));
-        }
+        if (report == ReportState.OK)
+            message.setText(U_BEEN_UNSUBSCRIBED_ALL.toStringValue());
+        else
+            message.setText(ERROR_BECAUSE.toStringValue() + report.toStringValue());
 
         execute(absSender, message, user);
     }

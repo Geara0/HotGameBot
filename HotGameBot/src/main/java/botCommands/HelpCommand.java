@@ -6,8 +6,7 @@ import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
-import static botCommands.CommandsConstants.HELP_DESCRIPTION;
-import static botCommands.CommandsConstants.HELP_NAME;
+import static botCommands.CommandsConstants.*;
 
 /**
  * Команда помощи пользователю
@@ -22,8 +21,9 @@ public class HelpCommand extends Command {
 
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
-        StringBuilder helpMessageBuilder = new StringBuilder("<b>Available commands:</b>\n");
-        commandRegistry.getRegisteredCommands().forEach(command -> helpMessageBuilder.append(command.toString()).append("\n"));
+        StringBuilder helpMessageBuilder = new StringBuilder(AVAILABLE_COMMANDS.toStringValue() + '\n');
+        commandRegistry.getRegisteredCommands()
+                .forEach(command -> helpMessageBuilder.append(command.toString()).append("\n"));
         var helpMessage = new SendMessage();
         helpMessage.setChatId(chat.getId().toString());
         helpMessage.enableHtml(true);

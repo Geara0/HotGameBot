@@ -4,6 +4,8 @@ package botCommands;
  * Енам со строковыми константами, не совсем понимаю зачем он нужен, но все равно сделал, может когда-нибудь пойму
  */
 public enum CommandsConstants {
+    // for /help
+    AVAILABLE_COMMANDS("<b>Доступные команды:</b>"),
     HELP_NAME("help"),
     HELP_DESCRIPTION("Список всех доступных команд"),
     START_NAME("start"),
@@ -20,13 +22,19 @@ public enum CommandsConstants {
     WANT_TO_PLAY_DESCRIPTION("Подборка игр по параметру"),
     NO_SUBS("У вас пока нет подписок"),
     QUIT("Вы вышли!"),
-    STOPPING_LINE("specialStoppingLineThatMightBeAnEnumOrAnotherSpecialObjectButIDon'tWantToDoThisKittensAreCute"),
-    IS_THE_RIGHT_TITLE_WITH_OPTIONS("Это тайтл, который вы искали?(yes/no/stop)"),
-    INCORRECT_INDEX("Введнный индекс некорректен"),
-    CANT_FIND_TITLE("Мы не можем подобрать тайтл за такую стоимость"),
-    NOT_WHOLE_NUMBER("Ваш ввод не является целым числом"),
-    AVAILABLE_RECOMMENDATIONS("Пока доступны только рекомендации по цене\r\nВведите жалемую стоимость в целых числах");
-
+    // for commands themselves
+    UR_SUBSCRIPTIONS("Вы подписаны на:"),
+    HELLO("Hi, "),
+    U_FORGOT_NAME("Кажется, вы забыли ввести название\nИспользуйте /subscribe [title]"),
+    NOT_IT("Это не то "),
+    U_BEEN_SUBSCRIBED("Вы успешно подписались на "),
+    U_BEEN_UNSUBSCRIBED("Вы успешно отписались от "),
+    U_BEEN_UNSUBSCRIBED_ALL("Вы успешно отписались от всех игр"),
+    WE_FOUND_MULTIPLE_VARIANTS("Мы нашли несколько вариантов по вашему запросу"),
+    ERROR_BECAUSE("Произошла ошибка по причине "),
+    WE_RECOMMEND("По заданным параметрам рекомендуем:"),
+    WE_CANT_RECOMMEND("По заданным параметрам ничего не найдено")
+    ;
 
     /**
      * Конструкция для присвоения и получения текстового значения енаму
