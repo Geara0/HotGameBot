@@ -8,6 +8,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 
 import static db.Converter.*;
 
@@ -72,7 +73,7 @@ public class DBWorker implements IDB {
         String[] subscriptions;
         var result = executeSQL(connection, String.format(
                 "SELECT subscriptions FROM users WHERE (id = %s)", userId));
-        var subscriptionsIds = hstoreToSet(result, "subscriptions", Integer.class);
+        Set<Integer> subscriptionsIds = hstoreToSet(result, "subscriptions", Integer.class);
         if (subscriptionsIds == null || subscriptionsIds.size() < 1) return new String[0];
         result = executeSQL(connection, String.format(
                 "SELECT title FROM games WHERE (id IN %s)", subscriptionsIds.toString()
