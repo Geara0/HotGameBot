@@ -5,20 +5,15 @@ import bot.KeyboardMarkupTypes;
 import db.DBWorker;
 import db.IDB;
 import db.ReportState;
-import entities.Title;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
-import parsing.HotGameParser;
-import parsing.IParser;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static botCommands.CommandsConstants.SUBSCRIBE_DESCRIPTION;
-import static botCommands.CommandsConstants.SUBSCRIBE_NAME;
+import static botCommands.CommandsConstants.*;
 
 /**
  * Команда подписки на игру
@@ -36,19 +31,19 @@ public class SubscribeCommand extends Command {
         var title = getName(strings);
 
         if (title == null) {
-            message.setText("Кажется, вы забыли ввести название\nИспользуйте /subscribe [title]");
+            message.setText(U_FORGOT_NAME.toStringValue());
             execute(absSender, message, user);
             return;
         }
 
         IDB db = new DBWorker();
         var closest = new ArrayList<>(Arrays.asList(db.getClosest(title)));
-        closest.add(String.format("Это не то '%s'", title));
+        closest.add(NOT_IT.toStringValue() + String.format("'%s'", title));
         var keyboard = KeyboardCreator.createKeyboardMarkUp(1, closest, KeyboardMarkupTypes.DB);
         if (db.subscribeUser(user.getId(), title) == ReportState.OK) {
-            message.setText(String.format("Вы успешно подписались на %s", title));
+            message.setText(U_BEEN_SUBSCRIBED.toStringValue() + title);
         } else {
-            message.setText("Мы нашли несколько вариантов по вашему запросу");
+            message.setText(WE_FOUND_MULTIPLE_VARIANTS.toStringValue());
             message.setReplyMarkup(keyboard);
         }
         execute(absSender, message, user);

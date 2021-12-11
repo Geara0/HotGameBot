@@ -1,10 +1,14 @@
 package bot;
 
+import botCommands.CommandsConstants;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static bot.KeyboardMarkupTypes.*;
+
 
 public class KeyboardCreator {
     public static InlineKeyboardMarkup createKeyboardMarkUp(Iterable<String> buttons) {
@@ -32,15 +36,15 @@ public class KeyboardCreator {
     }
 
     public static InlineKeyboardMarkup createKeyboardMarkUp(int columnCount, Iterable<String> buttonNames) {
-        return createKeyboardMarkUp(columnCount, buttonNames, KeyboardMarkupTypes.DEFAULT);
+        return createKeyboardMarkUp(columnCount, buttonNames, DEFAULT);
     }
 
     private static InlineKeyboardButton createButton(String name, KeyboardMarkupTypes type) {
         var inlineKeyboardButton = new InlineKeyboardButton();
         inlineKeyboardButton.setText(name);
-        if (type == KeyboardMarkupTypes.DB) {
-            if (name.contains("Это не то"))
-                inlineKeyboardButton.setCallbackData(KeyboardMarkupTypes.NOT_IT.toStringValue().concat(name));
+        if (type == DB) {
+            if (name.contains(CommandsConstants.NOT_IT.toStringValue()))
+                inlineKeyboardButton.setCallbackData(NOT_IT.toStringValue() + name);
             else inlineKeyboardButton.setCallbackData(type.toStringValue());
             return inlineKeyboardButton;
         }

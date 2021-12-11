@@ -8,8 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
-import static botCommands.CommandsConstants.UNSUBSCRIBE_DESCRIPTION;
-import static botCommands.CommandsConstants.UNSUBSCRIBE_NAME;
+import static botCommands.CommandsConstants.*;
 
 /**
  * Команда отписки от игры
@@ -24,10 +23,10 @@ public class UnsubscribeCommand extends Command {
         var message = new SendMessage();
         message.setChatId(chat.getId().toString());
 
-        var title = getName(strings);
+        String titleName = getName(strings);
 
-        if (title == null) {
-            message.setText("Кажется, вы забыли ввести название\nИспользуйте /unsubscribe [title]");
+        if (titleName == null) {
+            message.setText(U_FORGOT_NAME.toStringValue());
             execute(absSender, message, user);
             return;
         }
@@ -35,13 +34,12 @@ public class UnsubscribeCommand extends Command {
         //TODO: KeyboardMarkup с вариантами от чего отписаться task3
 
         IDB db = new DBWorker();
-        var report = db.unsubscribeUser(user.getId(), title);
-        if (report == ReportState.OK) {
-            message.setText(String.format("Вы успешно отписались от %s", title));
-        } else {
-            message.setText(String.format("Произошла ошибка, вы не смогли отписаться от %s по причине: %s",
-                    title, report));
-        }
+        var report = db.unsubscribeUser(user.getId(), titleName);
+        if (report == ReportState.OK)
+            message.setText(U_BEEN_UNSUBSCRIBED.toStringValue() + titleName);
+        else
+            message.setText(ERROR_BECAUSE.toStringValue() + report);
+
         execute(absSender, message, user);
     }
 
