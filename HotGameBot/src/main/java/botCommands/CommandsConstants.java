@@ -33,7 +33,10 @@ public enum CommandsConstants {
     WE_FOUND_MULTIPLE_VARIANTS("Мы нашли несколько вариантов по вашему запросу"),
     ERROR_BECAUSE("Произошла ошибка по причине "),
     WE_RECOMMEND("По заданным параметрам рекомендуем:"),
-    WE_CANT_RECOMMEND("По заданным параметрам ничего не найдено")
+    WE_CANT_RECOMMEND("По заданным параметрам ничего не найдено"),
+    YES("Да"),
+    NO("Нет"),
+    UNSUBSCRIBE("Отписаться"),
     ;
 
     /**

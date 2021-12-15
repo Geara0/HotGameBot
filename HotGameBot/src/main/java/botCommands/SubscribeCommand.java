@@ -25,28 +25,32 @@ public class SubscribeCommand extends Command {
 
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
+        var titleName = getName(strings);
+        var message = TrySubscribe(user, chat, titleName);
+        execute(absSender, message, user);
+    }
+
+    public static SendMessage TrySubscribe(User user, Chat chat, String titleName) {
         var message = new SendMessage();
         message.setChatId(chat.getId().toString());
 
-        var title = getName(strings);
-
-        if (title == null) {
+        if (titleName == null || titleName.trim().equals("")) {
             message.setText(U_FORGOT_NAME.toStringValue());
-            execute(absSender, message, user);
-            return;
+            return message;
         }
 
         IDB db = new DBWorker();
-        var closest = new ArrayList<>(Arrays.asList(db.getClosest(title)));
-        closest.add(NOT_IT.toStringValue() + String.format("'%s'", title));
-        var keyboard = KeyboardCreator.createKeyboardMarkUp(1, closest, KeyboardMarkupTypes.DB);
-        if (db.subscribeUser(user.getId(), title) == ReportState.OK) {
-            message.setText(U_BEEN_SUBSCRIBED.toStringValue() + title);
+        if (db.subscribeUser(user.getId(), titleName) == ReportState.OK) {
+            message.setText(U_BEEN_SUBSCRIBED.toStringValue() + titleName);
         } else {
+            var closest = new ArrayList<>(Arrays.asList(db.getClosestOverall(titleName)));
+            closest.add(NOT_IT.toStringValue() + String.format("'%s'", titleName));
+            var keyboard = KeyboardCreator.createKeyboardMarkUp(1, closest, KeyboardMarkupTypes.DB);
             message.setText(WE_FOUND_MULTIPLE_VARIANTS.toStringValue());
             message.setReplyMarkup(keyboard);
         }
-        execute(absSender, message, user);
+
+        return message;
     }
 
     private String getName(String[] strings) {

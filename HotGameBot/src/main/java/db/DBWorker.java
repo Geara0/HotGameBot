@@ -3,6 +3,7 @@ package db;
 import entities.Levenshtein.LevenshteinCalculator;
 import entities.Title;
 
+import javax.validation.OverridesAttribute;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -50,17 +51,13 @@ public class DBWorker implements IDB {
      *
      * @param title наименование игры
      */
+    @Override
     public void addTitle(Title title) {
         executeSQL(connection, String.format(
                 "INSERT INTO games(title, link, buy_link, price, developer, publisher, genres, description, picture_jpeg, release_date, is_multiplayer) VALUES (%s)", title.toDB()));
     }
 
-    /**
-     * Получить игру из бд
-     *
-     * @param title наименование игры
-     * @return игра
-     */
+    @Override
     public Title getTitle(String title) {
         title = title.replaceAll("'", "");
         var result = executeSQL(connection, String.format(
@@ -83,7 +80,7 @@ public class DBWorker implements IDB {
     }
 
     @Override
-    public String[] getClosest(String title) {
+    public String[] getClosestOverall(String title) {
         var result = executeSQL(connection, "SELECT title FROM games");
         var allTitles = new HashSet<String>();
         Collections.addAll(allTitles, convertStringRows(result, "title"));

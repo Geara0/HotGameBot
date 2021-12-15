@@ -2,6 +2,8 @@ package bot;
 
 import botCommands.*;
 import db.DBWorker;
+import db.IDB;
+import entities.Levenshtein.LevenshteinCalculator;
 import entities.Title;
 import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -9,23 +11,27 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import parsing.HotGameParser;
 import parsing.IParser;
 
-import java.util.ArrayList;
+import java.util.*;
 
 import static bot.ConstantReplies.*;
 import static bot.KeyboardMarkupTypes.*;
+import static botCommands.CommandsConstants.*;
+import static botCommands.CommandsConstants.NOT_IT;
 
-public final class HelloBot extends TelegramLongPollingCommandBot {
+public final class HotGameBot extends TelegramLongPollingCommandBot {
     private final String BOT_USERNAME = "@HotGameInfo_bot";
     private final String BOT_TOKEN = System.getenv("HotGameBotToken");
 
     /**
      * Регистрация комманд
      */
-    public HelloBot() {
+    public HotGameBot() {
         register(new StartCommand());
         register(new MyGamesCommand());
         register(new SubscribeCommand());
@@ -63,11 +69,28 @@ public final class HelloBot extends TelegramLongPollingCommandBot {
         if (update.hasCallbackQuery()) processCallbackUpdate(update.getCallbackQuery());
         if (!(update.hasMessage() && update.getMessage().hasText())) return;
 
-        var msg = update.getMessage();
-        Long chatId = msg.getChatId();
-        String userName = getUserName(msg);
-        var answer = String.format("Hi, %s", userName);
-        sendAnswer(chatId, userName, answer);
+        IDB db = new DBWorker();
+        var message = update.getMessage();
+        String text = message.getText();
+        User user = message.getFrom();
+        Long userId = user.getId();
+        String userName = getUserName(message);
+        var subscriptions = db.getSubscriptions(userId);
+
+        var reply = new SendMessage();
+        reply.setChatId(message.getChatId().toString());
+        if (Arrays.asList(subscriptions).contains(text))
+            processCallbackDefault(new CallbackQuery(
+                    null, user, message, null, text, null, null), reply);
+        else
+            reply = SubscribeCommand.TrySubscribe(user, message.getChat(), text);
+
+
+        try {
+            execute(reply);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -84,6 +107,8 @@ public final class HelloBot extends TelegramLongPollingCommandBot {
             processCallbackParser(query, answer);
         else if (queryData.startsWith(DB.toStringValue()))
             processCallbackDB(query, answer);
+        else if (queryData.startsWith(CONFIRM_UNSUB.toStringValue()))
+            processCallbackConfirmUnsub(query, answer);
         else
             processCallbackDefault(query, answer);
 
@@ -107,32 +132,34 @@ public final class HelloBot extends TelegramLongPollingCommandBot {
         return userName != null ? userName : String.format("%s %s", user.getLastName(), user.getFirstName());
     }
 
-    //TODO: replace in task3
-
-    /**
-     * Отправить пользователю ответ
-     */
-    private void sendAnswer(Long chatId, String userName, String text) {
-        var answer = new SendMessage();
-        answer.setText(text);
-        answer.setChatId(chatId.toString());
-        try {
-            execute(answer);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
-    }
-
     /**
      * Обработать callback с обычной кнопки
      *
      * @param answer ответное сообщение пользователю
      */
-    public static void processCallbackDefault(CallbackQuery query, SendMessage answer) {
-        var db = new DBWorker();
+    private static void processCallbackDefault(CallbackQuery query, SendMessage answer) {
+        IDB db = new DBWorker();
         Title title = db.getTitle(query.getData());
         answer.setText(title.toString());
 
+        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
+        var keyboardRow = new ArrayList<InlineKeyboardButton>();
+        var button = KeyboardCreator.createButton(UNSUBSCRIBE.toStringValue(), CONFIRM_UNSUB, title.getName());
+        keyboardRow.add(button);
+        keyboard.add(keyboardRow);
+        answer.setReplyMarkup(new InlineKeyboardMarkup(keyboard));
+    }
+
+    /**
+     * Обработать callback с подтверждения отписки
+     *
+     * @param answer ответное сообщение пользователю
+     */
+    private static void processCallbackConfirmUnsub(CallbackQuery query, SendMessage answer) {
+        IDB db = new DBWorker();
+        var titleName = query.getData().replaceAll("@", "");
+        db.unsubscribeUser(query.getFrom().getId(), query.getData().replaceAll("@", ""));
+        answer.setText(U_BEEN_UNSUBSCRIBED.toStringValue() + titleName);
     }
 
     /**
@@ -140,11 +167,11 @@ public final class HelloBot extends TelegramLongPollingCommandBot {
      *
      * @param answer ответное сообщение пользователю
      */
-    public static void processCallbackDB(CallbackQuery query, SendMessage answer) {
-        var db = new DBWorker();
+    private static void processCallbackDB(CallbackQuery query, SendMessage answer) {
+        IDB db = new DBWorker();
         String titleName = query.getData().replaceAll("\\$", "");
         db.subscribeUser(query.getFrom().getId(), titleName);
-        answer.setText(U_R_SUBSCRIBED_ON.toStringValue() + titleName);
+        answer.setText(U_BEEN_SUBSCRIBED.toStringValue() + titleName);
     }
 
     /**
@@ -152,13 +179,13 @@ public final class HelloBot extends TelegramLongPollingCommandBot {
      *
      * @param answer ответное сообщение пользователю
      */
-    public static void processCallbackParser(CallbackQuery query, SendMessage answer) {
+    private static void processCallbackParser(CallbackQuery query, SendMessage answer) {
         IParser parser = new HotGameParser();
-        var db = new DBWorker();
+        IDB db = new DBWorker();
         Title title = parser.parseTitlesByName(query.getData().replaceAll("%", "")).get(0);
         db.addTitle(title);
         db.subscribeUser(query.getFrom().getId(), title.getName());
-        answer.setText(U_R_SUBSCRIBED_ON.toStringValue() + title.getName());
+        answer.setText(U_BEEN_UNSUBSCRIBED.toStringValue() + title.getName());
     }
 
     /**
@@ -166,7 +193,7 @@ public final class HelloBot extends TelegramLongPollingCommandBot {
      *
      * @param answer ответное сообщение пользователю
      */
-    public static void processCallbackNotIt(CallbackQuery query, SendMessage answer) {
+    private static void processCallbackNotIt(CallbackQuery query, SendMessage answer) {
         IParser parser = new HotGameParser();
         String queryData = query.getData();
         ArrayList<Title> titleNames = parser.parseTitlesByName(

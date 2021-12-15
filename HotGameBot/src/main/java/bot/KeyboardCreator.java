@@ -4,6 +4,7 @@ import botCommands.CommandsConstants;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
+import javax.management.Notification;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,13 +40,31 @@ public class KeyboardCreator {
         return createKeyboardMarkUp(columnCount, buttonNames, DEFAULT);
     }
 
+
+    public static InlineKeyboardMarkup createConfirmationKeyboard(KeyboardMarkupTypes type, String titleName) {
+        //TODO: это точно надо в лог
+        if (type != CONFIRM_UNSUB) return null;
+        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
+        var keyboardRow = new ArrayList<InlineKeyboardButton>();
+        keyboardRow.add(createButton("Да", type, titleName));
+        keyboardRow.add(createButton("Нет", type, titleName));
+        keyboard.add(keyboardRow);
+        return new InlineKeyboardMarkup(keyboard);
+    }
+
+    public static InlineKeyboardButton createButton(String name, KeyboardMarkupTypes type, String callbackData) {
+        var inlineKeyboardButton = new InlineKeyboardButton();
+        inlineKeyboardButton.setText(name);
+        inlineKeyboardButton.setCallbackData(type.toStringValue() + callbackData);
+        return inlineKeyboardButton;
+    }
+
+
     private static InlineKeyboardButton createButton(String name, KeyboardMarkupTypes type) {
         var inlineKeyboardButton = new InlineKeyboardButton();
         inlineKeyboardButton.setText(name);
-        if (type == DB) {
-            if (name.contains(CommandsConstants.NOT_IT.toStringValue()))
-                inlineKeyboardButton.setCallbackData(NOT_IT.toStringValue() + name);
-            else inlineKeyboardButton.setCallbackData(type.toStringValue());
+        if (type == DB && name.contains(CommandsConstants.NOT_IT.toStringValue())) {
+            inlineKeyboardButton.setCallbackData(NOT_IT.toStringValue() + name);
             return inlineKeyboardButton;
         }
         inlineKeyboardButton.setCallbackData(type.toStringValue().concat(name));
