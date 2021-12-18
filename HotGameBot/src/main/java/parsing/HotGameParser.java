@@ -19,6 +19,7 @@ public class HotGameParser implements IParser {
     private ReportState report;
 
     public HotGameParser() {
+        report = ReportState.INITIAL;
     }
 
     /**
