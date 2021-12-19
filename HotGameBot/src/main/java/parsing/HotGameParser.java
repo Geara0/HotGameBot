@@ -9,7 +9,10 @@ import javax.sql.rowset.serial.SerialBlob;
 import javax.xml.crypto.URIReferenceException;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 
 public class HotGameParser implements IParser {
@@ -19,6 +22,7 @@ public class HotGameParser implements IParser {
     private ReportState report;
 
     public HotGameParser() {
+        report = ReportState.INITIAL;
     }
 
     /**
