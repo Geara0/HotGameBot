@@ -3,7 +3,6 @@ package bot;
 import botCommands.*;
 import db.DBWorker;
 import db.IDB;
-import entities.Levenshtein.LevenshteinCalculator;
 import entities.Title;
 import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -17,12 +16,14 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import parsing.HotGameParser;
 import parsing.IParser;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import static bot.ConstantReplies.*;
+import static bot.ConstantReplies.NOTHING_FOUND;
+import static bot.ConstantReplies.OTHER_SUGGESTIONS;
 import static bot.KeyboardMarkupTypes.*;
 import static botCommands.CommandsConstants.*;
-import static botCommands.CommandsConstants.NOT_IT;
 
 public final class HotGameBot extends TelegramLongPollingCommandBot {
     private final String BOT_USERNAME = "@HotGameInfo_bot";
@@ -101,7 +102,7 @@ public final class HotGameBot extends TelegramLongPollingCommandBot {
         var queryData = query.getData();
         var answer = new SendMessage();
 
-        if (queryData.startsWith(NOT_IT.toStringValue()))
+        if (queryData.startsWith(KeyboardMarkupTypes.NOT_IT.toStringValue()))
             processCallbackNotIt(query, answer);
         else if (queryData.startsWith(PARSER.toStringValue()))
             processCallbackParser(query, answer);

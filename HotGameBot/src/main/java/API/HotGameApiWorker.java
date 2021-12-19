@@ -3,22 +3,24 @@ package API;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import entities.Title;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import parsing.HotGameParser;
 import parsing.IParser;
+import parsing.ReportState;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class HotGameApiWorker implements APIWorker{
     final String APIUrl = "https://api.hot-game.info/games_top.json";
+    private static final Logger logger = LogManager.getLogger("API");
 
     @Override
     public ArrayList<Title> getData() {
@@ -31,8 +33,10 @@ public class HotGameApiWorker implements APIWorker{
 
     private Title convert(APITitle title){
         IParser parser = new HotGameParser();
-        System.out.println(title.title);
-        return parser.parseTitleByLink(title.link);
+        Title result =parser.parseTitleByLink(title.link);
+        if (!parser.getReport().equals(ReportState.OK))
+            logger.warn("something went wrong, parser report: {}",parser.getReport());
+        return result;
     }
 
     private List<APITitle> getTitlesFromApi(){
@@ -56,13 +60,5 @@ public class HotGameApiWorker implements APIWorker{
             e.printStackTrace();
         }
         return content.toString();
-    }
-
-    public static void main(String[] args){
-        var apiWorker = new HotGameApiWorker();
-        var start = Instant.now();
-        var titles = apiWorker.getData();
-        var stop = Instant.now();
-        System.out.println(Duration.between(start,stop).toMillis());
     }
 }

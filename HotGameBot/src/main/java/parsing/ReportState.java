@@ -4,11 +4,11 @@ package parsing;
  * Енам состояний парсера
  */
 public enum ReportState {
-    INITIAL("парсер в начальном положении"),
-    OK("все хорошо"),
-    BAD_URL("Вы ввели некорректную ссылку"),
-    BAD_NAME("Вы ввели некорректное название"),
-    BAD_PARAMETERS("Некорректный формат параметров");
+    INITIAL("REPORTSTATE: INITIAL"),
+    OK("REPORTSTATE: ALL GOOD"),
+    BAD_URL("REPORTSTATE: BAD_URL"),
+    BAD_NAME("REPORTSTATE: BAD_NAME"),
+    BAD_PARAMETERS("REPORTSTATE: BAD_PARAMETERS");
 
 
     private final String value;
