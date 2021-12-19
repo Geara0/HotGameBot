@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Appenders>
+        <!-- Async Loggers will auto-flush in batches, so switch off immediateFlush. -->
+        <RandomAccessFile name="parserAppender" fileName="target/log/parser.log" immediateFlush="false" append="true">
+            <MarkerFilter marker="debugMarker" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout>
+                <Pattern>%highlight{%d %p %c{1.} [%t] %m %ex%n}</Pattern>
+            </PatternLayout>
+        </RandomAccessFile>
+        <RandomAccessFile name="DBWorkerAppender" fileName="target/log/dbWorker.log" immediateFlush="false" append="true">
+            <PatternLayout>
+                <Pattern>%d %p %c{1.} [%t] %m %ex%n</Pattern>
+            </PatternLayout>
+        </RandomAccessFile>
+        <RandomAccessFile name="botCommandsAppender" fileName="target/log/botCommands.log" immediateFlush="false" append="true">
+            <PatternLayout>
+                <Pattern>%d %p %c{1.} [%t] %m %ex%n</Pattern>
+            </PatternLayout>
+        </RandomAccessFile>
+        <RandomAccessFile name="botAppender" fileName="target/log/bot.log" immediateFlush="false" append="true">
+            <PatternLayout>
+                <Pattern>%d %p %c{1.} [%t] %m %ex%n</Pattern>
+            </PatternLayout>
+        </RandomAccessFile>
+        <RandomAccessFile name="APIAppender" fileName="target/log/api.log" immediateFlush="false" append="true">
+            <PatternLayout>
+                <Pattern>%d %p %c{1.} [%t] %m %ex%n</Pattern>
+            </PatternLayout>
+        </RandomAccessFile>
+        <RandomAccessFile name="rootError" fileName="target/log/dump.log" immediateFlush="false" append="true">
+            <PatternLayout>
+                <Pattern>%d %p %c{1.} [%t] %m %ex%n</Pattern>
+            </PatternLayout>
+        </RandomAccessFile>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="parsing.HotGameParser" level="all" additivity="true" includeLocation="false">
+            <AppenderRef ref="parserAppender"/>
+        </Logger>
+        <Logger name="db.DBWorker" level="all" additivity="true" includeLocation="false">
+            <AppenderRef ref="DBWorkerAppender"/>
+        </Logger>
+        <Logger name="botCommands" level="all" additivity="true" includeLocation="false">
+                <AppenderRef ref="botCommandsAppender"/>
+        </Logger>
+        <Logger name="bot" level="all" additivity="true" includeLocation="false">
+            <AppenderRef ref="botAppender"/>
+        </Logger>
+        <Logger name="API" level="all" additivity="true" includeLocation="false">
+            <AppenderRef ref="APIAppender"/>
+        </Logger>
+        <Root level="error">
+            <AppenderRef ref="rootError"/>
+        </Root>
+    </Loggers>
+
+
+</Configuration>
