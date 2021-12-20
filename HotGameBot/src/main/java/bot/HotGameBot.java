@@ -39,6 +39,7 @@ public final class HotGameBot extends TelegramLongPollingCommandBot {
         register(new UnsubscribeCommand());
         register(new UnsubscribeAllCommand());
         register(new WantToPlayCommand());
+        register(new ReportCommand());
         var helpCommand = new HelpCommand(this);
         register(helpCommand);
 
@@ -86,7 +87,6 @@ public final class HotGameBot extends TelegramLongPollingCommandBot {
         else
             reply = SubscribeCommand.TrySubscribe(user, message.getChat(), text);
 
-
         try {
             execute(reply);
         } catch (TelegramApiException e) {
@@ -104,11 +104,11 @@ public final class HotGameBot extends TelegramLongPollingCommandBot {
 
         if (queryData.startsWith(KeyboardMarkupTypes.NOT_IT.toStringValue()))
             processCallbackNotIt(query, answer);
-        else if (queryData.startsWith(PARSER.toStringValue()))
+        else if (queryData.startsWith(KeyboardMarkupTypes.PARSER.toStringValue()))
             processCallbackParser(query, answer);
-        else if (queryData.startsWith(DB.toStringValue()))
+        else if (queryData.startsWith(KeyboardMarkupTypes.DB.toStringValue()))
             processCallbackDB(query, answer);
-        else if (queryData.startsWith(CONFIRM_UNSUB.toStringValue()))
+        else if (queryData.startsWith(KeyboardMarkupTypes.CONFIRM_UNSUB.toStringValue()))
             processCallbackConfirmUnsub(query, answer);
         else
             processCallbackDefault(query, answer);

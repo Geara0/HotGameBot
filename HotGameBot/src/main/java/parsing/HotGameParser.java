@@ -53,11 +53,11 @@ public class HotGameParser implements IParser {
             report = ReportState.BAD_NAME;
             return new ArrayList<>();
         }
-        logger.info(debugMarker,"parsing by name:    {}",name);
+        logger.info(debugMarker, "parsing by name: {}", name);
         ArrayList<Title> result = new ArrayList<>();
         for (int i = 0; i < 5 && !report.equals(ReportState.OK); i++)
             result = getTitlesByRequest("q=".concat(name));
-        logger.debug(debugMarker,"parsing by name finished, report:{}",report.toStringValue());
+        logger.debug(debugMarker, "parsing by name finished, report: {}", report.toStringValue());
         return result;
     }
 
@@ -72,11 +72,11 @@ public class HotGameParser implements IParser {
         report = ReportState.INITIAL;
         String parameters = String.join(";", params);
         ArrayList<Title> result = new ArrayList<>();
-        logger.info(debugMarker,"recommendations by parameters: {}",parameters);
+        logger.info(debugMarker, "recommendations by parameters: {}", parameters);
         for (int i = 0; i < 5 && !report.equals(ReportState.OK); i++)
             result = getTitlesByRequest(parameters);
         if (!report.equals(ReportState.OK)) report = ReportState.BAD_PARAMETERS;
-        logger.debug(debugMarker,"recommendations by parameters finished, report:{}",report.toStringValue());
+        logger.debug(debugMarker, "recommendations by parameters finished, report:{}", report.toStringValue());
         return new ArrayList<>(result.subList(0, 5));
     }
 
@@ -92,10 +92,10 @@ public class HotGameParser implements IParser {
             return new Title();
         }
         Title result = new Title();
-        logger.info(debugMarker,"parsing title by link: {}",link);
+        logger.info(debugMarker, "parsing title by link: {}", link);
         for (int i = 0; i < 5 && !report.equals(ReportState.OK); i++)
             result = getTitleInfoSelect(link);
-        logger.debug(debugMarker,"parsing by link finished, report: {}",report.toStringValue());
+        logger.debug(debugMarker, "parsing by link finished, report: {}", report.toStringValue());
         return result;
     }
 
@@ -110,7 +110,7 @@ public class HotGameParser implements IParser {
         String searchRequest = request.strip().toLowerCase(); //replaceAll("[^a-zA-Z]","");
         String domainUrl = "https://hot-game.info";
         String searchUrl = domainUrl.concat("/").concat(searchRequest);
-        logger.info(debugMarker,"trying make request: {}",searchUrl);
+        logger.info(debugMarker, "trying make request: {}", searchUrl);
         try {
             Document doc = Jsoup.connect(searchUrl).get();
             Element searchResults = doc.selectFirst("body > div.container.content-container > section.yui3-cssreset.result-block.content-table");
@@ -128,9 +128,9 @@ public class HotGameParser implements IParser {
             logger.warn(e.getStackTrace());
         } catch (URIReferenceException e) {
             report = ReportState.BAD_NAME;
-            logger.debug(debugMarker,"NO RESULTS by request: {}",request);
+            logger.debug(debugMarker, "NO RESULTS by request: {}", request);
         }
-        logger.debug(debugMarker,"parsing by link finished, report: {}",report.toStringValue());
+        logger.debug(debugMarker, "parsing by link finished, report: {}", report.toStringValue());
         return result;
     }
 
@@ -142,7 +142,7 @@ public class HotGameParser implements IParser {
      */
     private Title getTitleInfoSelect(String link) {
         Title result = new Title();
-        logger.info(debugMarker,"trying parse by link: {}",link);
+        logger.info(debugMarker, "trying parse by link: {}", link);
         try {
             Document doc = Jsoup.connect(link).get();
             Element gameInfo = doc.selectFirst("body > div.container.content-container > section.game.clearfix > aside > div.hg-block.short-game-description > div");
@@ -168,11 +168,11 @@ public class HotGameParser implements IParser {
         } catch (IOException e) {
             report = ReportState.BAD_URL;
         } catch (NullPointerException | NumberFormatException e) {
-            logger.warn("DATE TROUBLES with title: {}",link);
+            logger.warn("DATE TROUBLES with title: {}", link);
         } catch (SQLException e) {
             //idk what to do....
         }
-        logger.debug(debugMarker,"request finished, report: {}",report.toStringValue());
+        logger.debug(debugMarker, "request finished, report: {}", report.toStringValue());
         return result;
     }
 

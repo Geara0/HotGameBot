@@ -20,6 +20,8 @@ public enum CommandsConstants {
     UNSUBSCRIBE_ALL_DESCRIPTION("Отписаться от всех игр"),
     WANT_TO_PLAY_NAME("wantToPlay"),
     WANT_TO_PLAY_DESCRIPTION("Подборка игр по параметру"),
+    REPORT_NAME("report"),
+    REPORT_DESCRIPTION("Вы можете оставить сообщение об ошибке"),
     NO_SUBS("У вас пока нет подписок"),
     QUIT("Вы вышли!"),
     // for commands themselves
@@ -37,6 +39,7 @@ public enum CommandsConstants {
     YES("Да"),
     NO("Нет"),
     UNSUBSCRIBE("Отписаться"),
+    REPORT_THANKS("Спасибо за помощь!"),
     ;
 
     /**
