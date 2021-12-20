@@ -1,11 +1,25 @@
+import API.APIWorker;
 import bot.HotGameBot;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
+import java.util.Arrays;
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class Main {
 
+    private final static Logger logger = LogManager.getLogger("root");
+    private final static Long fifteenMinutes = 900000L;
+    private final static Long threeHours = 10800000L;
     public static void main(String[] args) {
+        new Timer(true).scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run(){dbUpdatingFromAPI();}
+        }, fifteenMinutes, threeHours);
         startBot();
     }
 
@@ -15,7 +29,13 @@ public class Main {
             TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
             telegramBotsApi.registerBot(new HotGameBot());
         } catch (TelegramApiException e) {
-            e.printStackTrace();
+            logger.error("bot startup error: {}", Arrays.toString(e.getStackTrace()));
         }
+    }
+
+    private static void dbUpdatingFromAPI(){
+        var apiWorker = new APIWorker();
+        var data = apiWorker.getData();
+        //TODO запихивать тайтлы в бд
     }
 }
