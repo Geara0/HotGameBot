@@ -20,6 +20,6 @@ public class ReportCommand extends Command {
         message.setText(REPORT_THANKS.toStringValue());
         execute(absSender, message, user);
         //TODO: Лог
-        Log12.info(String.join(" ", strings));
+        logger.fatal("user report: {}", String.join(" ", strings));
     }
 }

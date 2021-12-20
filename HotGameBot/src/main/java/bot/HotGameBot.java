@@ -4,6 +4,8 @@ import botCommands.*;
 import db.DBWorker;
 import db.IDB;
 import entities.Title;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -22,12 +24,14 @@ import java.util.List;
 
 import static bot.ConstantReplies.NOTHING_FOUND;
 import static bot.ConstantReplies.OTHER_SUGGESTIONS;
-import static bot.KeyboardMarkupTypes.*;
+import static bot.KeyboardMarkupTypes.CONFIRM_UNSUB;
+import static bot.KeyboardMarkupTypes.PARSER;
 import static botCommands.CommandsConstants.*;
 
 public final class HotGameBot extends TelegramLongPollingCommandBot {
     private final String BOT_USERNAME = "@HotGameInfo_bot";
     private final String BOT_TOKEN = System.getenv("HotGameBotToken");
+    private final static Logger logger = LogManager.getLogger("bot");
 
     /**
      * Регистрация комманд
@@ -42,18 +46,21 @@ public final class HotGameBot extends TelegramLongPollingCommandBot {
         register(new ReportCommand());
         var helpCommand = new HelpCommand(this);
         register(helpCommand);
+        logger.info("commands registered");
 
         registerDefaultAction(((absSender, message) -> {
             var text = new SendMessage();
             text.setText(String.format("Command not found: %s", message.getText()));
             text.setChatId(message.getChatId().toString());
             try {
+                logger.debug("executing command: {}",text.getText());
                 absSender.execute(text);
             } catch (TelegramApiException e) {
                 e.printStackTrace();
             }
             helpCommand.execute(absSender, message.getFrom(), message.getChat(), new String[]{});
         }));
+        logger.info("bot is stated");
     }
 
     @Override
@@ -77,20 +84,24 @@ public final class HotGameBot extends TelegramLongPollingCommandBot {
         User user = message.getFrom();
         Long userId = user.getId();
         String userName = getUserName(message);
+        logger.debug("received non-command update: {}, {}, {}",userId,userName,text);
         var subscriptions = db.getSubscriptions(userId);
-
         var reply = new SendMessage();
         reply.setChatId(message.getChatId().toString());
-        if (Arrays.asList(subscriptions).contains(text))
+        if (Arrays.asList(subscriptions).contains(text)){
             processCallbackDefault(new CallbackQuery(
                     null, user, message, null, text, null, null), reply);
-        else
+        }
+        else{
+            logger.debug("subscribe processing");
             reply = SubscribeCommand.TrySubscribe(user, message.getChat(), text);
+        }
 
         try {
             execute(reply);
+            logger.debug("reply executed: {}, {}, {}",user.getId(),user.getUserName(),reply.getText());
         } catch (TelegramApiException e) {
-            e.printStackTrace();
+            logger.error("exception thrown: {}", Arrays.toString(e.getStackTrace()));
         }
 
     }
@@ -102,22 +113,35 @@ public final class HotGameBot extends TelegramLongPollingCommandBot {
         var queryData = query.getData();
         var answer = new SendMessage();
 
-        if (queryData.startsWith(KeyboardMarkupTypes.NOT_IT.toStringValue()))
+        logger.debug("processing callback: {}, {}, {}", query.getFrom().getId(),query.getFrom().getUserName(),query.getData());
+        if (queryData.startsWith(KeyboardMarkupTypes.NOT_IT.toStringValue())){
+            logger.debug("processing 'not-it' callback");
             processCallbackNotIt(query, answer);
-        else if (queryData.startsWith(KeyboardMarkupTypes.PARSER.toStringValue()))
+        }
+        else if (queryData.startsWith(KeyboardMarkupTypes.PARSER.toStringValue())){
+            logger.debug("processing 'parser' callback");
             processCallbackParser(query, answer);
-        else if (queryData.startsWith(KeyboardMarkupTypes.DB.toStringValue()))
+        }
+        else if (queryData.startsWith(KeyboardMarkupTypes.DB.toStringValue())){
+            logger.debug("processing 'db' callback");
             processCallbackDB(query, answer);
-        else if (queryData.startsWith(KeyboardMarkupTypes.CONFIRM_UNSUB.toStringValue()))
+        }
+        else if (queryData.startsWith(KeyboardMarkupTypes.CONFIRM_UNSUB.toStringValue())){
+            logger.debug("processing 'confirm-unsub' callback");
             processCallbackConfirmUnsub(query, answer);
-        else
+        }
+        else{
+            logger.debug("processing default callback");
             processCallbackDefault(query, answer);
+        }
+        logger.debug("processing complete: {}",answer.getText());
 
         answer.setChatId(query.getMessage().getChatId().toString());
         try {
             execute(answer);
+            logger.debug("answer executed: {}, {}, {}",query.getFrom().getId(),query.getFrom().getUserName(),answer.getText());
         } catch (TelegramApiException e) {
-            e.printStackTrace();
+            logger.debug("exception thrown: {}", Arrays.toString(e.getStackTrace()));
         }
     }
 

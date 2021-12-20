@@ -2,11 +2,13 @@ package db;
 
 import entities.Levenshtein.LevenshteinCalculator;
 import entities.Title;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import javax.validation.OverridesAttribute;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -20,6 +22,7 @@ public class DBWorker implements IDB {
     private final String jdbcURL = "jdbc:postgresql://localhost:5432/postgres";
     private final String userName = "postgres";
     private final String password = System.getenv("PostgresPassword");
+    private static final Logger logger = LogManager.getLogger("db.DBWorker");
     /**
      * Соединение с бд
      */
@@ -29,10 +32,11 @@ public class DBWorker implements IDB {
      * Подключаемся к бд при инициализации
      */
     public DBWorker() {
+        logger.debug("db worker initialized");
         try {
             connection = DriverManager.getConnection(jdbcURL, userName, password);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("connection to db failed: {}", Arrays.toString(e.getStackTrace()));
         }
     }
 
@@ -42,6 +46,7 @@ public class DBWorker implements IDB {
      * @param userId id пользователя
      */
     public void addUser(long userId) {
+        logger.debug("adding user: {}",userId);
         executeSQL(connection, String.format(
                 "INSERT INTO users(id) VALUES (%s)", userId));
     }
@@ -53,6 +58,7 @@ public class DBWorker implements IDB {
      */
     @Override
     public void addTitle(Title title) {
+        logger.debug("adding title: {}",title.toString());
         executeSQL(connection, String.format(
                 "INSERT INTO games(title, link, buy_link, price, developer, publisher, genres, description, picture_jpeg, release_date, is_multiplayer) VALUES (%s)", title.toDB()));
     }
@@ -62,6 +68,7 @@ public class DBWorker implements IDB {
         title = title.replaceAll("'", "");
         var result = executeSQL(connection, String.format(
                 "SELECT * FROM games WHERE (title = '%s')", title));
+        logger.debug("getting title: {}",result.toString());
         return convertGames(result).get(0);
     }
 
@@ -76,6 +83,7 @@ public class DBWorker implements IDB {
                 "SELECT title FROM games WHERE (id IN %s)", subscriptionsIds.toString()
                         .replace('[', '(').replace(']', ')')));
         subscriptions = convertStringRows(result, "title");
+        logger.debug("getting subscriptions: {}, {}",userId,result.toString());
         return subscriptions;
     }
 
@@ -91,16 +99,21 @@ public class DBWorker implements IDB {
     @Override
     public ReportState subscribeUser(long userId, String title) {
         title = title.replaceAll("'", "");
+        logger.debug("trying subscribe user: {}, {}",userId,title);
 
         var result = executeSQL(connection, String.format(
                 "SELECT id FROM games WHERE (title = '%s')", title));
         var titles = convertLongRows(result, "id");
 
-        if (titles.length == 0) return ReportState.BAD_NAME;
+        if (titles.length == 0) {
+            logger.debug("cannot subscribe user (no results in db): {}",title);
+            return ReportState.BAD_NAME;
+        }
         var titleId = titles[0];
         executeSQL(connection, String.format(
                 "UPDATE users SET subscriptions = subscriptions || ('%s=>null') WHERE (id = %s)",
                 titleId, userId));
+        logger.debug("user successfully subscribed: {}, {}",userId,titleId);
         return ReportState.OK;
     }
 
@@ -109,16 +122,22 @@ public class DBWorker implements IDB {
         var result = executeSQL(connection, String.format(
                 "SELECT id FROM games WHERE (title = '%s')", title));
         var titles = convertLongRows(result, "id");
-        if (titles.length == 0) return ReportState.BAD_NAME;
+        logger.debug("trying unsubscribe user: {}, {}",userId,title);
+        if (titles.length == 0) {
+            logger.debug("cannot unsubscribe user (no result in subs request): {}, {}",userId,title);
+            return ReportState.BAD_NAME;
+        }
         var titleId = titles[0];
         executeSQL(connection, String.format(
                 "UPDATE users SET subscriptions = delete(subscriptions, '%s') WHERE (id = %s)",
                 titleId, userId));
+        logger.debug("user successfully unsubscribed: {}, {}",userId,titleId);
         return ReportState.OK;
     }
 
     @Override
     public ReportState unsubscribeAllUser(long userId) {
+        logger.debug("UNSUBSCRIBING ALL USERS");
         executeSQL(connection, String.format(
                 "UPDATE users SET subscriptions = hstore(array[]::character varying[]) WHERE (id = %s)", userId));
         return ReportState.OK;

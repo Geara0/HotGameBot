@@ -3,58 +3,81 @@
     <Appenders>
         <!-- Async Loggers will auto-flush in batches, so switch off immediateFlush. -->
         <RandomAccessFile name="parserAppender" fileName="target/log/parser.log" immediateFlush="false" append="true">
-            <MarkerFilter marker="debugMarker" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout>
-                <Pattern>%highlight{%d %p %c{1.} [%t] %m %ex%n}</Pattern>
+                <Pattern>"%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"</Pattern>
             </PatternLayout>
         </RandomAccessFile>
         <RandomAccessFile name="DBWorkerAppender" fileName="target/log/dbWorker.log" immediateFlush="false"
                           append="true">
             <PatternLayout>
-                <Pattern>%d %p %c{1.} [%t] %m %ex%n</Pattern>
+                <Pattern>"%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"</Pattern>
             </PatternLayout>
         </RandomAccessFile>
         <RandomAccessFile name="botCommandsAppender" fileName="target/log/botCommands.log" immediateFlush="false"
                           append="true">
             <PatternLayout>
-                <Pattern>%d %p %c{1.} [%t] %m %ex%n</Pattern>
+                <Pattern>"%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"</Pattern>
             </PatternLayout>
         </RandomAccessFile>
         <RandomAccessFile name="botAppender" fileName="target/log/bot.log" immediateFlush="false" append="true">
             <PatternLayout>
-                <Pattern>%d %p %c{1.} [%t] %m %ex%n</Pattern>
+                <Pattern>"%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"</Pattern>
             </PatternLayout>
         </RandomAccessFile>
         <RandomAccessFile name="APIAppender" fileName="target/log/api.log" immediateFlush="false" append="true">
             <PatternLayout>
-                <Pattern>%d %p %c{1.} [%t] %m %ex%n</Pattern>
+                <Pattern>"%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"</Pattern>
             </PatternLayout>
         </RandomAccessFile>
-        <RandomAccessFile name="rootError" fileName="target/log/dump.log" immediateFlush="false" append="true">
+
+        <RandomAccessFile name="errors" filename="target/log/error.log" immediateFlush="false" append="true">
             <PatternLayout>
-                <Pattern>%d %p %c{1.} [%t] %m %ex%n</Pattern>
+                <Pattern>"%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"</Pattern>
             </PatternLayout>
         </RandomAccessFile>
+        <RandomAccessFile name="userReports" fileName="target/log/userReports.log" immediateFlush="false" append="true">
+            <PatternLayout>
+                <Pattern>"%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"</Pattern>
+            </PatternLayout>
+        </RandomAccessFile>
+        <RollingRandomAccessFile name="Dump" fileName="target/log/dump.log"
+                                 filePattern="logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz">
+            <PatternLayout>
+                <Pattern>"%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="50 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="5"/>
+        </RollingRandomAccessFile>
     </Appenders>
 
     <Loggers>
-        <Logger name="parsing.HotGameParser" level="all" additivity="true" includeLocation="false">
-            <AppenderRef ref="parserAppender"/>
+        <Logger name="API" level="debug" additivity="false" includeLocation="false">
+            <AppenderRef ref="APIAppender" level="debug"/>
+            <AppenderRef ref="Dump" level="info"/>
         </Logger>
-        <Logger name="db.DBWorker" level="all" additivity="true" includeLocation="false">
-            <AppenderRef ref="DBWorkerAppender"/>
+        <Logger name="bot" level="debug" additivity="true" includeLocation="false">
+            <AppenderRef ref="botAppender" level="debug"/>
+            <AppenderRef ref="Dump" level="info"/>
         </Logger>
-        <Logger name="botCommands" level="all" additivity="true" includeLocation="false">
-            <AppenderRef ref="botCommandsAppender"/>
+        <Logger name="botCommands" level="debug" additivity="true" includeLocation="false">
+            <AppenderRef ref="botAppender" level="debug"/>
+            <AppenderRef ref="botCommandsAppender" level="trace"/>
+            <AppenderRef ref="userReports" level="fatal"/>
+            <AppenderRef ref="Dump" level="info"/>
         </Logger>
-        <Logger name="bot" level="all" additivity="true" includeLocation="false">
-            <AppenderRef ref="botAppender"/>
+        <Logger name="db.DBWorker" level="debug" additivity="true" includeLocation="false">
+            <AppenderRef ref="DBWorkerAppender" level="debug"/>
+            <AppenderRef ref="Dump" level="info"/>
         </Logger>
-        <Logger name="API" level="all" additivity="true" includeLocation="false">
-            <AppenderRef ref="APIAppender"/>
+        <Logger name="parsing.HotGameParser" level="debug" additivity="true" includeLocation="false">
+            <AppenderRef ref="parserAppender" level="info"/>
+            <AppenderRef ref="Dump" level="info"/>
         </Logger>
         <Root level="error">
-            <AppenderRef ref="rootError"/>
+            <AppenderRef ref="errors" level="error"/>
         </Root>
     </Loggers>
 

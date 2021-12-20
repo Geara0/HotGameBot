@@ -1,12 +1,15 @@
 package db;
 
 import entities.Title;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.Array;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
@@ -14,6 +17,7 @@ import java.util.Set;
  * Вспомогательный класс, тк в проекте нет Hibernate
  */
 public class Converter {
+    private final static Logger logger = LogManager.getLogger("db.DBWorker");
     /**
      * Конвертировать ResultSet игр в список игр
      */
@@ -34,7 +38,7 @@ public class Converter {
                         resultSet.getBlob("picture_jpeg")));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("converting titles error: {}", Arrays.toString(e.getStackTrace()));
         }
         return titles;
     }
@@ -52,7 +56,7 @@ public class Converter {
                 titles.add(resultSet.getString(column));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("converting rows to string error: {}", Arrays.toString(e.getStackTrace()));
         }
         return titles.toArray(new String[0]);
     }
@@ -70,7 +74,7 @@ public class Converter {
                 titles.add(resultSet.getLong(column));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("convert long rows error: {}", Arrays.toString(e.getStackTrace()));
         }
         return titles.toArray(new Long[0]);
     }
@@ -88,7 +92,7 @@ public class Converter {
         try {
             javaArray = (T[]) array.getArray();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("arrayToJavaArray error: {}", Arrays.toString(e.getStackTrace()));
         }
         return javaArray;
     }
@@ -103,14 +107,14 @@ public class Converter {
      */
     public static <T> Set<T> hstoreToSet(ResultSet hstore, String column, Class<T> tClass) {
         Set<T> set = null;
-        Map<T, String> map = null;
+        Map<T, String> map;
         try {
             if (hstore.next()) {
                 map = (Map<T, String>) hstore.getObject(column);
                 set = map.keySet();
             }
         } catch (SQLException | NullPointerException e) {
-            e.printStackTrace();
+            logger.error("hstore to set error: {}", Arrays.toString(e.getStackTrace()));
         }
         return set;
     }
@@ -126,10 +130,11 @@ public class Converter {
         ResultSet result = null;
         try {
             var statement = connection.createStatement();
+            logger.debug("executing sql: {}",sql);
             statement.execute(sql);
             result = statement.getResultSet();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("executing sql error: {}", Arrays.toString(e.getStackTrace()));
         }
         return result;
     }
