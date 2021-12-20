@@ -8,12 +8,14 @@
                 <Pattern>%highlight{%d %p %c{1.} [%t] %m %ex%n}</Pattern>
             </PatternLayout>
         </RandomAccessFile>
-        <RandomAccessFile name="DBWorkerAppender" fileName="target/log/dbWorker.log" immediateFlush="false" append="true">
+        <RandomAccessFile name="DBWorkerAppender" fileName="target/log/dbWorker.log" immediateFlush="false"
+                          append="true">
             <PatternLayout>
                 <Pattern>%d %p %c{1.} [%t] %m %ex%n</Pattern>
             </PatternLayout>
         </RandomAccessFile>
-        <RandomAccessFile name="botCommandsAppender" fileName="target/log/botCommands.log" immediateFlush="false" append="true">
+        <RandomAccessFile name="botCommandsAppender" fileName="target/log/botCommands.log" immediateFlush="false"
+                          append="true">
             <PatternLayout>
                 <Pattern>%d %p %c{1.} [%t] %m %ex%n</Pattern>
             </PatternLayout>
@@ -43,7 +45,7 @@
             <AppenderRef ref="DBWorkerAppender"/>
         </Logger>
         <Logger name="botCommands" level="all" additivity="true" includeLocation="false">
-                <AppenderRef ref="botCommandsAppender"/>
+            <AppenderRef ref="botCommandsAppender"/>
         </Logger>
         <Logger name="bot" level="all" additivity="true" includeLocation="false">
             <AppenderRef ref="botAppender"/>
