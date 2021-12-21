@@ -1,6 +1,5 @@
 package entities;
 
-import java.io.Console;
 import java.sql.Blob;
 import java.util.Date;
 
@@ -179,6 +178,14 @@ public class Title {
         return description;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String toDB() {
         var genres = new StringBuilder("{");
         for (var genre : getGenres()) genres.append(genre).append(", ");
@@ -205,13 +212,5 @@ public class Title {
         }
         result.delete(result.length() - 2, result.length() - 1);
         return result.toString();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 }

@@ -111,6 +111,40 @@ public class DBWorker implements IDB {
     }
 
     @Override
+    public Long getId(String titleName) {
+        //TODO: лог
+        var result = executeSQL(connection, String.format(
+                "SELECT id FROM games WHERE title = '%s'", titleName));
+        var titleIds = convertLongRows(result, "id");
+        if (titleIds.length == 0) {
+            return null;
+        }
+        return titleIds[0];
+    }
+
+    @Override
+    public String getName(long titleId) {
+        //TODO: лог
+        var result = executeSQL(connection, String.format(
+                "SELECT title FROM games WHERE id = %s", titleId));
+        var titleNames = convertStringRows(result, "title");
+        if (titleNames.length == 0) {
+            return "DATABASE ERROR";
+        }
+        return titleNames[0];
+    }
+
+    @Override
+    public ReportState subscribeUser(long userId, Long titleId) {
+        //TODO: лог
+        executeSQL(connection, String.format(
+                "UPDATE users SET subscriptions = subscriptions || ('%s=>null') WHERE (id = %s)",
+                titleId, userId));
+        logger.debug("user successfully subscribed: {}, {}", userId, titleId);
+        return ReportState.OK;
+    }
+
+    @Override
     public ReportState subscribeUser(long userId, String title) {
         title = title.replaceAll("'", "");
         logger.debug("trying subscribe user: {}, {}", userId, title);

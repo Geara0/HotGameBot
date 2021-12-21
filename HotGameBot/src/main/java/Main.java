@@ -25,7 +25,7 @@ public class Main {
             public void run() {
                 dbUpdatingFromAPI();
             }
-        }, zeroMinutes, threeHours);
+        }, fifteenMinutes, threeHours);
         startBot();
     }
 
@@ -46,6 +46,5 @@ public class Main {
         for (var title : data) {
             dbWorker.updateTitle(title);
         }
-        //TODO запихивать тайтлы в бд
     }
 }

@@ -1,6 +1,8 @@
 package bot;
 
 import botCommands.CommandsConstants;
+import db.DBWorker;
+import db.IDB;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
@@ -16,6 +18,25 @@ public class KeyboardCreator {
         return createKeyboardMarkUp(1, buttons);
     }
 
+
+    public static InlineKeyboardMarkup createKeyboardMarkUpById(int columnCount, Iterable<Long> buttonIds, KeyboardMarkupTypes type) {
+        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
+        var keyboardRow = new ArrayList<InlineKeyboardButton>();
+        var count = 0;
+        for (var buttonId : buttonIds) {
+            if (count >= columnCount) {
+                keyboard.add(new ArrayList<>(keyboardRow));
+                keyboardRow.clear();
+                count = 0;
+            }
+            keyboardRow.add((createButton(buttonId, type)));
+            count++;
+        }
+        if (!keyboardRow.isEmpty()) {
+            keyboard.add(keyboardRow);
+        }
+        return new InlineKeyboardMarkup(keyboard);
+    }
 
     public static InlineKeyboardMarkup createKeyboardMarkUp(int columnCount, Iterable<String> buttonNames, KeyboardMarkupTypes type) {
         List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
@@ -36,10 +57,10 @@ public class KeyboardCreator {
         return new InlineKeyboardMarkup(keyboard);
     }
 
+
     public static InlineKeyboardMarkup createKeyboardMarkUp(int columnCount, Iterable<String> buttonNames) {
         return createKeyboardMarkUp(columnCount, buttonNames, DEFAULT);
     }
-
 
     public static InlineKeyboardMarkup createConfirmationKeyboard(KeyboardMarkupTypes type, String titleName) {
         //TODO: это точно надо в лог
@@ -59,6 +80,18 @@ public class KeyboardCreator {
         return inlineKeyboardButton;
     }
 
+    private static InlineKeyboardButton createButton(Long id, KeyboardMarkupTypes type) {
+        var possibleLength = 17;
+        var inlineKeyboardButton = new InlineKeyboardButton();
+        IDB db = new DBWorker();
+        var name = db.getName(id);
+        name = name.length() <= possibleLength
+                ? name
+                : name.substring(0, possibleLength) + "...";
+        inlineKeyboardButton.setText(name);
+        inlineKeyboardButton.setCallbackData(type.toStringValue() + id);
+        return inlineKeyboardButton;
+    }
 
     private static InlineKeyboardButton createButton(String name, KeyboardMarkupTypes type) {
         var inlineKeyboardButton = new InlineKeyboardButton();

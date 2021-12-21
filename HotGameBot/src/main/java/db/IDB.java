@@ -11,6 +11,32 @@ public interface IDB {
      */
     String[] getSubscriptions(long userId);
 
+
+    /**
+     * Подписать пользователя на игру
+     *
+     * @param userId  id пользователя
+     * @param titleId id игры
+     * @return ReportState с кодом ошибки
+     */
+    ReportState subscribeUser(long userId, Long titleId);
+
+    /**
+     * Получить название игры по её id
+     *
+     * @param titleId id игры
+     * @return имя игры
+     */
+    String getName(long titleId);
+
+    /**
+     * Получить id игры по её названию
+     *
+     * @param titleName название игры
+     * @return id игры
+     */
+    Long getId(String titleName);
+
     /**
      * Подписать пользователя на игру
      *

@@ -53,7 +53,7 @@ public final class HotGameBot extends TelegramLongPollingCommandBot {
             text.setText(String.format("Command not found: %s", message.getText()));
             text.setChatId(message.getChatId().toString());
             try {
-                logger.debug("executing command: {}",text.getText());
+                logger.debug("executing command: {}", text.getText());
                 absSender.execute(text);
             } catch (TelegramApiException e) {
                 e.printStackTrace();
@@ -84,22 +84,21 @@ public final class HotGameBot extends TelegramLongPollingCommandBot {
         User user = message.getFrom();
         Long userId = user.getId();
         String userName = getUserName(message);
-        logger.debug("received non-command update: {}, {}, {}",userId,userName,text);
+        logger.debug("received non-command update: {}, {}, {}", userId, userName, text);
         var subscriptions = db.getSubscriptions(userId);
         var reply = new SendMessage();
         reply.setChatId(message.getChatId().toString());
-        if (Arrays.asList(subscriptions).contains(text)){
+        if (Arrays.asList(subscriptions).contains(text)) {
             processCallbackDefault(new CallbackQuery(
                     null, user, message, null, text, null, null), reply);
-        }
-        else{
+        } else {
             logger.debug("subscribe processing");
             reply = SubscribeCommand.TrySubscribe(user, message.getChat(), text);
         }
 
         try {
             execute(reply);
-            logger.debug("reply executed: {}, {}, {}",user.getId(),user.getUserName(),reply.getText());
+            logger.debug("reply executed: {}, {}, {}", user.getId(), user.getUserName(), reply.getText());
         } catch (TelegramApiException e) {
             logger.error("exception thrown: {}", Arrays.toString(e.getStackTrace()));
         }
@@ -113,33 +112,23 @@ public final class HotGameBot extends TelegramLongPollingCommandBot {
         var queryData = query.getData();
         var answer = new SendMessage();
 
-        logger.debug("processing callback: {}, {}, {}", query.getFrom().getId(),query.getFrom().getUserName(),query.getData());
-        if (queryData.startsWith(KeyboardMarkupTypes.NOT_IT.toStringValue())){
-            logger.debug("processing 'not-it' callback");
-            processCallbackNotIt(query, answer);
-        }
-        else if (queryData.startsWith(KeyboardMarkupTypes.PARSER.toStringValue())){
-            logger.debug("processing 'parser' callback");
-            processCallbackParser(query, answer);
-        }
-        else if (queryData.startsWith(KeyboardMarkupTypes.DB.toStringValue())){
+        logger.debug("processing callback: {}, {}, {}", query.getFrom().getId(), query.getFrom().getUserName(), query.getData());
+        if (queryData.startsWith(KeyboardMarkupTypes.DB.toStringValue())) {
             logger.debug("processing 'db' callback");
             processCallbackDB(query, answer);
-        }
-        else if (queryData.startsWith(KeyboardMarkupTypes.CONFIRM_UNSUB.toStringValue())){
+        } else if (queryData.startsWith(KeyboardMarkupTypes.CONFIRM_UNSUB.toStringValue())) {
             logger.debug("processing 'confirm-unsub' callback");
             processCallbackConfirmUnsub(query, answer);
-        }
-        else{
+        } else {
             logger.debug("processing default callback");
             processCallbackDefault(query, answer);
         }
-        logger.debug("processing complete: {}",answer.getText());
+        logger.debug("processing complete: {}", answer.getText());
 
         answer.setChatId(query.getMessage().getChatId().toString());
         try {
             execute(answer);
-            logger.debug("answer executed: {}, {}, {}",query.getFrom().getId(),query.getFrom().getUserName(),answer.getText());
+            logger.debug("answer executed: {}, {}, {}", query.getFrom().getId(), query.getFrom().getUserName(), answer.getText());
         } catch (TelegramApiException e) {
             logger.debug("exception thrown: {}", Arrays.toString(e.getStackTrace()));
         }
@@ -194,43 +183,8 @@ public final class HotGameBot extends TelegramLongPollingCommandBot {
      */
     private static void processCallbackDB(CallbackQuery query, SendMessage answer) {
         IDB db = new DBWorker();
-        String titleName = query.getData().replaceAll("\\$", "");
-        db.subscribeUser(query.getFrom().getId(), titleName);
-        answer.setText(U_BEEN_SUBSCRIBED.toStringValue() + titleName);
-    }
-
-    /**
-     * Обработать callback с кнопки, работающей с парсером
-     *
-     * @param answer ответное сообщение пользователю
-     */
-    private static void processCallbackParser(CallbackQuery query, SendMessage answer) {
-        IParser parser = new HotGameParser();
-        IDB db = new DBWorker();
-        Title title = parser.parseTitlesByName(query.getData().replaceAll("%", "")).get(0);
-        db.addTitle(title);
-        db.subscribeUser(query.getFrom().getId(), title.getName());
-        answer.setText(U_BEEN_UNSUBSCRIBED.toStringValue() + title.getName());
-    }
-
-    /**
-     * Обработать callback с кнопки, переводящей работу с бд на парсер
-     *
-     * @param answer ответное сообщение пользователю
-     */
-    private static void processCallbackNotIt(CallbackQuery query, SendMessage answer) {
-        IParser parser = new HotGameParser();
-        String queryData = query.getData();
-        ArrayList<Title> titleNames = parser.parseTitlesByName(
-                queryData.substring(queryData.indexOf("'"), queryData.lastIndexOf("'"))
-        );
-        var names = new ArrayList<String>(titleNames.size());
-        for (var e : titleNames) names.add(e.getName());
-        var keyboard = KeyboardCreator.createKeyboardMarkUp(1, names, PARSER);
-        if (names.size() != 0)
-            answer.setText(OTHER_SUGGESTIONS.toStringValue());
-        else
-            answer.setText(NOTHING_FOUND.toStringValue());
-        answer.setReplyMarkup(keyboard);
+        var titleId = Long.valueOf(query.getData().replaceAll("\\$", ""));
+        db.subscribeUser(query.getFrom().getId(), titleId);
+        answer.setText(U_BEEN_SUBSCRIBED.toStringValue() + db.getName(titleId));
     }
 }
