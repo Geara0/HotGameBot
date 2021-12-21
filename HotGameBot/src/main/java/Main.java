@@ -1,5 +1,7 @@
 import API.APIWorker;
 import bot.HotGameBot;
+import db.DBWorker;
+import db.IDB;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
@@ -13,13 +15,17 @@ import java.util.TimerTask;
 public class Main {
 
     private final static Logger logger = LogManager.getLogger("root");
+    private final static Long zeroMinutes = 0L;
     private final static Long fifteenMinutes = 900000L;
     private final static Long threeHours = 10800000L;
+
     public static void main(String[] args) {
         new Timer(true).scheduleAtFixedRate(new TimerTask() {
             @Override
-            public void run(){dbUpdatingFromAPI();}
-        }, fifteenMinutes, threeHours);
+            public void run() {
+                dbUpdatingFromAPI();
+            }
+        }, zeroMinutes, threeHours);
         startBot();
     }
 
@@ -33,9 +39,13 @@ public class Main {
         }
     }
 
-    private static void dbUpdatingFromAPI(){
+    private static void dbUpdatingFromAPI() {
         var apiWorker = new APIWorker();
+        IDB dbWorker = new DBWorker();
         var data = apiWorker.getData();
+        for (var title : data) {
+            dbWorker.updateTitle(title);
+        }
         //TODO запихивать тайтлы в бд
     }
 }
