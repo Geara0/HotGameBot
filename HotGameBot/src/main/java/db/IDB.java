@@ -59,4 +59,11 @@ public interface IDB {
      * @param title наименование игры
      */
     void addTitle(Title title);
+
+    /**
+     * Обновить игру в бд
+     *
+     * @param title наименование игры
+     */
+    void updateTitle(Title title);
 }
