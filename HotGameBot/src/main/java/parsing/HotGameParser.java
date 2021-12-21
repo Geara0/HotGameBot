@@ -50,11 +50,11 @@ public class HotGameParser implements IParser {
             report = ReportState.BAD_NAME;
             return new ArrayList<>();
         }
-        logger.debug("parsing by name:    {}",name);
+        logger.debug("parsing by name:    {}", name);
         ArrayList<Title> result = new ArrayList<>();
         for (int i = 0; i < 5 && !report.equals(ReportState.OK) && !report.equals(ReportState.NO_RESULTS); i++)
             result = getTitlesByRequest("q=".concat(name));
-        logger.debug("parsing by name finished, report:{}",report.toStringValue());
+        logger.debug("parsing by name finished, report:{}", report.toStringValue());
 
         return result;
     }
@@ -70,11 +70,11 @@ public class HotGameParser implements IParser {
         report = ReportState.INITIAL;
         String parameters = String.join(";", params);
         ArrayList<Title> result = new ArrayList<>();
-        logger.debug("recommendations by parameters: {}",parameters);
+        logger.debug("recommendations by parameters: {}", parameters);
         for (int i = 0; i < 5 && !report.equals(ReportState.OK); i++)
             result = getTitlesByRequest(parameters);
         if (!report.equals(ReportState.OK)) report = ReportState.BAD_PARAMETERS;
-        logger.debug("recommendations by parameters finished, report:{}",report.toStringValue());
+        logger.debug("recommendations by parameters finished, report:{}", report.toStringValue());
         return new ArrayList<>(result.subList(0, 5));
     }
 
@@ -90,10 +90,10 @@ public class HotGameParser implements IParser {
             return new Title();
         }
         Title result = new Title();
-        logger.debug("parsing title by link: {}",link);
+        logger.debug("parsing title by link: {}", link);
         for (int i = 0; i < 5 && !report.equals(ReportState.OK); i++)
             result = getTitleInfoSelect(link);
-        logger.debug("parsing by link finished, report: {}",report.toStringValue());
+        logger.debug("parsing by link finished, report: {}", report.toStringValue());
         return result;
     }
 
@@ -108,7 +108,7 @@ public class HotGameParser implements IParser {
         String searchRequest = request.strip().toLowerCase(); //replaceAll("[^a-zA-Z]","");
         String domainUrl = "https://hot-game.info";
         String searchUrl = domainUrl.concat("/").concat(searchRequest);
-        logger.debug("trying make request: {}",searchUrl);
+        logger.debug("trying make request: {}", searchUrl);
         try {
             Document doc = Jsoup.connect(searchUrl).get();
             Element searchResults = doc.selectFirst("body > div.container.content-container > section.yui3-cssreset.result-block.content-table");
@@ -126,9 +126,9 @@ public class HotGameParser implements IParser {
             logger.warn(e.getStackTrace());
         } catch (URIReferenceException e) {
             report = ReportState.NO_RESULTS;
-            logger.debug("NO RESULTS by request: {}",request);
+            logger.debug("NO RESULTS by request: {}", request);
         }
-        logger.debug("parsing by link finished, report: {}",report.toStringValue());
+        logger.debug("parsing by link finished, report: {}", report.toStringValue());
         return result;
     }
 
@@ -140,7 +140,7 @@ public class HotGameParser implements IParser {
      */
     private Title getTitleInfoSelect(String link) {
         Title result = new Title();
-        logger.debug("trying parse by link: {}",link);
+        logger.debug("trying parse by link: {}", link);
         try {
             Document doc = Jsoup.connect(link).get();
             Element gameInfo = doc.selectFirst("body > div.container.content-container > section.game.clearfix > aside > div.hg-block.short-game-description > div");
@@ -161,16 +161,16 @@ public class HotGameParser implements IParser {
             bestLink = bestPrice.equals("0") ? bestLink.concat("\r\nСмотрите по ссылке чтобы узнать о наличии") : bestLink;
             Date date = parseDate(releaseDate);
             boolean isMultiplayer = isMultiplayer(mode);
-            result = new Title(name, link, bestLink, (int) Double.parseDouble(bestPrice), publisher, developer, date, genres, isMultiplayer, description, new SerialBlob(new byte[1]));
+            result = new Title(name, link, bestLink, (int) Double.parseDouble(bestPrice), publisher, developer, date, genres, isMultiplayer, description, new SerialBlob(new byte[0]), null);
             setReportOK();
         } catch (IOException e) {
             report = ReportState.BAD_URL;
         } catch (NullPointerException | NumberFormatException e) {
-            logger.warn("DATE TROUBLES with title: {}",link);
+            logger.warn("DATE TROUBLES with title: {}", link);
         } catch (SQLException e) {
             //idk what to do....
         }
-        logger.debug("request finished, report: {}",report.toStringValue());
+        logger.debug("request finished, report: {}", report.toStringValue());
         return result;
     }
 

@@ -18,6 +18,7 @@ import java.util.Set;
  */
 public class Converter {
     private final static Logger logger = LogManager.getLogger("db.DBWorker");
+
     /**
      * Конвертировать ResultSet игр в список игр
      */
@@ -35,7 +36,8 @@ public class Converter {
                         arrayToJavaArray(resultSet.getArray("genres"), String.class),
                         resultSet.getBoolean("is_multiplayer"),
                         resultSet.getString("description"),
-                        resultSet.getBlob("picture_jpeg")));
+                        resultSet.getBlob("picture_jpeg"),
+                        resultSet.getLong("id")));
             }
         } catch (SQLException e) {
             logger.error("converting titles error: {}", Arrays.toString(e.getStackTrace()));
@@ -130,7 +132,7 @@ public class Converter {
         ResultSet result = null;
         try {
             var statement = connection.createStatement();
-            logger.debug("executing sql: {}",sql);
+            logger.debug("executing sql: {}", sql);
             statement.execute(sql);
             result = statement.getResultSet();
         } catch (SQLException e) {

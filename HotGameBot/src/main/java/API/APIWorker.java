@@ -25,6 +25,7 @@ public class APIWorker implements IAPI {
 
     /**
      * Реализация интерфейса
+     *
      * @return лист тайтлов из апи
      */
     @Override
@@ -32,26 +33,42 @@ public class APIWorker implements IAPI {
         List<APITitle> rawTitles = getTitlesFromApi();
         ArrayList<Title> result = new ArrayList<>();
         for (APITitle rawTitle : rawTitles)
-            result.add(convert(rawTitle));
-        logger.info("{} titles received from api",rawTitles.size());
+            result.add(convertParse(rawTitle));
+        logger.info("{} titles received from api", rawTitles.size());
         return result;
     }
 
     /**
+     * //TODO: Если api обновят
      * Метод для преобразования АПИтайтла в обычный тайтл
+     *
      * @param title АПИ тайтл для преобразования
      * @return объект тайтла, соответствующий АПИтайтлу
      */
     private Title convert(APITitle title) {
         IParser parser = new HotGameParser();
+        Title result = new Title();
+        return result;
+    }
+
+    /**
+     * Метод для преобразования АПИтайтла в обычный тайтл через парсинг, тк HotGame не добавили в апи нужные ссылки
+     *
+     * @param title АПИ тайтл для преобразования
+     * @return объект тайтла, соответствующий АПИтайтлу
+     */
+    private Title convertParse(APITitle title) {
+        IParser parser = new HotGameParser();
         Title result = parser.parseTitleByLink(title.link);
+        result.setId(Long.valueOf(title.id));
         if (!parser.getReport().equals(ReportState.OK))
-            logger.warn("something went wrong, parser report with title {}, parser report: {}",title.title, parser.getReport());
+            logger.warn("something went wrong, parser report with title {}, parser report: {}", title.title, parser.getReport());
         return result;
     }
 
     /**
      * Получает тайтлы из апи
+     *
      * @return лист АПИтайтлов
      */
     private List<APITitle> getTitlesFromApi() {
@@ -63,6 +80,7 @@ public class APIWorker implements IAPI {
 
     /**
      * Получает json документ с апи
+     *
      * @return json-строка
      */
     private String getDataFromAPI() {
@@ -71,7 +89,7 @@ public class APIWorker implements IAPI {
             HttpURLConnection connection = (HttpURLConnection) new URL(APIUrl).openConnection();
             connection.setRequestMethod("GET");
             BufferedReader input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            logger.debug("request response message: {}",connection.getResponseMessage());
+            logger.debug("request response message: {}", connection.getResponseMessage());
             String inputLine;
             while ((inputLine = input.readLine()) != null)
                 content.append(inputLine);
