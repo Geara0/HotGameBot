@@ -85,9 +85,14 @@ public class LevenshteinCalculator {
         boolean flag = true;
         int i = 0;
         while (flag) {
-            flag = pairs.get(i).getWeight() < distance;
-            if (flag) result.add(pairs.get(i).getText());
-            i++;
+            try{
+                flag = pairs.get(i).getWeight() < distance;
+                if (flag) result.add(pairs.get(i).getText());
+                i++;
+            }
+            catch (IndexOutOfBoundsException e){
+                flag=false;
+            }
         }
         return result.toArray(new String[0]);
     }
