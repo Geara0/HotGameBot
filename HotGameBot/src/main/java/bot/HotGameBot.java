@@ -153,12 +153,13 @@ public final class HotGameBot extends TelegramLongPollingCommandBot {
      */
     private static void processCallbackDefault(CallbackQuery query, SendMessage answer) {
         IDB db = new DBWorker();
-        Title title = db.getTitle(query.getData());
+        var id = Long.parseLong(query.getData());
+        Title title = db.getTitle(db.getName(id));
         answer.setText(title.toString());
 
         List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
         var keyboardRow = new ArrayList<InlineKeyboardButton>();
-        var button = KeyboardCreator.createButton(UNSUBSCRIBE.toStringValue(), CONFIRM_UNSUB, title.getName());
+        var button = KeyboardCreator.createButton(UNSUBSCRIBE.toStringValue(), CONFIRM_UNSUB, String.valueOf(id));
         keyboardRow.add(button);
         keyboard.add(keyboardRow);
         answer.setReplyMarkup(new InlineKeyboardMarkup(keyboard));
@@ -171,8 +172,8 @@ public final class HotGameBot extends TelegramLongPollingCommandBot {
      */
     private static void processCallbackConfirmUnsub(CallbackQuery query, SendMessage answer) {
         IDB db = new DBWorker();
-        var titleName = query.getData().replaceAll("@", "");
-        db.unsubscribeUser(query.getFrom().getId(), query.getData().replaceAll("@", ""));
+        var titleName = db.getName(Long.parseLong(query.getData().replaceAll("@", "")));
+        db.unsubscribeUser(query.getFrom().getId(), titleName);
         answer.setText(U_BEEN_UNSUBSCRIBED.toStringValue() + titleName);
     }
 
@@ -183,7 +184,7 @@ public final class HotGameBot extends TelegramLongPollingCommandBot {
      */
     private static void processCallbackDB(CallbackQuery query, SendMessage answer) {
         IDB db = new DBWorker();
-        var titleId = Long.valueOf(query.getData().replaceAll("\\$", ""));
+        var titleId = Long.parseLong(query.getData().replaceAll("\\$", ""));
         db.subscribeUser(query.getFrom().getId(), titleId);
         answer.setText(U_BEEN_SUBSCRIBED.toStringValue() + db.getName(titleId));
     }

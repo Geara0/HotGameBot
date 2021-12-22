@@ -81,13 +81,9 @@ public class KeyboardCreator {
     }
 
     private static InlineKeyboardButton createButton(Long id, KeyboardMarkupTypes type) {
-        var possibleLength = 17;
         var inlineKeyboardButton = new InlineKeyboardButton();
         IDB db = new DBWorker();
         var name = db.getName(id);
-        name = name.length() <= possibleLength
-                ? name
-                : name.substring(0, possibleLength) + "...";
         inlineKeyboardButton.setText(name);
         inlineKeyboardButton.setCallbackData(type.toStringValue() + id);
         return inlineKeyboardButton;
