@@ -19,7 +19,6 @@ public class ReportCommand extends Command {
         message.setChatId(chat.getId().toString());
         message.setText(REPORT_THANKS.toStringValue());
         execute(absSender, message, user);
-        //TODO: Лог
         logger.fatal("user report: {}", String.join(" ", strings));
     }
 }
