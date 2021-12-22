@@ -1,6 +1,6 @@
 package db;
 
-public enum DBConstants {
+public enum DBIntegerConstants {
     NAME_MAX(100),
     LINK_MAX(150),
     BUY_LINK_MAX(400),
@@ -12,7 +12,7 @@ public enum DBConstants {
 
     private final int value;
 
-    DBConstants(int value) {
+    DBIntegerConstants(int value) {
         this.value = value;
     }
 

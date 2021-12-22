@@ -3,6 +3,7 @@ package bot;
 import botCommands.*;
 import db.DBWorker;
 import db.IDB;
+import db.ReportState;
 import entities.Levenshtein.LevenshteinCalculator;
 import entities.Title;
 import org.apache.logging.log4j.LogManager;
@@ -88,7 +89,7 @@ public final class HotGameBot extends TelegramLongPollingCommandBot {
         User user = message.getFrom();
         Long userId = user.getId();
         String userName = getUserName(message);
-        logger.debug("received non-command update: {}, {}, {}", userId, userName, text);
+        logger.debug("received non-command update: user:{}, userName:{}, text:{}", userId, userName, text);
         var subscriptions = db.getSubscriptions(userId);
         var reply = new SendMessage();
         reply.setChatId(message.getChatId().toString());
@@ -103,12 +104,23 @@ public final class HotGameBot extends TelegramLongPollingCommandBot {
 
         try {
             execute(reply);
-            logger.debug("reply executed: {}, {}, {}", user.getId(), user.getUserName(), reply.getText());
+            logger.debug("reply executed: user:{}, {}, reply:{}", user.getId(), user.getUserName(), reply.getText());
         } catch (TelegramApiException e) {
             logger.error("exception thrown: {}", Arrays.toString(e.getStackTrace()));
         }
 
     }
+
+//    public static void notifyUser(String userId, Title title, String message) {
+//        var reply = new SendMessage();
+//        reply.setChatId(userId);
+//        reply.setText(message + title.toString());
+//        try {
+//            execute(reply);
+//        } catch (TelegramApiException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     /**
      * Обработка callback с Markup кнопок
@@ -117,7 +129,8 @@ public final class HotGameBot extends TelegramLongPollingCommandBot {
         var queryData = query.getData();
         var answer = new SendMessage();
 
-        logger.debug("processing callback: {}, {}, {}", query.getFrom().getId(), query.getFrom().getUserName(), query.getData());
+        logger.debug("processing callback: {}, {}, {}",
+                query.getFrom().getId(), query.getFrom().getUserName(), query.getData());
         if (queryData.startsWith(KeyboardMarkupTypes.DB.toStringValue())) {
             logger.debug("processing 'db' callback");
             processCallbackDB(query, answer);
@@ -133,7 +146,8 @@ public final class HotGameBot extends TelegramLongPollingCommandBot {
         answer.setChatId(query.getMessage().getChatId().toString());
         try {
             execute(answer);
-            logger.debug("answer executed: {}, {}, {}", query.getFrom().getId(), query.getFrom().getUserName(), answer.getText());
+            logger.debug("answer executed: user:{}, {}, text:{}",
+                    query.getFrom().getId(), query.getFrom().getUserName(), answer.getText());
         } catch (TelegramApiException e) {
             logger.debug("exception thrown: {}", Arrays.toString(e.getStackTrace()));
         }
@@ -190,7 +204,12 @@ public final class HotGameBot extends TelegramLongPollingCommandBot {
     private static void processCallbackDB(CallbackQuery query, SendMessage answer) {
         IDB db = new DBWorker();
         var titleId = Long.parseLong(query.getData().replaceAll("\\$", ""));
-        db.subscribeUser(query.getFrom().getId(), titleId);
-        answer.setText(U_BEEN_SUBSCRIBED.toStringValue() + db.getName(titleId));
+        var report = db.subscribeUser(query.getFrom().getId(), titleId);
+        if (report == ReportState.OK)
+            answer.setText(U_BEEN_SUBSCRIBED.toStringValue() + db.getName(titleId));
+        else if (report == ReportState.ALREADY)
+            answer.setText(U_ALREADY_SUBSCRIBED.toStringValue() + db.getName(titleId));
+        else //TODO:лог
+            answer.setText(ERROR_BECAUSE.toStringValue() + report.toStringValue());
     }
 }

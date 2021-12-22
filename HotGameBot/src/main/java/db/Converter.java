@@ -107,6 +107,7 @@ public class Converter {
      * @param <T>    тип данных hstore
      * @return set
      */
+    //Дженерик не работает нормально - будет всегда String
     public static <T> Set<T> hstoreToSet(ResultSet hstore, String column, Class<T> tClass) {
         Set<T> set = null;
         Map<T, String> map;
@@ -136,7 +137,7 @@ public class Converter {
             statement.execute(sql);
             result = statement.getResultSet();
         } catch (SQLException e) {
-            logger.error("executing sql error: {}, ----{}",sql, Arrays.toString(e.getStackTrace()));
+            logger.error("executing sql error: {}, ----{}", sql, Arrays.toString(e.getStackTrace()));
         }
         return result;
     }

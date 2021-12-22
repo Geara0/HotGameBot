@@ -30,6 +30,7 @@ public enum CommandsConstants {
     U_FORGOT_NAME("Кажется, вы забыли ввести название\nИспользуйте /subscribe [title]"),
     NOT_IT("Это не то "),
     U_BEEN_SUBSCRIBED("Вы успешно подписались на "),
+    U_ALREADY_SUBSCRIBED("Вы уже были подписаны на "),
     U_BEEN_UNSUBSCRIBED("Вы успешно отписались от "),
     U_BEEN_UNSUBSCRIBED_ALL("Вы успешно отписались от всех игр"),
     WE_FOUND_MULTIPLE_VARIANTS("Мы нашли несколько вариантов по вашему запросу"),
