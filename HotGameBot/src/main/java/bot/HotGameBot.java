@@ -17,17 +17,12 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import parsing.HotGameParser;
-import parsing.IParser;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static bot.ConstantReplies.NOTHING_FOUND;
-import static bot.ConstantReplies.OTHER_SUGGESTIONS;
 import static bot.KeyboardMarkupTypes.CONFIRM_UNSUB;
-import static bot.KeyboardMarkupTypes.PARSER;
 import static botCommands.CommandsConstants.*;
 
 public final class HotGameBot extends TelegramLongPollingCommandBot {
@@ -64,6 +59,17 @@ public final class HotGameBot extends TelegramLongPollingCommandBot {
         }));
         logger.info("bot is stated");
     }
+
+//    private void updateAndNotify(){
+//        var apiWorker = new APIWorker();
+//        IDB dbWorker = new DBWorker();
+//        var data = apiWorker.getData();
+//        for (var title : data) {
+//            //String[] usersIds = dbWorker.updateTitle(title); //если обновился - множество айди подписчиков, если нет - пустой
+//            for (var id : usersIds)
+//                notifyUser(id,title,"");
+//        }
+//    }
 
     @Override
     public String getBotUsername() {
