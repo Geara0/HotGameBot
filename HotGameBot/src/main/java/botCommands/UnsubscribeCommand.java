@@ -40,8 +40,6 @@ public class UnsubscribeCommand extends Command {
             return;
         }
 
-        //TODO: KeyboardMarkup с вариантами от чего отписаться task3
-
         IDB db = new DBWorker();
         var report = db.unsubscribeUser(user.getId(), titleName);
         if (report == ReportState.OK)
