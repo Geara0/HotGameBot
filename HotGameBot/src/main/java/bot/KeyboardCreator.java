@@ -3,10 +3,11 @@ package bot;
 import botCommands.CommandsConstants;
 import db.DBWorker;
 import db.IDB;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
-import javax.management.Notification;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +18,8 @@ public class KeyboardCreator {
     public static InlineKeyboardMarkup createKeyboardMarkUp(Iterable<String> buttons) {
         return createKeyboardMarkUp(1, buttons);
     }
+
+    private final static Logger logger = LogManager.getLogger("keyboard");
 
 
     public static InlineKeyboardMarkup createKeyboardMarkUpById(int columnCount, Iterable<Long> buttonIds, KeyboardMarkupTypes type) {
@@ -63,8 +66,10 @@ public class KeyboardCreator {
     }
 
     public static InlineKeyboardMarkup createConfirmationKeyboard(KeyboardMarkupTypes type, String titleName) {
-        //TODO: это точно надо в лог
-        if (type != CONFIRM_UNSUB) return null;
+        if (type != CONFIRM_UNSUB) {
+            logger.warn("keyboardType does not match, required CONFIRM_UNSUB, received: {} \r\n return null",type.toStringValue());
+            return null;
+        }
         List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
         var keyboardRow = new ArrayList<InlineKeyboardButton>();
         keyboardRow.add(createButton("Да", type, titleName));

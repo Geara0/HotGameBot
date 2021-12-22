@@ -40,6 +40,11 @@
                 <Pattern>"%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"</Pattern>
             </PatternLayout>
         </RandomAccessFile>
+        <RandomAccessFile name="keyboardAppender" fileName="target/log/keyboard.log" immediateFlush="false" append="true">
+            <PatternLayout>
+                <Pattern>"%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"</Pattern>
+            </PatternLayout>
+        </RandomAccessFile>
         <RollingRandomAccessFile name="Dump" fileName="target/log/dump.log"
                                  filePattern="logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz">
             <PatternLayout>
@@ -74,6 +79,10 @@
         </Logger>
         <Logger name="parsing.HotGameParser" level="debug" additivity="true" includeLocation="false">
             <AppenderRef ref="parserAppender" level="info"/>
+            <AppenderRef ref="Dump" level="info"/>
+        </Logger>
+        <Logger name="keyboard" level="debug" additivity="true" includeLocation="false">
+            <AppenderRef ref="keyboardAppender" level="debug"/>
             <AppenderRef ref="Dump" level="info"/>
         </Logger>
         <Root level="error">

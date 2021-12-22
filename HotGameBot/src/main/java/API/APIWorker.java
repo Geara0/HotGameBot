@@ -30,9 +30,11 @@ public class APIWorker implements IAPI {
      */
     @Override
     public ArrayList<Title> getData() {
+        logger.info("asking API for title data");
         List<APITitle> rawTitles = getTitlesFromApi();
         ArrayList<Title> result = new ArrayList<>();
         for (APITitle rawTitle : rawTitles) {
+            logger.debug("processing title {}",rawTitle.title);
             var parsedTitle = convertParse(rawTitle);
             if (parsedTitle.getName() != null)
                 result.add(convertParse(rawTitle));

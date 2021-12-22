@@ -39,7 +39,7 @@ public class LevenshteinCalculator {
     }
 
     private Set<String> stringArrayToSet(String[] arr) {
-        return Arrays.stream(arr).collect(Collectors.toSet());
+        return arr.length > 0 ? Arrays.stream(arr).collect(Collectors.toSet()) : new HashSet<>();
     }
 
     /**
@@ -158,6 +158,8 @@ public class LevenshteinCalculator {
      * @return Получает лист пар "строка"-"расстояние до userText" упорядоченный по убыванию веса
      */
     public List<StringDoublePair> search(Set<String> stringSet, String userText) {
+        if (stringSet.isEmpty())
+            stringSet.add("");
         ArrayList<StringDoublePair> result = new ArrayList<>();
         AnaliseObject searchObj;
         if (userText.length() > 0)

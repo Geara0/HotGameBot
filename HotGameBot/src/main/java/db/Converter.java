@@ -136,7 +136,7 @@ public class Converter {
             statement.execute(sql);
             result = statement.getResultSet();
         } catch (SQLException e) {
-            logger.error("executing sql error: {}", Arrays.toString(e.getStackTrace()));
+            logger.error("executing sql error: {}, ----{}",sql, Arrays.toString(e.getStackTrace()));
         }
         return result;
     }

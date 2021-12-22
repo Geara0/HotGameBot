@@ -112,11 +112,12 @@ public class DBWorker implements IDB {
 
     @Override
     public Long getId(String titleName) {
-        //TODO: лог
+        logger.debug("trying to get id of title: {}",titleName);
         var result = executeSQL(connection, String.format(
                 "SELECT id FROM games WHERE title = '%s'", titleName));
         var titleIds = convertLongRows(result, "id");
         if (titleIds.length == 0) {
+            logger.warn("no title id which matches title name: {}",titleName);
             return null;
         }
         return titleIds[0];
@@ -124,11 +125,12 @@ public class DBWorker implements IDB {
 
     @Override
     public String getName(long titleId) {
-        //TODO: лог
+        logger.debug("trying to get title name with id {}",titleId);
         var result = executeSQL(connection, String.format(
                 "SELECT title FROM games WHERE id = %s", titleId));
         var titleNames = convertStringRows(result, "title");
         if (titleNames.length == 0) {
+            logger.warn("no such title with id {} in database", titleId);
             return "DATABASE ERROR";
         }
         return titleNames[0];
@@ -136,7 +138,7 @@ public class DBWorker implements IDB {
 
     @Override
     public ReportState subscribeUser(long userId, Long titleId) {
-        //TODO: лог
+        logger.debug("trying to subscribe user {} to title {}",userId,titleId);
         executeSQL(connection, String.format(
                 "UPDATE users SET subscriptions = subscriptions || ('%s=>null') WHERE (id = %s)",
                 titleId, userId));

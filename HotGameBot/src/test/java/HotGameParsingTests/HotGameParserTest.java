@@ -11,7 +11,7 @@ import java.time.Duration;
 import java.time.Instant;
 
 public class HotGameParserTest {
-    final String link = "https://hot-game.info/game/Control-AWE";
+    final String link = "https://hot-game.info/game/Among-Us";
     final String goodName = "control awe";
     String badName = "control deluxe editiob";
     final IParser parser = new HotGameParser();
@@ -71,7 +71,7 @@ public class HotGameParserTest {
 
     @Test
     public void getTitleByGoodLinkTest(){
-        var title = parser.parseTitleByLink("https://hot-game.info/game/Control");
+        var title = parser.parseTitleByLink(link);
         Assertions.assertEquals(parser.getReport(), ReportState.OK);
     }
 
