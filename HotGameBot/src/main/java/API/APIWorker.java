@@ -34,7 +34,7 @@ public class APIWorker implements IAPI {
         List<APITitle> rawTitles = getTitlesFromApi();
         ArrayList<Title> result = new ArrayList<>();
         for (APITitle rawTitle : rawTitles) {
-            logger.debug("processing title {}",rawTitle.title);
+            logger.debug("processing title {}", rawTitle.title);
             var parsedTitle = convertParse(rawTitle);
             if (parsedTitle.getName() != null)
                 result.add(convertParse(rawTitle));

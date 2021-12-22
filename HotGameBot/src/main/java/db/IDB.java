@@ -1,6 +1,7 @@
 package db;
 
 import entities.Title;
+import entities.UpdateReport;
 
 public interface IDB {
     /**
@@ -90,6 +91,7 @@ public interface IDB {
      * Обновить игру в бд
      *
      * @param title наименование игры
+     * @return
      */
-    void updateTitle(Title title);
+    UpdateReport updateTitle(Title title);
 }

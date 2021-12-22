@@ -1,14 +1,10 @@
 package db;
 
-import bot.HotGameBot;
 import entities.Levenshtein.LevenshteinCalculator;
 import entities.Title;
+import entities.UpdateReport;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.bots.AbsSender;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -21,7 +17,7 @@ import static db.DBStringConstants.*;
 /**
  * Класс, работающий с бд
  */
-public class DBWorker implements IDB  {
+public class DBWorker implements IDB {
     private final String jdbcURL = "jdbc:postgresql://localhost:5432/postgres";
     private final String userName = "postgres";
     private final String password = System.getenv("PostgresPassword");
@@ -67,7 +63,7 @@ public class DBWorker implements IDB  {
     }
 
     @Override
-    public void updateTitle(Title title) {
+    public UpdateReport updateTitle(Title title) {
         var result = executeSQL(connection, String.format("SELECT * FROM games WHERE id = %s", title.getId()));
         var resultTitle = convertGames(result);
         if (resultTitle.size() == 0)
@@ -75,17 +71,19 @@ public class DBWorker implements IDB  {
         else {
             var resTitle = resultTitle.get(0);
             executeSQL(connection, String.format(
-                    "UPDATE games SET buy_link = %s, price = %s WHERE id = %s",
-                    resTitle.getBuyLink(), resTitle.getPrice(), resTitle.getId()));
+                    "UPDATE games SET buy_link = '%s', price = %s WHERE id = %s",
+                    title.getBuyLink(), title.getPrice(), resTitle.getId()));
             if (title.getPrice() < resTitle.getPrice()) {
+                result = executeSQL(connection, String.format("SELECT * FROM games WHERE id = %s", title.getId()));
                 var users = hstoreToSet(result, "subscribers", String.class);
                 var message = String.format("%s %s\n%s %s\n%s %s\n\n",
-                        PRICE_UPDATED, title.getName(),
-                        PRICE_BEFORE, resTitle.getPrice(),
-                        PRICE_NOW, title.getPrice());
-                notifyUsers(users, title, message);
+                        PRICE_UPDATED.toStringValue(), title.getName(),
+                        PRICE_BEFORE.toStringValue(), resTitle.getPrice(),
+                        PRICE_NOW.toStringValue(), title.getPrice());
+                return new UpdateReport(title, users, message);
             }
         }
+        return new UpdateReport();
     }
 
     @Override

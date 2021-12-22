@@ -1,11 +1,13 @@
 package bot;
 
+import API.APIWorker;
 import botCommands.*;
 import db.DBWorker;
 import db.IDB;
 import db.ReportState;
 import entities.Levenshtein.LevenshteinCalculator;
 import entities.Title;
+import entities.UpdateReport;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot;
@@ -18,9 +20,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static bot.KeyboardMarkupTypes.CONFIRM_UNSUB;
 import static botCommands.CommandsConstants.*;
@@ -29,11 +29,21 @@ public final class HotGameBot extends TelegramLongPollingCommandBot {
     private final String BOT_USERNAME = "@HotGameInfo_bot";
     private final String BOT_TOKEN = System.getenv("HotGameBotToken");
     private final static Logger logger = LogManager.getLogger("bot");
+    private final static Long zeroMinutes = 0L;
+    private final static Long fifteenMinutes = 900000L;
+    private final static Long threeHours = 10800000L;
 
     /**
-     * Регистрация комманд
+     * Регистрация команд и запуск таймера
      */
     public HotGameBot() {
+        new Timer(true).scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                updateAndNotify();
+            }
+        }, zeroMinutes, threeHours);
+
         register(new StartCommand());
         register(new MyGamesCommand());
         register(new SubscribeCommand());
@@ -60,16 +70,21 @@ public final class HotGameBot extends TelegramLongPollingCommandBot {
         logger.info("bot is stated");
     }
 
-//    private void updateAndNotify(){
-//        var apiWorker = new APIWorker();
-//        IDB dbWorker = new DBWorker();
-//        var data = apiWorker.getData();
-//        for (var title : data) {
-//            //String[] usersIds = dbWorker.updateTitle(title); //если обновился - множество айди подписчиков, если нет - пустой
-//            for (var id : usersIds)
-//                notifyUser(id,title,"");
-//        }
-//    }
+    private void updateAndNotify() {
+        var apiWorker = new APIWorker();
+        IDB db = new DBWorker();
+        var data = apiWorker.getData();
+        var reports = new ArrayList<UpdateReport>();
+        for (var title : data) {
+            var currentReport = db.updateTitle(title);
+            if (currentReport.wasUpdated())
+                reports.add(db.updateTitle(title)); //если обновился - множество айди подписчиков, если нет - пустой
+            if (currentReport.getSubscribers() != null && currentReport.getSubscribers().size() > 0) {
+                for (var userId : currentReport.getSubscribers())
+                    notifyUser(userId, currentReport.getTitle(), currentReport.getMessage());
+            }
+        }
+    }
 
     @Override
     public String getBotUsername() {
@@ -117,16 +132,16 @@ public final class HotGameBot extends TelegramLongPollingCommandBot {
 
     }
 
-//    public static void notifyUser(String userId, Title title, String message) {
-//        var reply = new SendMessage();
-//        reply.setChatId(userId);
-//        reply.setText(message + title.toString());
-//        try {
-//            execute(reply);
-//        } catch (TelegramApiException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    private void notifyUser(String userId, Title title, String message) {
+        var reply = new SendMessage();
+        reply.setChatId(userId);
+        reply.setText(message + title.toString());
+        try {
+            execute(reply);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Обработка callback с Markup кнопок
