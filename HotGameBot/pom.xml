@@ -25,7 +25,8 @@
                     <version>2.5</version>
                     <configuration>
                         <systemPropertyVariables>
-                            <log4j2.contextSelector>org.apache.logging.log4j.core.async.AsyncLoggerContextSelector</log4j2.contextSelector>
+                            <log4j2.contextSelector>org.apache.logging.log4j.core.async.AsyncLoggerContextSelector
+                            </log4j2.contextSelector>
                         </systemPropertyVariables>
                     </configuration>
                 </plugin>
@@ -55,7 +56,7 @@
         <dependency>
             <groupId>com.lmax</groupId>
             <artifactId>disruptor</artifactId>
-            <version>3.3.4</version>
+            <version>3.4.4</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -70,7 +71,7 @@
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.13.1</version>
+            <version>1.14.3</version>
         </dependency>
         <dependency>
             <groupId>com.jcabi</groupId>
@@ -80,7 +81,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>5.8.1</version>
+            <version>5.8.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -97,12 +98,12 @@
         <dependency>
             <groupId>org.telegram</groupId>
             <artifactId>telegrambots</artifactId>
-            <version>5.4.0</version>
+            <version>5.4.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.telegram</groupId>
             <artifactId>telegrambotsextensions</artifactId>
-            <version>5.4.0</version>
+            <version>5.4.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -130,6 +131,18 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>42.3.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <version>3.3.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <version>3.2.0</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
