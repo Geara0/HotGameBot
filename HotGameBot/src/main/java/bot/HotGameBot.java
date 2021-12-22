@@ -3,6 +3,7 @@ package bot;
 import botCommands.*;
 import db.DBWorker;
 import db.IDB;
+import entities.Levenshtein.LevenshteinCalculator;
 import entities.Title;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -75,10 +76,13 @@ public final class HotGameBot extends TelegramLongPollingCommandBot {
 
     @Override
     public void processNonCommandUpdate(Update update) {
+        var minimalDistance = 60;
+
         if (update.hasCallbackQuery()) processCallbackUpdate(update.getCallbackQuery());
         if (!(update.hasMessage() && update.getMessage().hasText())) return;
 
         IDB db = new DBWorker();
+        var levenshtein = new LevenshteinCalculator();
         var message = update.getMessage();
         String text = message.getText();
         User user = message.getFrom();
@@ -88,9 +92,10 @@ public final class HotGameBot extends TelegramLongPollingCommandBot {
         var subscriptions = db.getSubscriptions(userId);
         var reply = new SendMessage();
         reply.setChatId(message.getChatId().toString());
-        if (Arrays.asList(subscriptions).contains(text)) {
+        var superClosestStrings = levenshtein.getStringsInDistance(subscriptions, text, minimalDistance);
+        if (superClosestStrings.length > 0 && Arrays.asList(subscriptions).contains(superClosestStrings[0])) {
             processCallbackDefault(new CallbackQuery(
-                    null, user, message, null, text, null, null), reply);
+                    null, user, message, null, String.valueOf(db.getId(superClosestStrings[0])), null, null), reply);
         } else {
             logger.debug("subscribe processing");
             reply = SubscribeCommand.TrySubscribe(user, message.getChat(), text);
