@@ -38,7 +38,7 @@ public class LevenshteinCalculator {
         }
     }
 
-    private Set<String> stringArrayToSet(String[] arr){
+    private Set<String> stringArrayToSet(String[] arr) {
         return Arrays.stream(arr).collect(Collectors.toSet());
     }
 
@@ -75,25 +75,25 @@ public class LevenshteinCalculator {
     }
 
     public String[] getClosestStrings(String[] strings, String original, int count) {
-        return getClosestStrings(stringArrayToSet(strings),original,count);
+        return getClosestStrings(stringArrayToSet(strings), original, count);
     }
 
     //TODO: сделать чтоб принимал на вход Collection
-    public String[] getStringsInDistance(Set<String> stringSet, String original, double distance){
+    public String[] getStringsInDistance(Set<String> stringSet, String original, double distance) {
         List<String> result = new ArrayList<>();
-        List<StringDoublePair> pairs = search(stringSet,original);
+        List<StringDoublePair> pairs = search(stringSet, original);
         boolean flag = true;
         int i = 0;
-        while (flag){
-            flag = pairs.get(i).getWeight()<distance;
+        while (flag) {
+            flag = pairs.get(i).getWeight() < distance;
             if (flag) result.add(pairs.get(i).getText());
             i++;
         }
         return result.toArray(new String[0]);
     }
 
-    public String[] getStringsInDistance(String[] strings, String original, double distance){
-        return getStringsInDistance(stringArrayToSet(strings),original,distance);
+    public String[] getStringsInDistance(String[] strings, String original, double distance) {
+        return getStringsInDistance(stringArrayToSet(strings), original, distance);
     }
 
     /**
