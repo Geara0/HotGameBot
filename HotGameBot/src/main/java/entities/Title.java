@@ -151,7 +151,7 @@ public class Title {
 
     @Override
     public String toString() {
-        return String.format("%s Цена - %s\r\n%s\r\n%s\r\n", getName(), getPrice(), getBuyLink(), getLink());
+        return String.format("<b>%s</b>\nЦена - %s\n\nКупить:\n%s\n\nHotGame:\n%s\n", getName(), getPrice(), getBuyLink(), getLink());
     }
 
     public String getPublisher() {

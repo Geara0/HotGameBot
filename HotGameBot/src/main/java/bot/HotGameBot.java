@@ -42,7 +42,7 @@ public final class HotGameBot extends TelegramLongPollingCommandBot {
             public void run() {
                 updateAndNotify();
             }
-        }, zeroMinutes, threeHours);
+        }, fifteenMinutes, threeHours);
 
         register(new StartCommand());
         register(new MyGamesCommand());
@@ -98,7 +98,7 @@ public final class HotGameBot extends TelegramLongPollingCommandBot {
 
     @Override
     public void processNonCommandUpdate(Update update) {
-        var minimalDistance = 60;
+        var minimalDistance = 20;
 
         if (update.hasCallbackQuery()) processCallbackUpdate(update.getCallbackQuery());
         if (!(update.hasMessage() && update.getMessage().hasText())) return;
@@ -203,6 +203,7 @@ public final class HotGameBot extends TelegramLongPollingCommandBot {
         keyboardRow.add(button);
         keyboard.add(keyboardRow);
         answer.setReplyMarkup(new InlineKeyboardMarkup(keyboard));
+        answer.enableHtml(true);
     }
 
     /**
