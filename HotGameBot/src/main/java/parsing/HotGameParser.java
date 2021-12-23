@@ -1,8 +1,6 @@
 package parsing;
 
 import entities.Title;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -11,10 +9,7 @@ import javax.sql.rowset.serial.SerialBlob;
 import javax.xml.crypto.URIReferenceException;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.util.*;
 
 
 public class HotGameParser implements IParser {
@@ -22,10 +17,8 @@ public class HotGameParser implements IParser {
      * Поле с информацией о завершении процесса парсинга, хранит {@link ReportState}
      */
     private ReportState report;
-    private static final Logger logger = LogManager.getLogger(HotGameParser.class);
 
     public HotGameParser() {
-        report = ReportState.INITIAL;
     }
 
     /**
@@ -50,12 +43,9 @@ public class HotGameParser implements IParser {
             report = ReportState.BAD_NAME;
             return new ArrayList<>();
         }
-        logger.debug("parsing by name:    {}", name);
         ArrayList<Title> result = new ArrayList<>();
-        for (int i = 0; i < 5 && !report.equals(ReportState.OK) && !report.equals(ReportState.NO_RESULTS); i++)
+        for (int i = 0; i < 5 && !report.equals(ReportState.OK); i++)
             result = getTitlesByRequest("q=".concat(name));
-        logger.debug("parsing by name finished, report:{}", report.toStringValue());
-
         return result;
     }
 
@@ -70,12 +60,10 @@ public class HotGameParser implements IParser {
         report = ReportState.INITIAL;
         String parameters = String.join(";", params);
         ArrayList<Title> result = new ArrayList<>();
-        logger.debug("recommendations by parameters: {}", parameters);
         for (int i = 0; i < 5 && !report.equals(ReportState.OK); i++)
             result = getTitlesByRequest(parameters);
         if (!report.equals(ReportState.OK)) report = ReportState.BAD_PARAMETERS;
-        logger.debug("recommendations by parameters finished, report:{}", report.toStringValue());
-        return new ArrayList<>(result.subList(0, 5));
+        return (ArrayList<Title>) result.subList(0, 5);
     }
 
     /**
@@ -90,10 +78,8 @@ public class HotGameParser implements IParser {
             return new Title();
         }
         Title result = new Title();
-        logger.debug("parsing title by link: {}", link);
         for (int i = 0; i < 5 && !report.equals(ReportState.OK); i++)
             result = getTitleInfoSelect(link);
-        logger.debug("parsing by link finished, report: {}", report.toStringValue());
         return result;
     }
 
@@ -108,7 +94,6 @@ public class HotGameParser implements IParser {
         String searchRequest = request.strip().toLowerCase(); //replaceAll("[^a-zA-Z]","");
         String domainUrl = "https://hot-game.info";
         String searchUrl = domainUrl.concat("/").concat(searchRequest);
-        logger.debug("trying make request: {}", searchUrl);
         try {
             Document doc = Jsoup.connect(searchUrl).get();
             Element searchResults = doc.selectFirst("body > div.container.content-container > section.yui3-cssreset.result-block.content-table");
@@ -123,12 +108,10 @@ public class HotGameParser implements IParser {
             }
             setReportOK();
         } catch (IOException e) {
-            logger.warn(e.getStackTrace());
+            e.printStackTrace();
         } catch (URIReferenceException e) {
-            report = ReportState.NO_RESULTS;
-            logger.debug("NO RESULTS by request: {}", request);
+            report = ReportState.BAD_NAME;
         }
-        logger.debug("parsing by link finished, report: {}", report.toStringValue());
         return result;
     }
 
@@ -140,7 +123,6 @@ public class HotGameParser implements IParser {
      */
     private Title getTitleInfoSelect(String link) {
         Title result = new Title();
-        logger.debug("trying parse by link: {}", link);
         try {
             Document doc = Jsoup.connect(link).get();
             Element gameInfo = doc.selectFirst("body > div.container.content-container > section.game.clearfix > aside > div.hg-block.short-game-description > div");
@@ -161,16 +143,16 @@ public class HotGameParser implements IParser {
             bestLink = bestPrice.equals("0") ? bestLink.concat("\r\nСмотрите по ссылке чтобы узнать о наличии") : bestLink;
             Date date = parseDate(releaseDate);
             boolean isMultiplayer = isMultiplayer(mode);
-            result = new Title(name, link, bestLink, (int) Double.parseDouble(bestPrice), publisher, developer, date, genres, isMultiplayer, description, new SerialBlob(new byte[0]), null);
+            result = new Title(name, link, bestLink, Integer.parseInt(bestPrice), publisher, developer, date, genres, isMultiplayer, description, new SerialBlob(new byte[1]));
             setReportOK();
         } catch (IOException e) {
             report = ReportState.BAD_URL;
         } catch (NullPointerException | NumberFormatException e) {
-            logger.warn("DATE TROUBLES with title: {}", link);
+            //ignored
+            //тайтлы на отсчете и дата "/" откуда-то, будет обработано при переходе на апи
         } catch (SQLException e) {
             //idk what to do....
         }
-        logger.debug("request finished, report: {}", report.toStringValue());
         return result;
     }
 

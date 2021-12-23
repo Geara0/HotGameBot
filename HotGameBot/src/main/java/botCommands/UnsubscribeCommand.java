@@ -1,23 +1,14 @@
 package botCommands;
 
-import bot.KeyboardCreator;
-import bot.KeyboardMarkupTypes;
 import db.DBWorker;
 import db.IDB;
 import db.ReportState;
-import entities.Levenshtein.LevenshteinCalculator;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-
 import static botCommands.CommandsConstants.*;
-import static db.Converter.convertStringRows;
 
 /**
  * Команда отписки от игры
@@ -39,6 +30,8 @@ public class UnsubscribeCommand extends Command {
             execute(absSender, message, user);
             return;
         }
+
+        //TODO: KeyboardMarkup с вариантами от чего отписаться task3
 
         IDB db = new DBWorker();
         var report = db.unsubscribeUser(user.getId(), titleName);

@@ -1,7 +1,6 @@
 package botCommands;
 
 import bot.KeyboardCreator;
-import bot.KeyboardMarkupTypes;
 import db.DBWorker;
 import db.IDB;
 import entities.Title;
@@ -10,7 +9,6 @@ import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,10 +28,7 @@ public class MyGamesCommand extends Command {
         IDB db = new DBWorker();
         message.setChatId(chat.getId().toString());
         List<String> subscriptionsNames = Arrays.asList(db.getSubscriptions(user.getId()));
-        var subscriptionsIds = new ArrayList<Long>(subscriptionsNames.size());
-        for (var name : subscriptionsNames)
-            subscriptionsIds.add(db.getId(name));
-        var keyboard = KeyboardCreator.createKeyboardMarkUpById(1, subscriptionsIds, KeyboardMarkupTypes.DEFAULT);
+        var keyboard = KeyboardCreator.createKeyboardMarkUp(subscriptionsNames);
         message.setText(UR_SUBSCRIPTIONS.toStringValue());
         message.setReplyMarkup(keyboard);
         execute(absSender, message, user);

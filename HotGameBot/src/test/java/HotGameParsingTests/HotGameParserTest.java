@@ -11,8 +11,8 @@ import java.time.Duration;
 import java.time.Instant;
 
 public class HotGameParserTest {
-    final String link = "https://hot-game.info/game/Among-Us";
-    final String goodName = "control awe";
+    final String link = "https://hot-game.info/game/Fallout-76";
+    final String goodName = "control";
     String badName = "control deluxe editiob";
     final IParser parser = new HotGameParser();
 
@@ -24,10 +24,10 @@ public class HotGameParserTest {
     @Test
     public void parseLink100Time(){
         Instant start = Instant.now();
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 100; i++)
             parser.parseTitleByLink(link);
         Instant finish = Instant.now();
-        System.out.println(Duration.between(start,finish).toMillis()/10.0);
+        System.out.println(Duration.between(start,finish).toMillis()/100.0);
     }
 
     @Test
@@ -59,19 +59,19 @@ public class HotGameParserTest {
 
     @Test
     public void getTitleByBadNameTest(){
-        var titles = parser.parseTitlesByName(badName);
+        var titles = parser.parseTitlesByName("control deluxe editiob");
         Assertions.assertEquals(parser.getReport(), ReportState.BAD_NAME);
     }
 
     @Test
     public void getTitleByGoodNameTest(){
-        var titles = parser.parseTitlesByName(goodName);
+        var titles = parser.parseTitlesByName("control deluxe edition");
         Assertions.assertEquals(parser.getReport(), ReportState.OK);
     }
 
     @Test
     public void getTitleByGoodLinkTest(){
-        var title = parser.parseTitleByLink(link);
+        var title = parser.parseTitleByLink("https://hot-game.info/game/Control");
         Assertions.assertEquals(parser.getReport(), ReportState.OK);
     }
 

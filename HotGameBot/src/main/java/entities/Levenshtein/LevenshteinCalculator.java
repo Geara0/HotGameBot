@@ -1,13 +1,12 @@
 package entities.Levenshtein;
 
+import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Модифицированное расстояние левенштайна с измененными весами замены, удаления и вставки символа и с учетом вероятности опечатки
@@ -38,10 +37,6 @@ public class LevenshteinCalculator {
         }
     }
 
-    private Set<String> stringArrayToSet(String[] arr) {
-        return arr.length > 0 ? Arrays.stream(arr).collect(Collectors.toSet()) : new HashSet<>();
-    }
-
     /**
      * Метод для поиска ближайшего совпадения в коллекции stringSet со строкой original
      *
@@ -53,10 +48,6 @@ public class LevenshteinCalculator {
         return getClosestStrings(stringSet, original, 1)[0];
     }
 
-    public String getClosestString(String[] strings, String original) {
-        return getClosestStrings(stringArrayToSet(strings), original, 1)[0];
-    }
-
     /**
      * Метод для поиска count ближайших строк в коллекции stringSet со строкой original
      *
@@ -66,39 +57,12 @@ public class LevenshteinCalculator {
      * @return массив строк в порядке увеличения расстояния до original
      */
     public String[] getClosestStrings(Set<String> stringSet, String original, int count) {
-        String[] result = new String[count];
+        String[] strings = new String[count];
         List<StringDoublePair> pairs = search(stringSet, original);
         for (int i = 0; i < count; i++) {
-            result[i] = pairs.get(i).getText();
+            strings[i] = pairs.get(i).getText();
         }
-        return result;
-    }
-
-    public String[] getClosestStrings(String[] strings, String original, int count) {
-        return getClosestStrings(stringArrayToSet(strings), original, count);
-    }
-
-    //TODO: сделать чтоб принимал на вход Collection
-    public String[] getStringsInDistance(Set<String> stringSet, String original, double distance) {
-        List<String> result = new ArrayList<>();
-        List<StringDoublePair> pairs = search(stringSet, original);
-        boolean flag = true;
-        int i = 0;
-        while (flag) {
-            try{
-                flag = pairs.get(i).getWeight() < distance;
-                if (flag) result.add(pairs.get(i).getText());
-                i++;
-            }
-            catch (IndexOutOfBoundsException e){
-                flag=false;
-            }
-        }
-        return result.toArray(new String[0]);
-    }
-
-    public String[] getStringsInDistance(String[] strings, String original, double distance) {
-        return getStringsInDistance(stringArrayToSet(strings), original, distance);
+        return strings;
     }
 
     /**
@@ -163,8 +127,6 @@ public class LevenshteinCalculator {
      * @return Получает лист пар "строка"-"расстояние до userText" упорядоченный по убыванию веса
      */
     public List<StringDoublePair> search(Set<String> stringSet, String userText) {
-        if (stringSet.isEmpty())
-            stringSet.add("");
         ArrayList<StringDoublePair> result = new ArrayList<>();
         AnaliseObject searchObj;
         if (userText.length() > 0)

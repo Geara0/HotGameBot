@@ -4,7 +4,6 @@ public enum KeyboardMarkupTypes {
     DEFAULT(""),
     DB("$$"),
     NOT_IT("##"),
-    CONFIRM_UNSUB("@@"),
     PARSER("%%");
 
     private final String value;

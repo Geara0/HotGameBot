@@ -33,7 +33,6 @@ public class Title {
     private Date releaseDate;
     private String[] genres;
     private Blob pictureJpeg;
-    private Long id;
 
     /**
      * синглплеер или мультиплеер
@@ -56,38 +55,20 @@ public class Title {
     }
 
     /**
-     * Конструктор класса
-     *
-     * @param name    {@link Title#name}
-     * @param link    {@link Title#link}
-     * @param buyLink {@link Title#buyLink}
-     * @param price   {@link Title#price}
-     * @param id      {@link Title#id}
-     */
-    public Title(String name, String link, String buyLink, float price, Long id) {
-        this.name = name;
-        this.link = link;
-        this.buyLink = buyLink;
-        this.price = price;
-        this.id = id;
-    }
-
-    /**
      * Расширенный рабочий конструктор класся
      *
-     * @param name        {@link Title#name}
-     * @param link        {@link Title#link}
-     * @param buyLink     {@link Title#buyLink}
-     * @param price       {@link Title#price}
-     * @param publisher   {@link Title#publisher}
-     * @param developer   {@link Title#developer}
-     * @param releaseDate {@link Title#releaseDate}
-     * @param genres      {@link Title#genres}
-     * @param multiplayer {@link Title#isMultiplayer}
-     * @param id          {@link Title#id}
+     * @param name        название тайтла
+     * @param link        ссылка на тайтл
+     * @param buyLink     ссылка на покупку с минимальной ценой
+     * @param price       минимальная цена
+     * @param publisher   издатель
+     * @param developer   разбраточик
+     * @param releaseDate дата релиза
+     * @param genres      список жанров
+     * @param multiplayer является ли мултиплеерной
      */
     public Title(String name, String link, String buyLink, float price, String publisher, String developer,
-                 Date releaseDate, String[] genres, boolean multiplayer, String description, Blob pictureJpeg, Long id) {
+                 Date releaseDate, String[] genres, boolean multiplayer, String description, Blob pictureJpeg) {
         this.name = name;
         this.link = link;
         this.buyLink = buyLink;
@@ -99,7 +80,6 @@ public class Title {
         this.isMultiplayer = multiplayer;
         this.description = description;
         this.pictureJpeg = pictureJpeg;
-        this.id = id;
     }
 
     /**
@@ -178,23 +158,13 @@ public class Title {
         return description;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String toDB() {
         var genres = new StringBuilder("{");
         for (var genre : getGenres()) genres.append(genre).append(", ");
         if (genres.length() > 1)
             genres.delete(genres.length() - 2, genres.length() - 1);
         genres.append("}");
-        var params = new String[]{
-                String.valueOf(getId()),
-                getName(),
+        var params = new String[]{getName(),
                 getLink(),
                 getBuyLink(),
                 String.valueOf(getPrice()),
@@ -208,7 +178,7 @@ public class Title {
         var result = new StringBuilder();
         for (var param : params) {
             if (param == null) result.append("null, ");
-            else result.append("'").append(param.replaceAll("'", "")).append("', ");
+            else result.append("'").append(param.replaceAll("'","")).append("', ");
         }
         result.delete(result.length() - 2, result.length() - 1);
         return result.toString();

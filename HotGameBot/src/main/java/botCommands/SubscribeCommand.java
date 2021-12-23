@@ -25,36 +25,28 @@ public class SubscribeCommand extends Command {
 
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
-        var titleName = getName(strings);
-        var message = TrySubscribe(user, chat, titleName);
-        execute(absSender, message, user);
-    }
-
-    public static SendMessage TrySubscribe(User user, Chat chat, String titleName) {
         var message = new SendMessage();
         message.setChatId(chat.getId().toString());
 
-        if (titleName == null || titleName.trim().equals("")) {
+        var title = getName(strings);
+
+        if (title == null) {
             message.setText(U_FORGOT_NAME.toStringValue());
-            return message;
+            execute(absSender, message, user);
+            return;
         }
 
         IDB db = new DBWorker();
-        if (db.subscribeUser(user.getId(), titleName) == ReportState.OK) {
-            message.setText(U_BEEN_SUBSCRIBED.toStringValue() + titleName);
+        var closest = new ArrayList<>(Arrays.asList(db.getClosest(title)));
+        closest.add(NOT_IT.toStringValue() + String.format("'%s'", title));
+        var keyboard = KeyboardCreator.createKeyboardMarkUp(1, closest, KeyboardMarkupTypes.DB);
+        if (db.subscribeUser(user.getId(), title) == ReportState.OK) {
+            message.setText(U_BEEN_SUBSCRIBED.toStringValue() + title);
         } else {
-            var closest = new ArrayList<>(Arrays.asList(db.getClosestOverall(titleName)));
-            var closestIds = new ArrayList<Long>(closest.size());
-            for (var gameName : closest) {
-                closestIds.add(db.getId(gameName));
-            }
-            closest.add(NOT_IT.toStringValue() + String.format("'%s'", titleName));
-            var keyboard = KeyboardCreator.createKeyboardMarkUpById(1, closestIds, KeyboardMarkupTypes.DB);
             message.setText(WE_FOUND_MULTIPLE_VARIANTS.toStringValue());
             message.setReplyMarkup(keyboard);
         }
-
-        return message;
+        execute(absSender, message, user);
     }
 
     private String getName(String[] strings) {
