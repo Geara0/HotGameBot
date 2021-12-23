@@ -111,12 +111,12 @@ public class DBWorker implements IDB {
     }
 
     @Override
-    public String[] getClosestOverall(String title) {
+    public String[] getClosestOverall(String title, Integer count) {
         var result = executeSQL(connection, "SELECT title FROM games");
         var allTitles = new HashSet<String>();
         Collections.addAll(allTitles, convertStringRows(result, "title"));
         var levenshtein = new LevenshteinCalculator();
-        return levenshtein.getClosestStrings(allTitles, title, 4);
+        return levenshtein.getClosestStrings(allTitles, title, count);
     }
 
     @Override
@@ -147,13 +147,22 @@ public class DBWorker implements IDB {
 
     @Override
     public ReportState subscribeUser(long userId, Long titleId) {
+        if (titleId == null) return ReportState.BAD_NAME;
         logger.debug("trying to subscribe user {} to title {}", userId, titleId);
         var result = executeSQL(connection, String.format(
                 "SELECT subscriptions FROM users WHERE id = %s", userId));
 
         var subscriptions = hstoreToSet(result, "subscriptions", Long.class);
         if (subscriptions.contains(String.valueOf(titleId))) return ReportState.ALREADY;
-
+        if (subscriptions.size() == 0) {
+            executeSQL(connection, String.format(
+                    "UPDATE games SET subscribers = ('%s=>null') WHERE id = %s",
+                    userId, titleId));
+            executeSQL(connection, String.format(
+                    "UPDATE users SET subscriptions = ('%s=>null') WHERE id = %s",
+                    titleId, userId));
+            return ReportState.OK;
+        }
         executeSQL(connection, String.format(
                 "UPDATE games SET subscribers = subscribers || ('%s=>null') WHERE (id = %s)",
                 userId, titleId));

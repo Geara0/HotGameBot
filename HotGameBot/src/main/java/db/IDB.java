@@ -68,9 +68,10 @@ public interface IDB {
      * Получить ближайшие по Левенштейну игры
      *
      * @param title наименование игры
+     * @param count Количество ближайших
      * @return ближайшие по Левенштейну игры
      */
-    String[] getClosestOverall(String title);
+    String[] getClosestOverall(String title, Integer count);
 
     /**
      * Получить игру из бд

@@ -43,12 +43,12 @@ public class SubscribeCommand extends Command {
         if (db.subscribeUser(user.getId(), titleName) == ReportState.OK) {
             message.setText(U_BEEN_SUBSCRIBED.toStringValue() + titleName);
         } else {
-            var closest = new ArrayList<>(Arrays.asList(db.getClosestOverall(titleName)));
+            var closest = new ArrayList<>(Arrays.asList(db.getClosestOverall(titleName, 8)));
             var closestIds = new ArrayList<Long>(closest.size());
             for (var gameName : closest) {
                 closestIds.add(db.getId(gameName));
             }
-            closest.add(NOT_IT.toStringValue() + String.format("'%s'", titleName));
+            //closest.add(NOT_IT.toStringValue() + String.format("'%s'", titleName));
             var keyboard = KeyboardCreator.createKeyboardMarkUpById(1, closestIds, KeyboardMarkupTypes.DB);
             message.setText(WE_FOUND_MULTIPLE_VARIANTS.toStringValue());
             message.setReplyMarkup(keyboard);
