@@ -26,7 +26,8 @@ public enum CommandsConstants {
     QUIT("Вы вышли!"),
     // for commands themselves
     UR_SUBSCRIPTIONS("Вы подписаны на:"),
-    HELLO("Hi, "),
+    HELLO("Привет, "),
+    HELP_ON_START("С помощью этого бота ты сможешь быть в курсе нижайших цен на выбранные тобой игры.\n\nПример использования бота:"),
     U_FORGOT_NAME("Кажется, вы забыли ввести название\nИспользуйте /subscribe [title]"),
     NOT_IT("Это не то "),
     U_BEEN_SUBSCRIBED("Вы успешно подписались на "),
