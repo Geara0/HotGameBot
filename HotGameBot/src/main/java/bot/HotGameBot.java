@@ -46,10 +46,10 @@ public final class HotGameBot extends TelegramLongPollingCommandBot {
 
         register(new StartCommand());
         register(new MyGamesCommand());
-        register(new SubscribeCommand());
-        register(new UnsubscribeCommand());
+//        register(new SubscribeCommand());
+//        register(new UnsubscribeCommand());
         register(new UnsubscribeAllCommand());
-        register(new WantToPlayCommand());
+//        register(new WantToPlayCommand());
         register(new ReportCommand());
         var helpCommand = new HelpCommand(this);
         register(helpCommand);
